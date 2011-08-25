@@ -44,7 +44,7 @@ class NewStop(webapp.RequestHandler):
         direction_tag = self.request.get('direction-select')
         stop_tag = self.request.get('stop-select')
         
-        position = user.stops.count() + 1
+        position = user.stops.order('-position').get().position + 1
         
         stop = models.Stop()
         stop.user = user
@@ -78,6 +78,9 @@ class EditStop(webapp.RequestHandler):
         
         stop = models.Stop.get_by_id(int(id))
         
+        if not stop.user == current_user:
+            self.redirect('/')
+        
         stop.title = title
         stop.agency_tag = agency_tag
         stop.line_tag = line_tag
@@ -91,37 +94,53 @@ class EditStop(webapp.RequestHandler):
         
 class DeleteStop(webapp.RequestHandler):
     def get(self, id):
+        '''Delete a stop.'''
+        current_user = users.get_current_user()
         stop = models.Stop.get_by_id(int(id)) # deal with stop positions
+        
+        if not stop.user == current_user:
+            self.redirect('/')
+        
         stop.delete()
         self.redirect('/')
         
 class MoveUp(webapp.RequestHandler):
-	def get(self, id):
-		stop = models.Stop.get_by_id(int(id))
-		other_stop = stop.user.stops.filter('position <', stop.position).order('-position').get()
-		
-		stop_position = stop.position
-		stop.position = other_stop.position
-		other_stop.position = stop_position
-		
-		stop.put()
-		other_stop.put()
-		
-		self.redirect('/')
+    def get(self, id):
+        current_user = users.get_current_user()
+        stop = models.Stop.get_by_id(int(id))
+        
+        if not stop.user == current_user:
+            self.redirect('/')
+        
+        other_stop = stop.user.stops.filter('position <', stop.position).order('-position').get()
+        
+        stop_position = stop.position
+        stop.position = other_stop.position
+        other_stop.position = stop_position
+        
+        stop.put()
+        other_stop.put()
+        
+        self.redirect('/')
 
 class MoveDown(webapp.RequestHandler):
-	def get(self, id):
-		stop = models.Stop.get_by_id(int(id))
-		other_stop = stop.user.stops.filter('position >', stop.position).order('-position').get()
-		
-		stop_position = stop.position
-		stop.position = other_stop.position
-		other_stop.position = stop_position
-		
-		stop.put()
-		other_stop.put()
-		
-		self.redirect('/')
+    def get(self, id):
+        current_user = users.get_current_user()
+        stop = models.Stop.get_by_id(int(id))
+        
+        if not stop.user == current_user:
+            self.redirect('/')
+        
+        other_stop = stop.user.stops.filter('position >', stop.position).order('-position').get()
+        
+        stop_position = stop.position
+        stop.position = other_stop.position
+        other_stop.position = stop_position
+        
+        stop.put()
+        other_stop.put()
+        
+        self.redirect('/')
 
 class Lines(webapp.RequestHandler):
     def post(self):
