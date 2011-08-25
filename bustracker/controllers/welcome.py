@@ -21,7 +21,7 @@ class Predictions(webapp.RequestHandler):
     def get(self):
         '''Return the html for a line's arrival times.'''
         current_user = users.get_current_user()
-        stops = models.User.all().filter('user =', current_user).get().stops
+        stops = models.User.all().filter('user =', current_user).get().stops.order('position')
         if stops.count() == 0:
             self.response.out.write('<tr class="header" colspan="2"><td>You have no saved stops. Add one <a href="/stop/new">here</a>.</td></tr>')
         else:
@@ -44,6 +44,8 @@ class NewStop(webapp.RequestHandler):
         direction_tag = self.request.get('direction-select')
         stop_tag = self.request.get('stop-select')
         
+        position = user.stops.count() + 1
+        
         stop = models.Stop()
         stop.user = user
         stop.title = title
@@ -52,6 +54,7 @@ class NewStop(webapp.RequestHandler):
         stop.direction_tag = direction_tag
         stop.stop_tag = stop_tag
         stop.time_to_stop = time_to_stop
+        stop.position = position
         stop.put()
         
         self.redirect('/')
@@ -88,9 +91,37 @@ class EditStop(webapp.RequestHandler):
         
 class DeleteStop(webapp.RequestHandler):
     def get(self, id):
-        stop = models.Stop.get_by_id(int(id))
+        stop = models.Stop.get_by_id(int(id)) # deal with stop positions
         stop.delete()
         self.redirect('/')
+        
+class MoveUp(webapp.RequestHandler):
+	def get(self, id):
+		stop = models.Stop.get_by_id(int(id))
+		other_stop = stop.user.stops.filter('position <', stop.position).order('-position').get()
+		
+		stop_position = stop.position
+		stop.position = other_stop.position
+		other_stop.position = stop_position
+		
+		stop.put()
+		other_stop.put()
+		
+		self.redirect('/')
+
+class MoveDown(webapp.RequestHandler):
+	def get(self, id):
+		stop = models.Stop.get_by_id(int(id))
+		other_stop = stop.user.stops.filter('position >', stop.position).order('-position').get()
+		
+		stop_position = stop.position
+		stop.position = other_stop.position
+		other_stop.position = stop_position
+		
+		stop.put()
+		other_stop.put()
+		
+		self.redirect('/')
 
 class Lines(webapp.RequestHandler):
     def post(self):

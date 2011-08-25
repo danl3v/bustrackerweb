@@ -10,6 +10,8 @@ def main():
            ('/predictions', welcome.Predictions),
            ('/stop/new', welcome.NewStop),
            ('/stop/edit/(.*)', welcome.EditStop),
+           ('/stop/moveup/(.*)', welcome.MoveUp),
+           ('/stop/movedown/(.*)', welcome.MoveDown),
            ('/stop/delete/(.*)', welcome.DeleteStop),
            ('/lines', welcome.Lines),
            ('/directions', welcome.Directions),

@@ -88,8 +88,13 @@ def print_prediction(self, stop, prediction):
         self.response.out.write('<tr class="time"><td class="arrival-time" colspan="2">no arrivals</td><tr>')
         
 def print_predictions(self, stops):
-    '''Print predictionss for each of the stops.'''
+    '''Print predictions for each of the stops.'''
+    i = 0
     for stop in stops:
-        self.response.out.write('<tr class="header"><td class="line-title">' + stop.title + '</td><td class="line-edit"><a href="/stop/edit/' +str(stop.key().id()) + '">edit</a> | <a href="/stop/delete/' +str(stop.key().id()) + '">delete</a></td></tr>')
+    	i += 1
+        self.response.out.write('<tr class="header"><td class="line-title">' + stop.title + '</td><td class="line-edit">')
+        if i != 1: self.response.out.write('<a href="/stop/moveup/' +str(stop.key().id()) + '">move up</a> | ')
+        if i < stops.count(): self.response.out.write('<a href="/stop/movedown/' +str(stop.key().id()) + '">move down</a> | ')
+        self.response.out.write('<a href="/stop/edit/' +str(stop.key().id()) + '">edit</a> | <a href="/stop/delete/' +str(stop.key().id()) + '">delete</a></td></tr>')
         prediction = get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=' + stop.agency_tag + '&r=' + stop.line_tag + '&d=' + stop.direction_tag + '&s=' + stop.stop_tag)
         print_prediction(self, stop, prediction)
