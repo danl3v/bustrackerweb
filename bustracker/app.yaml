@@ -1,0 +1,24 @@
+application: transit-tracker
+version: 1
+runtime: python
+api_version: 1
+
+builtins:
+- datastore_admin: on
+
+handlers:
+- url: /css
+  static_dir: static/css
+  
+- url: /js/jquery
+  static_dir: static/jquery/js
+  
+- url: /js
+  static_dir: static/js
+  
+- url: /.+
+  script: main.py
+  login: required
+  
+- url: /
+  script: main.py

@@ -1,0 +1,237 @@
+@background-color: #232625;
+@text-color: #FFAD29;
+@border-color: #647362;
+@highlight-color: #374036;
+@footer-height: 3em;
+
+html, body
+{
+	margin: 0;
+	padding: 0;
+	height: 100%;
+}
+
+div#container
+{
+	min-height: 100%;
+	position: relative;
+}
+
+div#header
+{
+	text-align: center;
+	padding-bottom: .4em;
+}
+
+div#main
+{
+	padding-bottom: @footer-height;
+}
+
+div#footer
+{
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	height: @footer-height;
+	opacity: 0;
+    -webkit-transition: all 0.2s ease;
+    -moz-transition: all 0.2s ease;
+    -o-transition: all 0.2s ease;
+}
+
+div#container:hover > div#footer
+{
+    opacity: 1;
+}
+
+div#footer-content
+{
+	text-align: center;
+	color: #FFFFFF;
+	margin-top: 1em;
+}
+
+/* COLORS ETC */
+
+body
+{
+	background-color: @background-color;
+	color: @text-color;
+	font-family: 'Oswald', sans-serif;
+}
+
+a, a:hover, a:visited, a:active
+{
+	color: #FFFFFF;
+	text-decoration: none;
+}
+
+div#footer span.separator
+{
+	color: @text-color;
+}
+
+/* STOP-LIST */
+
+table#stop-list
+{
+	width: 100%;
+	border-top: 1px solid @border-color;
+	border-bottom: 1px solid @border-color;
+	border-collapse: collapse;
+}
+
+table#stop-list tr td
+{
+	border-top: 1px solid @border-color;
+	border-bottom: 1px solid @border-color;
+}
+
+table#stop-list tr.header
+{
+	background: @highlight-color;
+}
+
+@text-margin: 10px;
+
+table#stop-list tr.header td
+{
+	font-size: 2em;
+	font-weight: bold;
+	padding: .5em @text-margin;
+}
+
+table#stop-list tr.time td
+{
+	padding: .2em @text-margin;
+}
+
+table#stop-list tr td span.big
+{
+	font-size: 2em;
+	font-weight: bold;
+}
+
+table#stop-list tr td.line-title
+{
+	text-align: left;
+	width: 80%;
+}
+
+table#stop-list tr td.line-edit
+{
+	text-align: right;
+	width: 20%;
+	font-size: 1em;
+	vertical-align: middle;
+	opacity: 0;
+    -webkit-transition: all 0.2s ease;
+    -moz-transition: all 0.2s ease;
+    -o-transition: all 0.2s ease;
+}
+
+table#stop-list tr.header:hover > td.line-edit
+{
+    opacity: 1;
+}
+
+table#stop-list td.arrival
+{
+	text-align: left;
+	width: 50%;
+}
+
+table#stop-list td.leave-time
+{
+	width: 50%;
+	text-align: right;
+}
+
+/* STOP MANAGEMENT */
+
+div.new-stop-form
+{
+    margin: 0 auto;
+    margin-top: 5em;
+    width: 600px;
+    padding: 14px;
+    margin-bottom: 1em;
+    border: solid 2px @border-color;
+    vertical-align: top;
+    background: @highlight-color;
+}
+
+div.new-stop-form h1
+{
+    font-weight: bold;
+    font-size: 1.5em;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+div.new-stop-form p
+{
+    color: #FFFFFF;
+	text-align: center;
+    margin-bottom: 20px;
+    border-bottom: solid 1px #FFFFFF;
+    padding-bottom: 10px;
+}
+
+div.new-stop-form label
+{
+    display: block;
+    font-weight: bold;
+    text-align: right;
+    width: 220px;
+    float: left;
+}
+
+div.new-stop-form .small
+{
+    color: #FFFFFF;
+    display: block;
+    font-size: .8em;
+    font-weight: normal;
+    text-align: right;
+    width: 220px;
+}
+
+div.new-stop-form input
+{
+    float: left;
+    font-size: 12px;
+    padding: 4px 2px;
+    border: solid 1px #aacfe4;
+    width: 300px;
+    margin: 2px 0 20px 10px;
+}
+
+div.new-stop-form div.select-set
+{
+    float: left;
+    font-size: 12px;
+    width: 200px;
+    margin: 2px 0 20px 10px;
+}
+
+div.new-stop-form div.select-set select
+{
+	display: block;
+}
+
+div.new-stop-form button
+{
+    clear: both;
+    border: 0;
+    margin-left: 240px;
+    width: 125px;
+    height: 31px;
+    background: #666666;
+    text-align: center;
+    line-height: 31px;
+    color: #FFFFFF;
+    font-size: .75em;
+    font-weight: bold;
+}

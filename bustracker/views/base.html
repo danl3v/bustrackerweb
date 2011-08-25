@@ -1,0 +1,18 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Bus Tracker</title>
+<meta charset="UTF-8">
+<link rel="stylesheet/less" type="text/css" href="/css/reset.less" />
+<link rel="stylesheet/less" type="text/css" href="/css/main.less">
+<script src="/js/less.js" type="text/javascript"></script>
+<link href='http://fonts.googleapis.com/css?family=Oswald' rel='stylesheet' type='text/css'>
+{% block extrahead %}{% endblock %}
+</head>
+<body>
+<div id="container">
+{% block content %}{% endblock %}
+<div id="footer"><div id="footer-content">{% if current_user %}{{ current_user.email }} <span class="separator">|</span> <a href="/stop/new">new stop</a> <span class="separator">|</span> {% endif %}<a href="{{ login_url }}">{{ login_url_linktext }}</a></div></div>
+</div>
+</body>
+</html>
