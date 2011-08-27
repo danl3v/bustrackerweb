@@ -3,6 +3,7 @@
 @border-color: #647362;
 @highlight-color: #374036;
 @footer-height: 3em;
+@left-right-margin: 10px;
 
 html, body
 {
@@ -58,7 +59,7 @@ body
 {
 	background-color: @background-color;
 	color: @text-color;
-	font-family: 'Oswald', sans-serif;
+	font-family: 'News Cycle', sans-serif;
 }
 
 a, a:hover, a:visited, a:active
@@ -93,16 +94,14 @@ table#stop-list tr.header
 	background: @highlight-color;
 }
 
-@text-margin: 10px;
-
 table#stop-list tr.header td
 {
-	padding: .5em @text-margin;
+	padding: .5em @left-right-margin;
 }
 
 table#stop-list tr.time td
 {
-	padding: .2em @text-margin;
+	padding: .2em @left-right-margin;
 }
 
 table#stop-list tr td span.big
@@ -117,6 +116,7 @@ table#stop-list tr td.line-title
 	font-size: 2em;
 	font-weight: bold;
 	width: 70%;
+	vertical-align: middle;
 }
 
 table#stop-list tr td.line-edit
@@ -132,7 +132,7 @@ table#stop-list tr td.line-edit
     -o-transition: all 0.2s ease;
 }
 
-.no-fade
+table#stop-list tr td.no-fade
 {
 	opacity: 1 !important;
 }
@@ -146,6 +146,13 @@ table#stop-list td.arrival
 {
 	text-align: left;
 	width: 50%;
+}
+
+table#stop-list td.subtitle
+{
+	color: #3BBA00;
+	font-size: 1.5em;
+	padding-bottom: .4em !important;
 }
 
 table#stop-list td.leave-time
