@@ -15,6 +15,7 @@ $(document).ready(function() {
 
 {% block content %}
 <div id="main">
+<div style="height:5em;"></div>
 <div class="new-stop-form">
 	<form action="/stop/edit/{{ stop.key.id }}" method="post" onsubmit="return validate();">
 		
