@@ -6,7 +6,6 @@
 <script src="/js/validate.js" type="text/javascript"></script>
 <script>
 $(document).ready(function() {
-	$('#agency-select').change();
 	setLine("{{ stop.agency_tag }}", "{{ stop.line_tag }}");
 	setDirection("{{ stop.agency_tag }}", "{{ stop.line_tag }}", "{{ stop.direction_tag }}");
 	setStop("{{ stop.agency_tag }}", "{{ stop.line_tag }}", "{{ stop.direction_tag }}", "{{ stop.stop_tag }}");

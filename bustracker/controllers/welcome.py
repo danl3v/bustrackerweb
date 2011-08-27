@@ -43,7 +43,7 @@ class NewStop(webapp.RequestHandler):
         stop.direction_tag = self.request.get('direction-select')
         stop.stop_tag = self.request.get('stop-select')
         stop.time_to_stop = int(self.request.get('time-to-stop'))
-        max_position = user.stops.order('-position').get()
+        max_position = stop.user.stops.order('-position').get()
         if max_position:
             stop.position = max_position.position + 1
         else:
