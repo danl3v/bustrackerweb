@@ -23,7 +23,7 @@ class Predictions(webapp.RequestHandler):
         current_user = users.get_current_user()
         stops = models.User.all().filter('user =', current_user).get().stops.order('position')
         if stops.count() == 0:
-            self.response.out.write('<tr class="header" colspan="2"><td class="line-title">You have no saved stops. Add one <a href="/stop/new">here</a>.</td></tr>')
+            self.response.out.write('<tr class="header" colspan="2"><td class="line-title">You have no saved stops. <a href="/stop/new">Add one here</a>.</td></tr>')
         else:
             nextbus.print_predictions(self, stops)
 
