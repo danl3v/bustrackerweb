@@ -22,15 +22,16 @@ $(document).ready(function() {
 		<p><a href="/">Back to Home</a></p>
 		
 		<label>Stop Title:
-		<span class="small">e.g. Line 18 at Park Blvd</span>
+		<span class="small">your personal description</span>
 		</label>
 		<input type="text" name="title" class="title" placeholder="e.g. Line 18 at Everett to Downtown Oakland" value="{{ stop.title }}">
 		
-		<label>Find the stop:
+		<label>Your origin:
+		<span class="small">use the menus</span>
 		</label>
 		<div class="select-set">
 		<select name="agency-select" id="agency-select">
-			<option>Select an agency...</option>
+			<option>Select a transit agency...</option>
 			<option value="actransit"{% if stop.agency_tag == 'actransit'%} selected{% endif %}>AC Transit</option>
 			<option value="sf-muni"{% if stop.agency_tag == 'sf-muni'%} selected{% endif %}>SF MUNI</option>
 		</select>
@@ -39,8 +40,8 @@ $(document).ready(function() {
 		<select name="stop-select" id="stop-select"></select>
 		</div>
 		
-		<label>Time to Stop:
-		<span class="small">number of minutes to get to the stop</span>
+		<label>Time to Get to Stop:
+		<span class="small">this is your estimation in minutes</span>
 		</label>
 		<input type="text" name="time-to-stop" id="time-to-stop" placeholder="e.g. 12" value="{{ stop.time_to_stop }}">
 		
