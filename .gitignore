@@ -1,4 +1,5 @@
 *.pyc
+.DS_Store
 google_appengine/
 bustracker/static/jquery
 
