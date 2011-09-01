@@ -9,7 +9,6 @@ function validate() {
 	var timeToStop = $('#time-to-stop').val();
 	
 	if (!title) {
-		alert(title);
 		alert("You must enter a title for your stop.");
 		return false;
 	}
@@ -21,7 +20,7 @@ function validate() {
 		alert("You must select a station and a direction.");
 		return false;
 	}
-	else if (!nextbusLine || !nextbusDirection || !nextbusStop) {
+	else if (agency != "bart" && (!nextbusLine || !nextbusDirection || !nextbusStop)) {
 		alert("You must select a line, direction, and stop.");
 		return false;
 	}
