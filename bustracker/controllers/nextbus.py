@@ -1,11 +1,11 @@
 from BeautifulSoup import BeautifulStoneSoup
-import urllib, time
+import urllib2, time
 
 ##### GENERAL #####
 
 def get_xml(url):
     '''Go to url and returns the xml data.'''
-    file = urllib.urlopen(url)
+    file = urllib2.urlopen(url)
     xml = file.read()
     file.close()
     return xml
