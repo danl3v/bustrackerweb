@@ -1,7 +1,7 @@
 from google.appengine.ext import webapp
 from google.appengine.api import users
 from models import models
-import view, nextbus
+import view, nextbus, bart, predictions
 
 class MainPage(webapp.RequestHandler):
     def get(self):
@@ -25,7 +25,7 @@ class Predictions(webapp.RequestHandler):
         if stops.count() == 0:
             self.response.out.write('<tr class="header" colspan="2"><td class="line-title">You have no saved stops. <a href="/stop/new">Add one</a>.</td></tr>')
         else:
-            nextbus.print_predictions(self, stops)
+            self.response.out.write(predictions.get_predictions(stops))
 
 class NewStop(webapp.RequestHandler):
     def get(self):
@@ -39,9 +39,13 @@ class NewStop(webapp.RequestHandler):
         stop.user = models.User.all().filter('user =', current_user).get()
         stop.title = self.request.get('title')
         stop.agency_tag = self.request.get('agency-select')
-        stop.line_tag = self.request.get('line-select')
-        stop.direction_tag = self.request.get('direction-select')
-        stop.stop_tag = self.request.get('stop-select')
+        if stop.agency_tag == "bart":
+            stop.direction_tag = self.request.get('bart-direction-select')
+            stop.stop_tag = self.request.get('bart-station-select')
+        else:
+            stop.line_tag = self.request.get('nextbus-line-select')
+            stop.direction_tag = self.request.get('nextbus-direction-select')
+            stop.stop_tag = self.request.get('nextbus-stop-select')
         stop.time_to_stop = int(self.request.get('time-to-stop'))
         max_position = stop.user.stops.order('-position').get()
         if max_position:
@@ -68,9 +72,13 @@ class EditStop(webapp.RequestHandler):
         if stop.user.user == current_user:
             stop.title = self.request.get('title')
             stop.agency_tag = self.request.get('agency-select')
-            stop.line_tag = self.request.get('line-select')
-            stop.direction_tag = self.request.get('direction-select')
-            stop.stop_tag = self.request.get('stop-select')
+            if stop.agency_tag == "bart":
+                stop.direction_tag = self.request.get('bart-direction-select')
+                stop.stop_tag = self.request.get('bart-station-select')
+            else:
+                stop.line_tag = self.request.get('nextbus-line-select')
+                stop.direction_tag = self.request.get('nextbus-direction-select')
+                stop.stop_tag = self.request.get('nextbus-stop-select')
             stop.time_to_stop = int(self.request.get('time-to-stop'))
             stop.put()
         self.redirect('/')
@@ -111,27 +119,3 @@ class MoveDown(webapp.RequestHandler):
             stop.put()
             other_stop.put()
         self.redirect('/')
-
-class Lines(webapp.RequestHandler):
-    def post(self):
-        '''Return the lines for an agency.'''
-        agency = self.request.get('agency')
-        line = self.request.get('line')
-        nextbus.print_lines(self, agency, line)
-        
-class Directions(webapp.RequestHandler):
-    def post(self):
-        '''Return the directions for a line for an agency.'''
-        agency = self.request.get('agency')
-        line = self.request.get('line')
-        direction = self.request.get('direction')
-        nextbus.print_directions(self, agency, line, direction)
-    
-class Stops(webapp.RequestHandler):
-    def post(self):
-        '''Return the directions for a line for an agency.'''
-        agency = self.request.get('agency')
-        line = self.request.get('line')
-        direction = self.request.get('direction')
-        stop = self.request.get('stop')
-        nextbus.print_stops(self, agency, line, direction, stop)

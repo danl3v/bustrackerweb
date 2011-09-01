@@ -1,37 +1,67 @@
 $(document).ready(function() {
+	
+	$('#nextbus-menus').hide();
+	$('#bart-menus').hide();
+
 	$('#agency-select').change(function() {
-		setLine($('#agency-select').val(), null);
+		if ($('#agency-select').val() == "bart") {
+			$('#nextbus-menus').hide();
+			$('#bart-menus').show();
+			bartSetStation(null);
+		}
+		else {
+			$('#bart-menus').hide();
+			$('#nextbus-menus').show();
+			nextbusSetLine($('#agency-select').val(), null);
+		}
 	});
 	
-	$('#line-select').change(function() {
-		setDirection($('#agency-select').val(), $('#line-select').val(), null);
+	$('#bart-station-select').change(function() {
+		bartSetDirection(null);
 	});
 	
-	$('#direction-select').change(function() {
-		setStop($('#agency-select').val(), $('#line-select').val(), $('#direction-select').val(), null);
+	$('#nextbus-line-select').change(function() {
+		nextbusSetDirection($('#agency-select').val(), $('#nextbus-line-select').val(), null);
+	});
+	
+	$('#nextbus-direction-select').change(function() {
+		nextbusSetStop($('#agency-select').val(), $('#nextbus-line-select').val(), $('#nextbus-direction-select').val(), null);
 	});
 });
 
-function setLine(agency, line) {
-	$('#line-select').html('<option value="">Loading...</option>');
-	$('#direction-select').html('');
-	$('#stop-select').html('');
-	$.post('/lines', { 'agency' : agency, 'line' : line }, function(data) {
-		$('#line-select').html(data);
+function bartSetStation(station) {
+	$('#bart-direction-select').html('');
+	$.post('/bart/stations', { 'station' : station }, function(data) {
+		$('#bart-station-select').html(data);
 	});
 }
 
-function setDirection(agency, line, direction) {
-	$('#direction-select').html('<option value="">Loading...</option>');
-	$('#stop-select').html('');
-	$.post('/directions', { 'agency' : agency, 'line' : line, 'direction' : direction }, function(data) {
-		$('#direction-select').html(data);
+function bartSetDirection(direction) {
+	$.post('/bart/directions', { 'direction' : direction }, function(data) {
+		$('#bart-direction-select').html(data);
 	});
 }
 
-function setStop(agency, line, direction, stop) {
-	$('#stop-select').html('<option value="">Loading...</option>');
-	$.post('/stops', { 'agency' : agency, 'line' : line, 'direction' : direction, 'stop' : stop }, function(data) {
-		$('#stop-select').html(data);
+function nextbusSetLine(agency, line) {
+	$('#nextbus-line-select').html('<option value="">Loading...</option>');
+	$('#nextbus-direction-select').html('');
+	$('#nextbus-stop-select').html('');
+	$.post('/nextbus/lines', { 'agency' : agency, 'line' : line }, function(data) {
+		$('#nextbus-line-select').html(data);
+	});
+}
+
+function nextbusSetDirection(agency, line, direction) {
+	$('#nextbus-direction-select').html('<option value="">Loading...</option>');
+	$('#nextbus-stop-select').html('');
+	$.post('/nextbus/directions', { 'agency' : agency, 'line' : line, 'direction' : direction }, function(data) {
+		$('#nextbus-direction-select').html(data);
+	});
+}
+
+function nextbusSetStop(agency, line, direction, stop) {
+	$('#nextbus-stop-select').html('<option value="">Loading...</option>');
+	$.post('/nextbus/stops', { 'agency' : agency, 'line' : line, 'direction' : direction, 'stop' : stop }, function(data) {
+		$('#nextbus-stop-select').html(data);
 	});
 }

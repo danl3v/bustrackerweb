@@ -6,9 +6,18 @@
 <script src="/js/validate.js" type="text/javascript"></script>
 <script>
 $(document).ready(function() {
-	setLine("{{ stop.agency_tag }}", "{{ stop.line_tag }}");
-	setDirection("{{ stop.agency_tag }}", "{{ stop.line_tag }}", "{{ stop.direction_tag }}");
-	setStop("{{ stop.agency_tag }}", "{{ stop.line_tag }}", "{{ stop.direction_tag }}", "{{ stop.stop_tag }}");
+	{% if stop.agency_tag == "bart" %}
+	bartSetStation("{{ stop.stop_tag }}");
+	bartSetDirection("{{ stop.direction_tag }}");
+	$('#nextbus-menus').hide();
+	$('#bart-menus').show();
+	{% else %}
+	nextbusSetLine("{{ stop.agency_tag }}", "{{ stop.line_tag }}");
+	nextbusSetDirection("{{ stop.agency_tag }}", "{{ stop.line_tag }}", "{{ stop.direction_tag }}");
+	nextbusSetStop("{{ stop.agency_tag }}", "{{ stop.line_tag }}", "{{ stop.direction_tag }}", "{{ stop.stop_tag }}");
+	$('#bart-menus').hide();
+	$('#nextbus-menus').show();
+	{% endif %}
 });
 </script>
 {% endblock %}
@@ -25,7 +34,7 @@ $(document).ready(function() {
 		<label>Stop Title:
 		<span class="small">your personal description</span>
 		</label>
-		<input type="text" name="title" class="title" placeholder="e.g. Line 18 at Everett to Downtown Oakland" value="{{ stop.title }}">
+		<input type="text" name="title" class="title" id="title" placeholder="e.g. Line 18 at Everett to Downtown Oakland" value="{{ stop.title }}">
 		
 		<label>Your origin:
 		<span class="small">use the menus</span>
@@ -35,10 +44,17 @@ $(document).ready(function() {
 			<option>Select a transit agency...</option>
 			<option value="actransit"{% if stop.agency_tag == 'actransit'%} selected{% endif %}>AC Transit</option>
 			<option value="sf-muni"{% if stop.agency_tag == 'sf-muni'%} selected{% endif %}>SF MUNI</option>
+			<option value="bart"{% if stop.agency_tag == 'bart'%} selected{% endif %}>BART</option>
 		</select>
-		<select name="line-select" id="line-select"></select>
-		<select name="direction-select" id="direction-select"></select>
-		<select name="stop-select" id="stop-select"></select>
+		<div id="nextbus-menus">
+		<select name="nextbus-line-select" id="nextbus-line-select"></select>
+		<select name="nextbus-direction-select" id="nextbus-direction-select"></select>
+		<select name="nextbus-stop-select" id="nextbus-stop-select"></select>
+		</div>
+		<div id="bart-menus">
+		<select name="bart-station-select" id="bart-station-select"></select>
+		<select name="bart-direction-select" id="bart-direction-select"></select>
+		</div>
 		</div>
 		
 		<label>Time to Get to Stop:

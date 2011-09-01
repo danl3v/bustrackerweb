@@ -1,6 +1,6 @@
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
-from controllers import welcome
+from controllers import welcome, nextbus, bart
 
 def main():
     application = webapp.WSGIApplication([
@@ -13,9 +13,11 @@ def main():
            ('/stop/moveup/(.*)', welcome.MoveUp),
            ('/stop/movedown/(.*)', welcome.MoveDown),
            ('/stop/delete/(.*)', welcome.DeleteStop),
-           ('/lines', welcome.Lines),
-           ('/directions', welcome.Directions),
-           ('/stops', welcome.Stops),
+           ('/nextbus/lines', nextbus.Lines),
+           ('/nextbus/directions', nextbus.Directions),
+           ('/nextbus/stops', nextbus.Stops),
+           ('/bart/stations', bart.Stations),
+           ('/bart/directions', bart.Directions),
          ],debug=True)
 
     run_wsgi_app(application)

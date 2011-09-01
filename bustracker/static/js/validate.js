@@ -1,16 +1,35 @@
 function validate() {
+	var title = $('#title').val();
 	var agency = $('#agency-select').val();
-	var line = $('#line-select').val();
-	var direction = $('#stop-select').val();
-	var stop = $('#stop-select').val();
+	var nextbusLine = $('#nextbus-line-select').val();
+	var nextbusDirection = $('#nextbus-stop-select').val();
+	var nextbusStop = $('#nextbus-stop-select').val();
+	var bartStation = $('#bart-station-select').val();
+	var bartDirection = $('#bart-direction-select').val();	
 	var timeToStop = $('#time-to-stop').val();
-	if (!agency || !line || !direction || !stop) {
-		alert("You must select a stop.");
+	
+	if (!title) {
+		alert(title);
+		alert("You must enter a title for your stop.");
 		return false;
 	}
-	else if (parseInt(timeToStop) != timeToStop) {
-		alert("Time to stop must be an integer.");
+	else if (!agency) {
+		alert("You must select a transit agency and then a stop.");
 		return false;
 	}
-	return true;
+	else if (agency == "bart" && (!bartStation || !bartDirection)) {
+		alert("You must select a station and a direction.");
+		return false;
+	}
+	else if (!nextbusLine || !nextbusDirection || !nextbusStop) {
+		alert("You must select a line, direction, and stop.");
+		return false;
+	}
+	else if (!timeToStop || parseInt(timeToStop) != timeToStop) {
+		alert("Time to stop must be a whole positive number.");
+		return false;
+	}
+	else {
+		return true;
+	}
 }

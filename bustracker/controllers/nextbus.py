@@ -1,100 +1,99 @@
+from google.appengine.ext import webapp
+
 from BeautifulSoup import BeautifulStoneSoup
-import urllib2, time
+import functions
 
-##### GENERAL #####
-
-def get_xml(url):
-    '''Go to url and returns the xml data.'''
-    file = urllib2.urlopen(url)
-    xml = file.read()
-    file.close()
-    return xml
+class Lines(webapp.RequestHandler):
+    def post(self):
+        '''Return the lines for an agency.'''
+        agency = self.request.get('agency')
+        line = self.request.get('line')
+        self.response.out.write(get_lines(agency, line)) # merge this function into the class
+        
+class Directions(webapp.RequestHandler):
+    def post(self):
+        '''Return the directions for a line for an agency.'''
+        agency = self.request.get('agency')
+        line = self.request.get('line')
+        direction = self.request.get('direction')
+        self.response.out.write(get_directions(agency, line, direction)) # merge this function into the class
+    
+class Stops(webapp.RequestHandler):
+    def post(self):
+        '''Return the stops for a direction for a line for an agency.'''
+        agency = self.request.get('agency')
+        line = self.request.get('line')
+        direction = self.request.get('direction')
+        stop = self.request.get('stop')
+        self.response.out.write(get_stops(agency, line, direction, stop)) # merge this function into the class
 
 ###### LINES #######
 
-def print_lines(self, agency, selected_line=None):
+def get_lines(agency, selected_line=None):
     if not agency:
         return
-    lines = get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=routeList&a=' + agency)
+    lines = functions.get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=routeList&a=' + agency)
     soup = BeautifulStoneSoup(lines, selfClosingTags=['route'])
     lines = soup.findAll('route')
-    self.response.out.write('<option value="">Select line...</option>')
+    html = ""
+    html += '<option value="">Select line...</option>'
     for line in lines:
         if line['tag'] == selected_line:
-            self.response.out.write('<option value="' + line['tag'] + '" selected>' + line['title'] + '</option>')
+            html += '<option value="' + line['tag'] + '" selected>' + line['title'] + '</option>'
         else:
-            self.response.out.write('<option value="' + line['tag'] + '">' + line['title'] + '</option>')
+            html += '<option value="' + line['tag'] + '">' + line['title'] + '</option>'
+    return html
 
 ###### DIRECTIONS ######
 
-def print_directions(self, agency, line, selected_direction=None):
+def get_directions(agency, line, selected_direction=None):
     if not agency or not line:
-        return
-    directions = get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=' + agency + '&r=' + line)
+        return ""
+    directions = functions.get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=' + agency + '&r=' + line)
     soup = BeautifulStoneSoup(directions, selfClosingTags=['stop'])
     directions = soup.findAll('direction')
-    self.response.out.write('<option value="">Select direction...</option>')
+    html = ""
+    html += '<option value="">Select direction...</option>'
     for direction in directions:
         if direction['tag'] == selected_direction:
-            self.response.out.write('<option value="' + direction['tag'] + '" selected>' + direction['title'] + '</option>')
+            html += '<option value="' + direction['tag'] + '" selected>' + direction['title'] + '</option>'
         else:
-            self.response.out.write('<option value="' + direction['tag'] + '">' + direction['title'] + '</option>')
+            html += '<option value="' + direction['tag'] + '">' + direction['title'] + '</option>'
+    return html
 
 ###### STOPS ######
 
-def print_stops(self, agency, line, direction, selected_stop=None):
+def get_stops(agency, line, direction, selected_stop=None):
     if not agency or not line or not direction:
-        return
-    directions = get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=' + agency + '&r=' + line)
+        return ""
+    directions = functions.get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=' + agency + '&r=' + line)
     soup = BeautifulStoneSoup(directions, selfClosingTags=['stop'])
     stop_ids = soup.find('direction', tag=direction).findAll('stop')
-    self.response.out.write('<option value="">Select stop...</option>')
+    html = ""
+    html += '<option value="">Select stop...</option>'
     for stop_id in stop_ids:
         stop = soup.find('stop', tag=stop_id['tag'])
         if stop['tag'] == selected_stop:
-            self.response.out.write('<option value="' + stop['tag'] + '" selected>' + stop['title'] + '</option>')
+            html += '<option value="' + stop['tag'] + '" selected>' + stop['title'] + '</option>'
         else:
-            self.response.out.write('<option value="' + stop['tag'] + '">' + stop['title'] + '</option>')
+            html += '<option value="' + stop['tag'] + '">' + stop['title'] + '</option>'
+    return html
 
 
 ###### PREDICTIONS ########
     
-def parse_prediction(prediction):
-    '''Return a parsed a prediction.'''
-    soup = BeautifulStoneSoup(prediction, selfClosingTags=['prediction'])
-    predictions = soup.findAll('prediction')[:3]
-    return sorted(predictions, key=lambda x: int(x['minutes']))
-    
-def get_leave_at(time_to_stop, minutes):
-    '''Return the string that tells user when to leave to catch the bus.'''
-    minutes = int(minutes)
-    if time_to_stop > minutes:
-        return "missed"
-    elif time_to_stop == minutes:
-        return "leave now"
-    else:
-        return "leave in " + str(minutes - time_to_stop) + "m"
-    
-def print_prediction(self, stop, prediction):
+def get_prediction(stop):
     '''Print a parsed prediction.'''
-    predictions = parse_prediction(prediction)
+    soup = BeautifulStoneSoup(functions.get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=' + stop.agency_tag + '&r=' + stop.line_tag + '&d=' + stop.direction_tag + '&s=' + stop.stop_tag), selfClosingTags=['prediction'])
+    predictions = soup.findAll('prediction')[:3]
+    predictions = sorted(predictions, key=lambda x: int(x['minutes']))
+    html = ""
     if predictions:
         for prediction in predictions:
             if prediction['minutes'] == "0":
-                self.response.out.write('<tr class="time"><td class="arrival-time"><span class="big">Arriving</span></td><td class="leave-time">' + get_leave_at(stop.time_to_stop, prediction['minutes']) + '</td><tr>')
+                html += '<tr class="time"><td class="arrival-time"><span class="big">Arriving</span></td><td class="leave-time">' + functions.get_leave_at(stop.time_to_stop, prediction['minutes']) + '</td><tr>'
             else:
-                self.response.out.write('<tr class="time"><td class="arrival-time"><span class="big">' + prediction['minutes'] + '</span> minutes</td><td class="leave-time">' + get_leave_at(stop.time_to_stop, prediction['minutes']) + '</td><tr>')
+                 html += '<tr class="time"><td class="arrival-time"><span class="big">' + prediction['minutes'] + '</span> minutes</td><td class="leave-time">' + functions.get_leave_at(stop.time_to_stop, prediction['minutes']) + '</td><tr>'
     else:
-        self.response.out.write('<tr class="time"><td class="arrival-time" colspan="2">no arrivals</td><tr>')
-        
-def print_predictions(self, stops):
-    '''Print predictions for each of the stops.'''
-    i = 0
-    for stop in stops:
-    	i += 1
-        self.response.out.write('<tr class="header"><td class="line-title">' + stop.title + '</td><td class="line-edit">')
-        if i != 1: self.response.out.write('<a href="/stop/moveup/' +str(stop.key().id()) + '">move up</a> | ')
-        if i < stops.count(): self.response.out.write('<a href="/stop/movedown/' +str(stop.key().id()) + '">move down</a> | ')
-        self.response.out.write('<a href="/stop/edit/' +str(stop.key().id()) + '">edit</a> | <a href="/stop/delete/' +str(stop.key().id()) + '">delete</a></td></tr>')
-        prediction = get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=' + stop.agency_tag + '&r=' + stop.line_tag + '&d=' + stop.direction_tag + '&s=' + stop.stop_tag)
-        print_prediction(self, stop, prediction)
+         html += '<tr class="time"><td class="arrival-time" colspan="2">no arrivals</td><tr>'
+    return html

@@ -18,7 +18,7 @@
 		<label>Stop Title:
 		<span class="small">your personal description</span>
 		</label>
-		<input type="text" name="title" class="title" placeholder="e.g. Line 18 at Everett to Downtown Oakland">
+		<input type="text" name="title" id="title" class="title" placeholder="e.g. Line 18 at Everett to Downtown Oakland">
 		
 		<label>Your origin:
 		<span class="small">use the menus</span>
@@ -28,10 +28,17 @@
 			<option>Select a transit agency...</option>
 			<option value="actransit">AC Transit</option>
 			<option value="sf-muni">SF MUNI</option>
+			<option value="bart">BART</option>
 		</select>
-		<select name="line-select" id="line-select"></select>
-		<select name="direction-select" id="direction-select"></select>
-		<select name="stop-select" id="stop-select"></select>
+		<div id="nextbus-menus">
+		<select name="nextbus-line-select" id="nextbus-line-select"></select>
+		<select name="nextbus-direction-select" id="nextbus-direction-select"></select>
+		<select name="nextbus-stop-select" id="nextbus-stop-select"></select>
+		</div>
+		<div id="bart-menus">
+		<select name="bart-station-select" id="bart-station-select"></select>
+		<select name="bart-direction-select" id="bart-direction-select"></select>
+		</div>
 		</div>
 		
 		<label>Time to Get to Stop:
