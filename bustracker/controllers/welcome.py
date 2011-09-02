@@ -1,7 +1,7 @@
 from google.appengine.ext import webapp
 from google.appengine.api import users
 from models import models
-import view, nextbus, bart, predictions
+import view
 
 class MainPage(webapp.RequestHandler):
     def get(self):
@@ -16,16 +16,6 @@ class MainPage(webapp.RequestHandler):
             view.renderTemplate(self, 'predictions.html', {})
         else:
             view.renderTemplate(self, 'index.html', {})
-
-class Predictions(webapp.RequestHandler):
-    def get(self):
-        '''Return the html for a line's arrival times.'''
-        current_user = users.get_current_user()
-        stops = models.User.all().filter('user =', current_user).get().stops.order('position')
-        if stops.count() == 0:
-            self.response.out.write('<tr class="header" colspan="2"><td class="line-title">You have no saved stops. <a href="/stop/new">Add one</a>.</td></tr>')
-        else:
-            self.response.out.write(predictions.get_predictions(stops))
 
 class NewStop(webapp.RequestHandler):
     def get(self):

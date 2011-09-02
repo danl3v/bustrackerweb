@@ -1,13 +1,11 @@
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
-from controllers import welcome, nextbus, bart
+from controllers import welcome, nextbus, bart, predictions
 
 def main():
     application = webapp.WSGIApplication([
-
-           # main pages
            ('/', welcome.MainPage),
-           ('/predictions', welcome.Predictions),
+           ('/predictions', predictions.Predictions),
            ('/stop/new', welcome.NewStop),
            ('/stop/edit/(.*)', welcome.EditStop),
            ('/stop/moveup/(.*)', welcome.MoveUp),

@@ -1,5 +1,19 @@
+from google.appengine.ext import webapp
+from google.appengine.api import users
+from models import models
+
 import nextbus, bart
     
+class Predictions(webapp.RequestHandler):
+    def get(self):
+        '''Return the html for a line's arrival times.'''
+        current_user = users.get_current_user()
+        stops = models.User.all().filter('user =', current_user).get().stops.order('position')
+        if stops.count() == 0:
+            self.response.out.write('<tr class="header" colspan="2"><td class="line-title">You have no saved stops. <a href="/stop/new">Add one</a>.</td></tr>')
+        else:
+            self.response.out.write(get_predictions(stops))
+            
 def get_predictions(stops):
     '''Return formatted html predictions for each of the stops.'''
     i = 0
