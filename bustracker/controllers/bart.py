@@ -52,9 +52,9 @@ def get_prediction_helper(station, direction, time_to_stop):
             trains = route.findAll('estimate')
             for train in trains:
                 if train.minutes.contents[0] == "Arrived":
-                    html += '<tr class="header4"><td class="header4-left"><span class="big">Arriving</span></td><td class="header4-right">' + functions.get_leave_at(time_to_stop, 0) + '</td><tr>'
+                    html += '<tr class="header4"><td class="header4-left"><span class="big">Arriving</span></td><td class="header4-right">' + functions.get_leave_at(time_to_stop, 0) + '</td></tr>'
                 else:
-                    html += '<tr class="header4"><td class="header4-left"><span class="big">' + train.minutes.contents[0] + '</span> minutes</td><td class="header4-right">' + functions.get_leave_at(time_to_stop, int(train.minutes.contents[0])) + '</td><tr>'
+                    html += '<tr class="header4"><td class="header4-left"><span class="big">' + train.minutes.contents[0] + '</span> minutes</td><td class="header4-right">' + functions.get_leave_at(time_to_stop, int(train.minutes.contents[0])) + '</td></tr>'
     else:
          html += '<tr class="header4"><td class="header4-left" colspan="2">no arrivals</td><tr>'
     return html
