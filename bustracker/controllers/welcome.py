@@ -23,15 +23,30 @@ class Feedback(webapp.RequestHandler):
         '''Render the home page.'''
         view.renderTemplate(self, 'feedback.html', {})
     def post(self):
-    	current_user = users.get_current_user()
-    	mail.send_mail(
-    		  sender=current_user.email(),
+        current_user = users.get_current_user()
+        mail.send_mail(
+              sender=current_user.email(),
               to="dlouislevy@gmail.com",
               subject="trackmyb.us feedback",
               body=self.request.get("feedback")
         )
     
         view.renderTemplate(self, 'feedback_success.html', {})
+
+class Settings(webapp.RequestHandler):
+    def get(self):
+        '''Render the settings page.'''
+        current_user = users.get_current_user()
+        user = models.User.all().filter('user =', current_user).get()
+        view.renderTemplate(self, 'settings.html', { "max_arrivals": user.max_arrivals, "show_missed": user.show_missed })
+    def post(self):
+        current_user = users.get_current_user()
+        user = models.User.all().filter('user =', current_user).get()
+        if user:
+            user.max_arrivals = int(self.request.get("max-arrivals"))
+            user.show_missed = True if self.request.get("show-missed") == "yes" else False
+            user.put()
+        self.redirect("/")
 
 class NewStop(webapp.RequestHandler):
     def get(self):

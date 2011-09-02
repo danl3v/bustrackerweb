@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+
+{% endblock %}
+
+{% block content %}
+<div id="main">
+<div style="height:5em;"></div>
+<div class="new-stop-form">
+	<form action="/settings" method="post" onsubmit="return true;">
+	
+		<h1>Settings</h1>
+		<p><a href="/">Back to Home</a></p>
+		
+		<label>Max Arrivals to Show:
+		<span class="small">the maximum number of upcoming vehicles that will be displayed</span>
+		</label>
+		<div class="select-set">
+		<select name="max-arrivals" id="max-arrivals">
+			<option value="1"{% if max_arrivals == 1 %} selected{% endif %}>1</option>
+			<option value="2"{% if max_arrivals == 2 %} selected{% endif %}>2</option>
+			<option value="3"{% if max_arrivals == 3 %} selected{% endif %}>3</option>
+			<option value="4"{% if max_arrivals == 4 %} selected{% endif %}>4</option>
+			<option value="5"{% if max_arrivals == 5 %} selected{% endif %}>5</option>
+		</select>
+		</div>
+		
+		<label>Show Missed Arrivals:
+		<span class="small">choose to display missed arrivals</span>
+		</label>
+		<div class="select-set">
+		<select name="show-missed" id="show-missed">
+			<option value="yes"{% if show_missed %} selected{% endif %}>Yes</option>
+			<option value="no"{% if not show_missed %} selected{% endif %}>No</option>
+		</select>
+		</div>
+		
+		<button name="submit" type="submit">Save Changes</button>
+	</form>
+</div>
+</div>
+
+{% endblock %}
