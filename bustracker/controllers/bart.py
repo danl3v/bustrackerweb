@@ -44,19 +44,19 @@ def get_stations(selected_station):
     
 ###### PREDICTIONS ########
     
-def get_prediction(station, direction):
+def get_prediction(station, direction, time_to_stop):
     '''Return a parsed a prediction.'''
     if direction in ["n", "s"]:
-        return get_prediction_helper(station, "&dir=" + direction)
+        return get_prediction_helper(station, "&dir=" + direction, time_to_stop)
     else:
     	html = ""
     	html += '<tr class="header"><td class="line-subtitle">Northbound</td><td></td></tr>'
-    	html += get_prediction_helper(station, "&dir=n")
+    	html += get_prediction_helper(station, "&dir=n", time_to_stop)
     	html += '<tr class="header"><td class="line-subtitle">Southbound</td><td></td></tr>'
-    	html += get_prediction_helper(station, "&dir=s")
+    	html += get_prediction_helper(station, "&dir=s", time_to_stop)
     	return html
     
-def get_prediction_helper(station, direction):
+def get_prediction_helper(station, direction, time_to_stop):
     html = ""
     soup = BeautifulStoneSoup(functions.get_xml("http://api.bart.gov/api/etd.aspx?cmd=etd&orig=" + station + direction + "&key=MW9S-E7SL-26DU-VV8V"), selfClosingTags=[])
     routes = soup.findAll('etd')
@@ -65,7 +65,10 @@ def get_prediction_helper(station, direction):
 			html += '<tr class="header"><td class="line-subsubtitle">' + route.destination.contents[0] + '</td><td></td></tr>'
 			trains = route.findAll('estimate')
 			for train in trains:
-				html += '<tr class="time"><td class="arrival"><span style="height: 100%; background-color:' + train.hexcolor.contents[0] + ';">&nbsp;&nbsp;</span><span class="big">' + train.minutes.contents[0] + '</span> minutes</td><td class="leave-time">' + 'leave time fxn' + '</td><tr>'
+				if train.minutes.contents[0] == "Arrived":
+					html += '<tr class="time"><td class="arrival"><span class="big">Arriving</span></td><td class="leave-time">' + functions.get_leave_at(time_to_stop, 0) + '</td><tr>'
+				else:
+					html += '<tr class="time"><td class="arrival"><span class="big">' + train.minutes.contents[0] + '</span> minutes</td><td class="leave-time">' + functions.get_leave_at(time_to_stop, int(train.minutes.contents[0])) + '</td><tr>'
     else:
          html += '<tr class="time"><td class="arrival-time" colspan="2">no arrivals</td><tr>'
     return html

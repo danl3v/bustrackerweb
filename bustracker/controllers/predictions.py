@@ -16,6 +16,6 @@ def get_predictions(stops):
 def get_prediction(stop):
     '''Return formatted html prediction for given stop.'''
     if stop.agency_tag == "bart":
-        return bart.get_prediction(stop.stop_tag, stop.direction_tag)
+        return bart.get_prediction(stop.stop_tag, stop.direction_tag, stop.time_to_stop)
     else:
         return nextbus.get_prediction(stop)
