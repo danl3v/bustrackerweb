@@ -5,6 +5,8 @@
 @footer-height: 3em;
 @left-right-margin: 10px;
 
+/* LAYOUT */
+
 html, body
 {
 	margin: 0;
@@ -41,19 +43,7 @@ div#footer
     -o-transition: all 0.2s ease;
 }
 
-div#container:hover > div#footer
-{
-    opacity: 1;
-}
-
-div#footer-content
-{
-	text-align: center;
-	color: #FFFFFF;
-	margin-top: 1em;
-}
-
-/* COLORS ETC */
+/* LINKS AND BODY */
 
 body
 {
@@ -66,6 +56,20 @@ a, a:hover, a:visited, a:active
 {
 	color: #FFFFFF;
 	text-decoration: none;
+}
+
+/* FOOTER STYLING */
+
+div#container:hover > div#footer
+{
+    opacity: 1;
+}
+
+div#footer-content
+{
+	text-align: center;
+	color: #FFFFFF;
+	margin-top: 1em;
 }
 
 div#footer span.separator
@@ -89,20 +93,48 @@ table#stop-list tr td
 	border-bottom: 1px solid @border-color;
 }
 
-table#stop-list tr.header
+/* HEADER 1 ROW */
+
+table#stop-list tr.header1
 {
 	background: @highlight-color;
 }
 
-table#stop-list tr.header td
+table#stop-list tr.header1 td
 {
 	padding: .5em @left-right-margin;
 }
 
-table#stop-list tr.time td
+/* HEADER 2 ROW */
+table#stop-list tr.header2
+{
+	background: @highlight-color;
+}
+
+table#stop-list tr.header2 td
+{
+	padding: .5em @left-right-margin;
+}
+
+/* HEADER 3 ROW */
+table#stop-list tr.header3
+{
+	background: #293028;
+}
+
+table#stop-list tr.header3 td
+{
+	padding: .5em @left-right-margin;
+}
+	
+/* HEADER 4 ROW */
+
+table#stop-list tr.header4 td
 {
 	padding: .2em @left-right-margin;
 }
+
+/* CELL STYLING */
 
 table#stop-list tr td span.big
 {
@@ -155,7 +187,7 @@ table#stop-list tr td.no-fade
 	opacity: 1 !important;
 }
 
-table#stop-list tr.header:hover > td.line-edit
+table#stop-list tr.header1:hover > td.line-edit
 {
     opacity: 1;
 }
