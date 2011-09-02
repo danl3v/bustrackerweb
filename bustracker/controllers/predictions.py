@@ -10,7 +10,7 @@ class Predictions(webapp.RequestHandler):
         current_user = users.get_current_user()
         stops = models.User.all().filter('user =', current_user).get().stops.order('position')
         if stops.count() == 0:
-            self.response.out.write('<tr class="header1" colspan="2"><td class="line-title">You have no saved stops. <a href="/stop/new">Add one</a>.</td></tr>')
+            self.response.out.write('<tr class="header1" colspan="2"><td class="header1-left">You have no saved stops. <a href="/stop/new">Add one</a>.</td></tr>')
         else:
             self.response.out.write(get_predictions(stops))
             
@@ -20,7 +20,7 @@ def get_predictions(stops):
     html = ""
     for stop in stops:
         i += 1
-        html += '<tr class="header1"><td class="line-title">' + stop.title + '</td><td class="line-edit">'
+        html += '<tr class="header1"><td class="header1-left">' + stop.title + '</td><td class="header1-right">'
         if i != 1: html += '<a href="/stop/moveup/' +str(stop.key().id()) + '">move up</a> | '
         if i < stops.count(): html += '<a href="/stop/movedown/' +str(stop.key().id()) + '">move down</a> | '
         html += '<a href="/stop/edit/' +str(stop.key().id()) + '">edit</a> | <a href="/stop/delete/' + str(stop.key().id()) + '">delete</a></td></tr>'

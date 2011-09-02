@@ -71,9 +71,9 @@ def get_prediction(stop):
     if predictions:
         for prediction in predictions:
             if prediction['minutes'] == "0":
-                html += '<tr class="header4"><td class="arrival"><span class="big">Arriving</span></td><td class="leave-time">' + functions.get_leave_at(stop.time_to_stop, prediction['minutes']) + '</td><tr>'
+                html += '<tr class="header4"><td class="header4-left"><span class="big">Arriving</span></td><td class="header4-right">' + functions.get_leave_at(stop.time_to_stop, prediction['minutes']) + '</td><tr>'
             else:
-                 html += '<tr class="header4"><td class="arrival"><span class="big">' + prediction['minutes'] + '</span> minutes</td><td class="leave-time">' + functions.get_leave_at(stop.time_to_stop, prediction['minutes']) + '</td><tr>'
+                 html += '<tr class="header4"><td class="header4-left"><span class="big">' + prediction['minutes'] + '</span> minutes</td><td class="header4-right">' + functions.get_leave_at(stop.time_to_stop, prediction['minutes']) + '</td><tr>'
     else:
-         html += '<tr class="header4"><td class="arrival" colspan="2">no arrivals</td><tr>'
+         html += '<tr class="header4"><td class="header4-left" colspan="2">no arrivals</td><tr>'
     return html

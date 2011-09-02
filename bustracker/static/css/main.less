@@ -105,44 +105,7 @@ table#stop-list tr.header1 td
 	padding: .5em @left-right-margin;
 }
 
-/* HEADER 2 ROW */
-table#stop-list tr.header2
-{
-	background: @highlight-color;
-}
-
-table#stop-list tr.header2 td
-{
-	padding: .5em @left-right-margin;
-}
-
-/* HEADER 3 ROW */
-table#stop-list tr.header3
-{
-	background: #293028;
-}
-
-table#stop-list tr.header3 td
-{
-	padding: .5em @left-right-margin;
-}
-	
-/* HEADER 4 ROW */
-
-table#stop-list tr.header4 td
-{
-	padding: .2em @left-right-margin;
-}
-
-/* CELL STYLING */
-
-table#stop-list tr td span.big
-{
-	font-size: 2em;
-	font-weight: bold;
-}
-
-table#stop-list tr td.line-title
+table#stop-list tr.header1 td.header1-left
 {
 	text-align: left;
 	font-size: 2em;
@@ -151,25 +114,7 @@ table#stop-list tr td.line-title
 	vertical-align: middle;
 }
 
-table#stop-list tr td.line-subtitle
-{
-	text-align: left;
-	font-size: 1.2em;
-	font-weight: bold;
-	width: 70%;
-	vertical-align: middle;
-}
-
-table#stop-list tr td.line-subsubtitle
-{
-	text-align: left;
-	font-size: 1em;
-	font-weight: bold;
-	width: 70%;
-	vertical-align: middle;
-}
-
-table#stop-list tr td.line-edit
+table#stop-list tr.header1 td.header1-right
 {
 	text-align: right;
 	width: 30%;
@@ -182,33 +127,92 @@ table#stop-list tr td.line-edit
     -o-transition: all 0.2s ease;
 }
 
-table#stop-list tr td.no-fade
-{
-	opacity: 1 !important;
-}
-
-table#stop-list tr.header1:hover > td.line-edit
+table#stop-list tr.header1:hover > td.header1-right
 {
     opacity: 1;
 }
 
-table#stop-list td.arrival
+/* HEADER 2 ROW */
+
+table#stop-list tr.header2
+{
+	background: @highlight-color;
+}
+
+table#stop-list tr.header2 td
+{
+	padding: .5em @left-right-margin;
+}
+
+table#stop-list tr.header2 td.header2-left
+{
+	text-align: left;
+	font-size: 1.2em;
+	font-weight: bold;
+	width: 70%;
+	vertical-align: middle;
+}
+
+/* HEADER 3 ROW */
+
+table#stop-list tr.header3
+{
+	background: #293028;
+}
+
+table#stop-list tr.header3 td
+{
+	padding: .5em @left-right-margin;
+}
+
+table#stop-list tr.header3 td.header3-left
+{
+	text-align: left;
+	font-size: 1em;
+	font-weight: bold;
+	width: 70%;
+	vertical-align: middle;
+}
+
+/* HEADER 4 ROW */
+
+table#stop-list tr.header4 td
+{
+	padding: .2em @left-right-margin;
+}
+
+table#stop-list tr.header4 td.header4-left
 {
 	text-align: left;
 	width: 50%;
 }
 
-table#stop-list td.subtitle
+table#stop-list tr.header4 td.header4-right
 {
+	width: 50%;
+	text-align: right;
+}
+
+table#stop-list tr.header4 td.header4-subtitle
+{
+	text-align: left;
+	width: 50%;
 	color: #3BBA00;
 	font-size: 1.5em;
 	padding-bottom: .4em !important;
 }
 
-table#stop-list td.leave-time
+/* NON-ROW SPECIFIC STYLING */
+
+table#stop-list tr td span.big
 {
-	width: 50%;
-	text-align: right;
+	font-size: 2em;
+	font-weight: bold;
+}
+
+table#stop-list tr td.no-fade
+{
+	opacity: 1 !important;
 }
 
 /* STOP MANAGEMENT */

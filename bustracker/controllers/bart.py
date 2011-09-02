@@ -35,9 +35,9 @@ def get_prediction(station, direction, time_to_stop):
     if direction in ["n", "s"]:
         return get_prediction_helper(station, "&dir=" + direction, time_to_stop)
     else:
-        html = '<tr class="header2"><td class="line-subtitle">Northbound</td><td></td></tr>'
+        html = '<tr class="header2"><td class="header2-left">Northbound</td><td></td></tr>'
         html += get_prediction_helper(station, "&dir=n", time_to_stop)
-        html += '<tr class="header2"><td class="line-subtitle">Southbound</td><td></td></tr>'
+        html += '<tr class="header2"><td class="header2-left">Southbound</td><td></td></tr>'
         html += get_prediction_helper(station, "&dir=s", time_to_stop)
         return html
     
@@ -48,13 +48,13 @@ def get_prediction_helper(station, direction, time_to_stop):
     routes = soup.findAll('etd')
     if routes:
         for route in routes:
-            html += '<tr class="header3"><td class="line-subsubtitle">' + route.destination.contents[0] + '</td><td></td></tr>'
+            html += '<tr class="header3"><td class="header3-left" colspan="2">' + route.destination.contents[0] + '</td></tr>'
             trains = route.findAll('estimate')
             for train in trains:
                 if train.minutes.contents[0] == "Arrived":
-                    html += '<tr class="header4"><td class="arrival"><span class="big">Arriving</span></td><td class="leave-time">' + functions.get_leave_at(time_to_stop, 0) + '</td><tr>'
+                    html += '<tr class="header4"><td class="header4-left"><span class="big">Arriving</span></td><td class="header4-right">' + functions.get_leave_at(time_to_stop, 0) + '</td><tr>'
                 else:
-                    html += '<tr class="header4"><td class="arrival"><span class="big">' + train.minutes.contents[0] + '</span> minutes</td><td class="leave-time">' + functions.get_leave_at(time_to_stop, int(train.minutes.contents[0])) + '</td><tr>'
+                    html += '<tr class="header4"><td class="header4-left"><span class="big">' + train.minutes.contents[0] + '</span> minutes</td><td class="header4-right">' + functions.get_leave_at(time_to_stop, int(train.minutes.contents[0])) + '</td><tr>'
     else:
-         html += '<tr class="header4"><td class="arrival" colspan="2">no arrivals</td><tr>'
+         html += '<tr class="header4"><td class="header4-left" colspan="2">no arrivals</td><tr>'
     return html
