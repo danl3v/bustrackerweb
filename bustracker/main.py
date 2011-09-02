@@ -5,6 +5,7 @@ from controllers import welcome, nextbus, bart, predictions
 def main():
     application = webapp.WSGIApplication([
            ('/', welcome.MainPage),
+           ('/feedback', welcome.Feedback),
            ('/predictions', predictions.Predictions),
            ('/stop/new', welcome.NewStop),
            ('/stop/edit/(.*)', welcome.EditStop),

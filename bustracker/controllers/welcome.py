@@ -1,5 +1,6 @@
 from google.appengine.ext import webapp
 from google.appengine.api import users
+from google.appengine.api import mail
 from models import models
 import view
 
@@ -16,6 +17,21 @@ class MainPage(webapp.RequestHandler):
             view.renderTemplate(self, 'predictions.html', {})
         else:
             view.renderTemplate(self, 'index.html', {})
+
+class Feedback(webapp.RequestHandler):
+    def get(self):
+        '''Render the home page.'''
+        view.renderTemplate(self, 'feedback.html', {})
+    def post(self):
+    	current_user = users.get_current_user()
+    	mail.send_mail(
+    		  sender=current_user.email(),
+              to="dlouislevy@gmail.com",
+              subject="trackmyb.us feedback",
+              body=self.request.get("feedback")
+        )
+    
+        view.renderTemplate(self, 'feedback_success.html', {})
 
 class NewStop(webapp.RequestHandler):
     def get(self):
