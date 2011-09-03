@@ -3,7 +3,7 @@ from google.appengine.ext import db
 class User(db.Model):
     user = db.UserProperty()
     max_arrivals = db.IntegerProperty(default=3)
-    show_missed = db.BooleanProperty(default=True)
+    show_missed = db.BooleanProperty(default=False)
     
 class Stop(db.Model):
 	user = db.ReferenceProperty(User, collection_name='stops')

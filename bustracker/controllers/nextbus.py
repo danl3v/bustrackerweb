@@ -74,6 +74,8 @@ def get_prediction(stop, max_arrivals, show_missed):
         for prediction in predictions:
             if prediction['minutes'] == "0":
                 html += '<tr class="header4"><td class="header4-left"><span class="big">Arriving</span></td><td class="header4-right">' + functions.get_leave_at_html(stop.time_to_stop, prediction['minutes']) + '</td><tr>'
+            elif prediction['minutes'] == "1":
+                html += '<tr class="header4"><td class="header4-left"><span class="big">' + prediction['minutes'] + '</span> minute</td><td class="header4-right">' + functions.get_leave_at_html(stop.time_to_stop, prediction['minutes']) + '</td><tr>'
             else:
                  html += '<tr class="header4"><td class="header4-left"><span class="big">' + prediction['minutes'] + '</span> minutes</td><td class="header4-right">' + functions.get_leave_at_html(stop.time_to_stop, prediction['minutes']) + '</td><tr>'
     else:

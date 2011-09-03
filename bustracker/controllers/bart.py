@@ -56,6 +56,8 @@ def get_prediction_helper(station, direction, time_to_stop, max_arrivals, show_m
             for train in trains:
                 if train.minutes.contents[0] == "Arrived":
                     html += '<tr class="header4"><td class="header4-left"><span class="big">Arriving</span></td><td class="header4-right">missed</td></tr>'
+                elif train.minutes.contents[0] == "1":
+                	html += '<tr class="header4"><td class="header4-left"><span class="big">' + train.minutes.contents[0] + '</span> minute</td><td class="header4-right">' + functions.get_leave_at_html(time_to_stop, int(train.minutes.contents[0])) + '</td></tr>'
                 else:
                     html += '<tr class="header4"><td class="header4-left"><span class="big">' + train.minutes.contents[0] + '</span> minutes</td><td class="header4-right">' + functions.get_leave_at_html(time_to_stop, int(train.minutes.contents[0])) + '</td></tr>'
     else:
