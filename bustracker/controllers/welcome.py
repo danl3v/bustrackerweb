@@ -134,7 +134,7 @@ class MoveDown(webapp.RequestHandler):
         current_user = users.get_current_user()
         stop = models.Stop.get_by_id(int(id))
         if stop and stop.user.user == current_user:
-            other_stop = stop.user.stops.filter('position >', stop.position).order('-position').get()
+            other_stop = stop.user.stops.filter('position >', stop.position).order('position').get()
             if other_stop:
                 stop_position = stop.position
                 stop.position = other_stop.position
