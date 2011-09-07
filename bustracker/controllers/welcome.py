@@ -81,7 +81,7 @@ class EditStop(webapp.RequestHandler):
         '''Load the edit stop page.'''
         current_user = users.get_current_user()
         stop = models.Stop.get_by_id(int(id))
-        if stop.user.user == current_user:
+        if stop and stop.user.user == current_user:
             view.renderTemplate(self, 'edit_stop.html', { 'stop' : stop })
         else:
             self.redirect('/')
@@ -90,7 +90,7 @@ class EditStop(webapp.RequestHandler):
         '''Save changes to the stop of a user.'''
         current_user = users.get_current_user()
         stop = models.Stop.get_by_id(int(id))    
-        if stop.user.user == current_user:
+        if stop and stop.user.user == current_user:
             stop.title = self.request.get('title')
             stop.agency_tag = self.request.get('agency-select')
             if stop.agency_tag == "bart":
@@ -109,7 +109,7 @@ class DeleteStop(webapp.RequestHandler):
         '''Delete a stop.'''
         current_user = users.get_current_user()
         stop = models.Stop.get_by_id(int(id))
-        if stop.user.user == current_user:
+        if stop and stop.user.user == current_user:
             stop.delete()
         self.redirect('/')
         
@@ -118,13 +118,14 @@ class MoveUp(webapp.RequestHandler):
         '''Move a stop up in the list.'''
         current_user = users.get_current_user()
         stop = models.Stop.get_by_id(int(id))
-        if stop.user.user == current_user:
+        if stop and stop.user.user == current_user:
             other_stop = stop.user.stops.filter('position <', stop.position).order('-position').get()
-            stop_position = stop.position
-            stop.position = other_stop.position
-            other_stop.position = stop_position
-            stop.put()
-            other_stop.put()
+            if other_stop:
+                stop_position = stop.position
+                stop.position = other_stop.position
+                other_stop.position = stop_position
+                stop.put()
+                other_stop.put()
         self.redirect('/')
 
 class MoveDown(webapp.RequestHandler):
@@ -132,11 +133,12 @@ class MoveDown(webapp.RequestHandler):
         '''Move a stop down in the list.'''
         current_user = users.get_current_user()
         stop = models.Stop.get_by_id(int(id))
-        if stop.user.user == current_user:
+        if stop and stop.user.user == current_user:
             other_stop = stop.user.stops.filter('position >', stop.position).order('-position').get()
-            stop_position = stop.position
-            stop.position = other_stop.position
-            other_stop.position = stop_position
-            stop.put()
-            other_stop.put()
+            if other_stop:
+                stop_position = stop.position
+                stop.position = other_stop.position
+                other_stop.position = stop_position
+                stop.put()
+                other_stop.put()
         self.redirect('/')
