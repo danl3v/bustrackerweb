@@ -77,9 +77,9 @@ div#footer span.separator
 	color: @text-color;
 }
 
-/* STOP-LIST */
+/* LIST */
 
-table#stop-list
+table.list
 {
 	width: 100%;
 	border-top: 1px solid @border-color;
@@ -87,7 +87,7 @@ table#stop-list
 	border-collapse: collapse;
 }
 
-table#stop-list tr td
+table.list tr td
 {
 	border-top: 1px solid @border-color;
 	border-bottom: 1px solid @border-color;
@@ -95,17 +95,17 @@ table#stop-list tr td
 
 /* HEADER 1 ROW */
 
-table#stop-list tr.header1
+table.list tr.header1
 {
 	background: @highlight-color;
 }
 
-table#stop-list tr.header1 td
+table.list tr.header1 td
 {
 	padding: .5em @left-right-margin;
 }
 
-table#stop-list tr.header1 td.header1-left
+table.list tr.header1 td.header1-left
 {
 	text-align: left;
 	font-size: 2em;
@@ -114,7 +114,7 @@ table#stop-list tr.header1 td.header1-left
 	vertical-align: middle;
 }
 
-table#stop-list tr.header1 td.header1-right
+table.list tr.header1 td.header1-right
 {
 	text-align: right;
 	width: 30%;
@@ -127,24 +127,24 @@ table#stop-list tr.header1 td.header1-right
     -o-transition: all 0.2s ease;
 }
 
-table#stop-list tr.header1:hover > td.header1-right
+table.list tr.header1:hover > td.header1-right
 {
     opacity: 1;
 }
 
 /* HEADER 2 ROW */
 
-table#stop-list tr.header2
+table.list tr.header2
 {
 	background: @highlight-color;
 }
 
-table#stop-list tr.header2 td
+table.list tr.header2 td
 {
 	padding: .5em @left-right-margin;
 }
 
-table#stop-list tr.header2 td.header2-left
+table.list tr.header2 td.header2-left
 {
 	text-align: left;
 	font-size: 1.2em;
@@ -155,17 +155,17 @@ table#stop-list tr.header2 td.header2-left
 
 /* HEADER 3 ROW */
 
-table#stop-list tr.header3
+table.list tr.header3
 {
 	background: #293028;
 }
 
-table#stop-list tr.header3 td
+table.list tr.header3 td
 {
 	padding: .5em @left-right-margin;
 }
 
-table#stop-list tr.header3 td.header3-left
+table.list tr.header3 td.header3-left
 {
 	text-align: left;
 	font-size: 1em;
@@ -176,24 +176,24 @@ table#stop-list tr.header3 td.header3-left
 
 /* HEADER 4 ROW */
 
-table#stop-list tr.header4 td
+table.list tr.header4 td
 {
 	padding: .2em @left-right-margin;
 }
 
-table#stop-list tr.header4 td.header4-left
+table.list tr.header4 td.header4-left
 {
 	text-align: left;
 	width: 50%;
 }
 
-table#stop-list tr.header4 td.header4-right
+table.list tr.header4 td.header4-right
 {
 	width: 50%;
 	text-align: right;
 }
 
-table#stop-list tr.header4 td.header4-subtitle
+table.list tr.header4 td.header4-subtitle
 {
 	text-align: left;
 	width: 50%;
@@ -204,7 +204,7 @@ table#stop-list tr.header4 td.header4-subtitle
 
 /* NON-ROW SPECIFIC STYLING */
 
-table#stop-list tr td span.big
+table.list tr td span.big
 {
 	font-size: 2em;
 	font-weight: bold;

@@ -8,7 +8,7 @@
 <div id="main">
 <div style="height:5em;"></div>
 <div class="new-stop-form">
-	<form action="/settings" method="post" onsubmit="return true;">
+	<form action="/settings" method="post">
 	
 		<h1>Settings</h1>
 		<p><a href="/">Back to Home</a></p>
@@ -33,6 +33,16 @@
 		<select name="show-missed" id="show-missed">
 			<option value="yes"{% if show_missed %} selected{% endif %}>Yes</option>
 			<option value="no"{% if not show_missed %} selected{% endif %}>No</option>
+		</select>
+		</div>
+		
+		<label>Show News Feed:
+		<span class="small">allows you to display news</span>
+		</label>
+		<div class="select-set">
+		<select name="show-news-feed" id="show-news-feed">
+			<option value="yes"{% if show_news_feed %} selected{% endif %}>Yes</option>
+			<option value="no"{% if not show_news_feed %} selected{% endif %}>No</option>
 		</select>
 		</div>
 		

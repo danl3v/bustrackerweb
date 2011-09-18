@@ -7,16 +7,14 @@
 
 {% block content %}
 
-<div id="header">
-<p>Transit Arrival Times</p>
-<span id="clock">&nbsp;</span> 
-</div>
+<div id="header"><p>Transit Arrival Times</p><span id="clock">&nbsp;</span></div>
 
 <form action="/feedback" method="post">
-<table id="stop-list">
-<tr class="header1"><td class="header1-left" colspan="2">Feedback</td></tr>
-<tr class="header4"><td class="header4-subtitle" colspan="2">Leave some feedback below and hit submit.</td></tr>
-<tr class="header4"><td class="header4-left" colspan="2"><textarea name="feedback" style="width: 40em; height: 20em;"></textarea><br><button type="submit">Submit</button></td></tr>
-</table>
+	<table class="list">
+		<tr class="header1"><td class="header1-left" colspan="2">Feedback</td></tr>
+		<tr class="header4"><td class="header4-subtitle" colspan="2">Leave some feedback below and hit submit.</td></tr>
+		<tr class="header4"><td class="header4-left" colspan="2"><textarea name="feedback" style="width: 40em; height: 20em;"></textarea><br><button type="submit">Submit</button></td></tr>
+	</table>
 </form>
+
 {% endblock %}

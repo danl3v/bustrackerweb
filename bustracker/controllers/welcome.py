@@ -14,7 +14,7 @@ class MainPage(webapp.RequestHandler):
                 user = models.User()
                 user.user = current_user
                 user.put()
-            view.renderTemplate(self, 'predictions.html', {})
+            view.renderTemplate(self, 'predictions.html', { 'show_news_feed' : user.show_news_feed })
         else:
             view.renderTemplate(self, 'index.html', {})
 
@@ -38,13 +38,14 @@ class Settings(webapp.RequestHandler):
         '''Render the settings page.'''
         current_user = users.get_current_user()
         user = models.User.all().filter('user =', current_user).get()
-        view.renderTemplate(self, 'settings.html', { "max_arrivals": user.max_arrivals, "show_missed": user.show_missed })
+        view.renderTemplate(self, 'settings.html', { 'max_arrivals': user.max_arrivals, 'show_missed': user.show_missed, 'show_news_feed' : user.show_news_feed })
     def post(self):
         current_user = users.get_current_user()
         user = models.User.all().filter('user =', current_user).get()
         if user:
             user.max_arrivals = int(self.request.get("max-arrivals"))
             user.show_missed = True if self.request.get("show-missed") == "yes" else False
+            user.show_news_feed = True if self.request.get("show-news-feed") == "yes" else False
             user.put()
         self.redirect("/")
 
