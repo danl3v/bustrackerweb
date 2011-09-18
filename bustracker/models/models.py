@@ -4,7 +4,7 @@ class User(db.Model):
     user = db.UserProperty()
     max_arrivals = db.IntegerProperty(default=3)
     show_missed = db.BooleanProperty(default=False)
-    show_news_feed = db.BooleanProperty(default=False)
+    show_news_feed = db.IntegerProperty(default=0)
     
 class Stop(db.Model):
 	user = db.ReferenceProperty(User, collection_name='stops')

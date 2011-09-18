@@ -45,7 +45,7 @@ class Settings(webapp.RequestHandler):
         if user:
             user.max_arrivals = int(self.request.get("max-arrivals"))
             user.show_missed = True if self.request.get("show-missed") == "yes" else False
-            user.show_news_feed = True if self.request.get("show-news-feed") == "yes" else False
+            user.show_news_feed = int(self.request.get("show-news-feed"))
             user.put()
         self.redirect("/")
 

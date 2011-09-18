@@ -37,12 +37,16 @@
 		</div>
 		
 		<label>Show News Feed:
-		<span class="small">allows you to display news</span>
+		<span class="small">choose a width for it too</span>
 		</label>
 		<div class="select-set">
 		<select name="show-news-feed" id="show-news-feed">
-			<option value="yes"{% if show_news_feed %} selected{% endif %}>Yes</option>
-			<option value="no"{% if not show_news_feed %} selected{% endif %}>No</option>
+			<option value="0"{% if show_news_feed == 0 %} selected{% endif %}>Do not show</option>
+			<option value="10"{% if show_news_feed == 10 %} selected{% endif %}>10%</option>
+			<option value="20"{% if show_news_feed == 20 %} selected{% endif %}>20%</option>
+			<option value="30"{% if show_news_feed == 30 %} selected{% endif %}>30%</option>
+			<option value="40"{% if show_news_feed == 40 %} selected{% endif %}>40%</option>
+			<option value="50"{% if show_news_feed == 50 %} selected{% endif %}>50%</option>
 		</select>
 		</div>
 		
