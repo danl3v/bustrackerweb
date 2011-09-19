@@ -34,7 +34,7 @@ function validate_stop() {
 }
 
 function validate_post() {
-	if (!$('#title').val()) {
+	if (!$('#body').val()) {
 		alert("You must enter a post body.");
 		return false;
 	}
