@@ -5,15 +5,30 @@
 <script src="/js/clock.js" type="text/javascript"></script>
 <script src="/js/predictions.js" type="text/javascript"></script>
 {% if show_news_feed %}
+<script src="/js/posts.js" type="text/javascript"></script>
 <script>
-function adjustLayout() { $('#divider').height($(document).height()); }
+
+var timer;
+
+function showScrollBars() {
+	document.documentElement.style.overflow = 'auto';
+	clearTimeout(timer);
+}
+
+function adjustLayout() {
+	document.documentElement.style.overflow = 'hidden';
+	$('#divider').height(0);
+	$('#divider').height($(document).height() - 1);
+	clearTimeout(timer);
+	timer = setTimeout("showScrollBars()", 1000);
+}
 
 $(document).ready(function() {
 	adjustLayout();	
 	$('#header').css('width', 100 - {{ show_news_feed }} + '%');
 	$('#divider').css('left', 100 - {{ show_news_feed }} + '%');
 	$('#stop-list-container').css('width', 100 - {{ show_news_feed }} + '%');
-	$('#news-list-container').css('width', {{ show_news_feed }} + '%');
+	$('#news-feed-list-container').css('width', {{ show_news_feed }} + '%');
 	$('#footer').css('width', 100 - {{ show_news_feed }} + '%');
 	window.onresize = function(event) { adjustLayout(); };
 });
@@ -27,21 +42,15 @@ $(document).ready(function() {
 <div id="main">
 	{% if show_news_feed %}
 	
-	<div id="container2">
+	<div id="container">
 		<div id="stop-list-container">
 			<table id="stop-list" class="list">
 				<tr class="header1"><td class="header1-left" colspan="2">Loading arrivals...</td></tr>
 			</table>
 		</div>
-		<div id="news-list-container">
-			<table id="news-list" class="list">
-				<tr class="header1"><td class="header1-left" colspan="2">News Feed</td></tr>
-				<tr class="header4"><td>Coffee Break!</td><tr>
-				<tr class="header4"><td>REQUEST: Anyone have an old USB keyboard and mouse they could lend to the cafe? We're looking to get the BART... http://fb.me/1gMCnAS1J</td></tr>
-				<tr class="header4"><td>Coffee Break!</td><tr>
-				<tr class="header4"><td>REQUEST: Anyone have an old USB keyboard and mouse they could lend to the cafe? We're looking to get the BART... http://fb.me/1gMCnAS1J</td></tr>
-				<tr class="header4"><td>Coffee Break!</td><tr>
-				<tr class="header4"><td>REQUEST: Anyone have an old USB keyboard and mouse they could lend to the cafe? We're looking to get the BART... http://fb.me/1gMCnAS1J</td></tr>
+		<div id="news-feed-list-container">
+			<table id="news-feed-list" class="list">
+				<tr class="header1"><td class="header1-left" colspan="2">Loading news feed...</td></tr>
 			</table>
 		</div>
 	</div>

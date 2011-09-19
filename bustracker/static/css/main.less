@@ -14,7 +14,7 @@ html, body
 	height: 100%;
 }
 
-div#container
+div#wrapper
 {
 	min-height: 100%;
 	position: relative;
@@ -31,12 +31,17 @@ div#main
 	padding-bottom: @footer-height;
 }
 
+div#container
+{
+	display: inline-block;
+}
+
 div#stop-list-container
 {
 	float: left;
 }
 
-div#news-list-container
+div#news-feed-list-container
 {
 	float: right;
 }
@@ -77,7 +82,7 @@ a, a:hover, a:visited, a:active
 
 /* FOOTER STYLING */
 
-div#container:hover > div#footer
+div#wrapper:hover > div#footer
 {
     opacity: 1;
 }
@@ -87,11 +92,6 @@ div#footer-content
 	text-align: center;
 	color: #FFFFFF;
 	margin-top: 1em;
-}
-
-div#footer span.separator
-{
-	color: @text-color;
 }
 
 /* LIST */
@@ -227,6 +227,30 @@ table.list tr td span.big
 	font-weight: bold;
 }
 
+table.list tr td span.body
+{
+	display: block;
+}
+
+table.list tr td span.details
+{
+	font-size: .8em;
+	color: #FFFFFF;
+}
+
+table.list tr td span.tools
+{
+	opacity: 0;
+    -webkit-transition: all 0.2s ease;
+    -moz-transition: all 0.2s ease;
+    -o-transition: all 0.2s ease;
+}
+
+table.list tr.header4:hover > td span.details span.tools
+{
+    opacity: 1;
+}
+
 /* STOP MANAGEMENT */
 
 div.new-stop-form
@@ -276,7 +300,7 @@ div.new-stop-form .small
     width: 220px;
 }
 
-div.new-stop-form input
+div.new-stop-form input, div.new-stop-form textarea
 {
     float: left;
     font-size: 12px;
@@ -284,6 +308,11 @@ div.new-stop-form input
     border: solid 1px #aacfe4;
     width: 300px;
     margin: 2px 0 20px 10px;
+}
+
+div.new-stop-form textarea
+{
+	height: 5em;
 }
 
 div.new-stop-form div.select-set
@@ -312,4 +341,11 @@ div.new-stop-form button
     color: #FFFFFF;
     font-size: .75em;
     font-weight: bold;
+}
+
+/* MISC */
+
+span.separator
+{
+	color: @text-color;
 }

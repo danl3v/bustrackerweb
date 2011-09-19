@@ -16,3 +16,9 @@ class Stop(db.Model):
 	destination_tag = db.StringProperty()
 	time_to_stop = db.IntegerProperty()
 	position = db.IntegerProperty()
+	
+class Post(db.Model):
+	user = db.ReferenceProperty(User, collection_name='posts')
+	body = db.StringProperty(default="")
+	created = db.DateTimeProperty(auto_now=True)
+	updated = db.DateTimeProperty(auto_now_add=True)

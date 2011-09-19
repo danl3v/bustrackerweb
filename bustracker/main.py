@@ -1,21 +1,21 @@
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
-from controllers import welcome, nextbus, bart, predictions
+from controllers import welcome, stops, nextbus, bart, predictions, posts
 
 def main():
     application = webapp.WSGIApplication([
-            # main
+           # main
            ('/', welcome.MainPage),
            ('/feedback', welcome.Feedback),
            ('/settings', welcome.Settings),
            ('/predictions', predictions.Predictions),
            
-           # management
-           ('/stop/new', welcome.NewStop),
-           ('/stop/edit/(.*)', welcome.EditStop),
-           ('/stop/moveup/(.*)', welcome.MoveUp),
-           ('/stop/movedown/(.*)', welcome.MoveDown),
-           ('/stop/delete/(.*)', welcome.DeleteStop),
+           # stop management
+           ('/stop/new', stops.NewStop),
+           ('/stop/edit/(.*)', stops.EditStop),
+           ('/stop/moveup/(.*)', stops.MoveUp),
+           ('/stop/movedown/(.*)', stops.MoveDown),
+           ('/stop/delete/(.*)', stops.DeleteStop),
            
            # nextbus
            ('/nextbus/lines', nextbus.Lines),
@@ -25,6 +25,13 @@ def main():
            # bart
            ('/bart/stations', bart.Stations),
            ('/bart/directions', bart.Directions),
+           
+           # news feed
+           ('/posts', posts.Posts),
+           ('/post/new', posts.NewPost),
+           ('/post/edit/(.*)', posts.EditPost),
+           ('/post/delete/(.*)', posts.DeletePost),
+           
          ],debug=True)
 
     run_wsgi_app(application)

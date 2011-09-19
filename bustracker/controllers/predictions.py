@@ -6,7 +6,7 @@ import nextbus, bart
     
 class Predictions(webapp.RequestHandler):
     def get(self):
-        '''Return the html for a line's arrival times.'''
+        '''Write out the user's saved stops and predicitons.'''
         current_user = users.get_current_user()
         stops = models.User.all().filter('user =', current_user).get().stops.order('position')
         if stops.count() == 0:
@@ -22,7 +22,7 @@ def get_predictions(stops):
         i += 1
         html += '<tr class="header1"><td class="header1-left">' + stop.title + '</td><td class="header1-right">'
         if i != 1: html += '<a href="/stop/moveup/' +str(stop.key().id()) + '">move up</a> | '
-        if i < stops.count(): html += '<a href="/stop/movedown/' +str(stop.key().id()) + '">move down</a> | '
+        if i < stops.count(): html += '<a href="/stop/movedown/' + str(stop.key().id()) + '">move down</a> | '
         html += '<a href="/stop/edit/' +str(stop.key().id()) + '">edit</a> | <a href="/stop/delete/' + str(stop.key().id()) + '">delete</a></td></tr>'
         html += get_prediction(stop)
     return html
