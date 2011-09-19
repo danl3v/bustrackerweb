@@ -38,7 +38,7 @@ class Settings(webapp.RequestHandler):
         '''Render the settings page.'''
         current_user = users.get_current_user()
         user = models.User.all().filter('user =', current_user).get()
-        view.renderTemplate(self, 'settings.html', { 'max_arrivals': user.max_arrivals, 'show_missed': user.show_missed, 'show_news_feed' : user.show_news_feed })
+        view.renderTemplate(self, 'settings.html', { 'max_arrivals': user.max_arrivals, 'show_missed': user.show_missed, 'show_news_feed' : user.show_news_feed, 'time_zone_offset' : user.time_zone_offset })
     def post(self):
         current_user = users.get_current_user()
         user = models.User.all().filter('user =', current_user).get()
@@ -46,5 +46,6 @@ class Settings(webapp.RequestHandler):
             user.max_arrivals = int(self.request.get("max-arrivals"))
             user.show_missed = True if self.request.get("show-missed") == "yes" else False
             user.show_news_feed = int(self.request.get("show-news-feed"))
+            user.time_zone_offset = int(self.request.get("time-zone-offset"))
             user.put()
         self.redirect("/")

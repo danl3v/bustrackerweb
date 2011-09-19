@@ -12,7 +12,7 @@
 <body>
 <div id="wrapper">
 {% block content %}{% endblock %}
-<div id="footer"><div id="footer-content">{% if current_user %}{{ current_user.email }} <span class="separator">|</span> <a href="/stop/new">new stop</a> <span class="separator">|</span>{% if show_news_feed %} <a href="/post/new">new post</a> <span class="separator">|</span>{% endif %} <a href="/settings">settings</a> <span class="separator">|</span> <a href="/feedback">feedback</a> <span class="separator">|</span> <a href="{{ login_url }}">{{ login_url_linktext }}</a>{% endif %}</div></div>
+<div id="footer"><div id="footer-content">{% if current_user %}{{ current_user.email }} <span class="separator">|</span> <a href="/stop/new">new stop</a> <span class="separator">|</span> <a href="/settings">settings</a> <span class="separator">|</span> <a href="/feedback">feedback</a> <span class="separator">|</span> <a href="{{ login_url }}">{{ login_url_linktext }}</a>{% endif %}</div></div>
 </div>
 </body>
 </html>

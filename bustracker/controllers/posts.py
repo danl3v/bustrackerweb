@@ -6,14 +6,14 @@ import view
 class Posts(webapp.RequestHandler):
     def get(self):
         current_user = users.get_current_user()
-        posts = models.User.all().filter('user =', current_user).get().posts.order('updated')
+        posts = models.User.all().filter('user =', current_user).get().posts.order('-created')
         if posts.count() == 0:
             self.response.out.write('<tr class="header1" colspan="2"><td class="header1-left">You have no posts. <a href="/post/new">Add one</a>.</td></tr>')
         else:
-            self.response.out.write('<tr class="header1"><td class="header1-left" colspan="2">News Feed</td></tr>')
+            self.response.out.write('<tr class="header1"><td class="header1-left">News Feed</td><td class="header1-right"><a href="/post/new">new post</a></td></tr>')
             for post in posts:
-                self.response.out.write('<tr class="header4"><td><span class="body">' + post.body + '</span>')
-                self.response.out.write('<span class="details">5m ago<span class="tools"> <span class="separator">|</span> <a href="/post/edit/' + str(post.key().id()) + '">edit</a> <span class="separator">|</span> <a href="/post/delete/' + str(post.key().id()) + '">delete</a></span></span></td></tr>')
+                self.response.out.write('<tr class="header4"><td colspan="2"><span class="body">' + post.body + '</span>')
+                self.response.out.write('<span class="details">' + post.pretty_created + '<span class="tools"> <span class="separator">|</span> <a href="/post/edit/' + str(post.key().id()) + '">edit</a> <span class="separator">|</span> <a href="/post/delete/' + str(post.key().id()) + '">delete</a></span></span></td></tr>')
 
 class NewPost(webapp.RequestHandler):
     def get(self):

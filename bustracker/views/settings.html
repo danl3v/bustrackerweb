@@ -50,6 +50,20 @@
 		</select>
 		</div>
 		
+		<label>Select Time Zone:
+		<span class="small">for news feed times to display correctly</span>
+		</label>
+		<div class="select-set">
+		<select name="time-zone-offset" id="time-zone-offset">
+			<option value="-9"{% if time_zone_offset == -9 %} selected{% endif %}>-9:00 Alaska Time</option>
+			<option value="-8"{% if time_zone_offset == -8 %} selected{% endif %}>-8:00 Pacific Time</option>
+			<option value="-7"{% if time_zone_offset == -7 %} selected{% endif %}>-7:00 Mountain Time</option>
+			<option value="-6"{% if time_zone_offset == -6 %} selected{% endif %}>-6:00 Central Time</option>
+			<option value="-5"{% if time_zone_offset == -5 %} selected{% endif %}>-5:00 Eastern Time</option>
+			<option value="-4"{% if time_zone_offset == -4 %} selected{% endif %}>-4:00 Quebec Time</option>
+		</select>
+		</div>
+		
 		<button name="submit" type="submit">Save Changes</button>
 	</form>
 </div>
