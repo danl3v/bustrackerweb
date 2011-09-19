@@ -6,8 +6,8 @@ import view
 class Posts(webapp.RequestHandler):
     def get(self):
         current_user = users.get_current_user()
-        posts = models.User.all().filter('user =', current_user).get().posts.order('-created')
-        if posts.count() == 0:
+        posts = models.User.all().filter('user =', current_user).get().posts.order('-created').fetch(limit=15)
+        if len(posts) == 0:
             self.response.out.write('<tr class="header1" colspan="2"><td class="header1-left">You have no posts. <a href="/post/new">Add one</a>.</td></tr>')
         else:
             self.response.out.write('<tr class="header1"><td class="header1-left">News Feed</td><td class="header1-right"><a href="/post/new">new post</a></td></tr>')
@@ -21,11 +21,13 @@ class NewPost(webapp.RequestHandler):
         view.renderTemplate(self, 'new_post.html', {})
     def post(self):
         '''Add a new post for a user.'''
-        current_user = users.get_current_user()
-        post = models.Post()
-        post.user = models.User.all().filter('user =', current_user).get()
-        post.body = self.request.get('body')
-        post.put()
+        body = self.request.get('body')
+        if body:
+            current_user = users.get_current_user()
+            post = models.Post()
+            post.user = models.User.all().filter('user =', current_user).get()
+            post.body = self.request.get('body')
+            post.put()
         self.redirect('/')
         
 class EditPost(webapp.RequestHandler):
@@ -39,11 +41,13 @@ class EditPost(webapp.RequestHandler):
             self.redirect('/')
     def post(self, id):
         '''Save changes to the post of a user.'''
-        current_user = users.get_current_user()
-        post = models.Post.get_by_id(int(id))    
-        if post and post.user.user == current_user:
-            post.body = self.request.get('body')
-            post.put()
+        body = self.request.get('body')
+        if body:
+            current_user = users.get_current_user()
+            post = models.Post.get_by_id(int(id))    
+            if post and post.user.user == current_user:
+                post.body = self.request.get('body')
+                post.put()
         self.redirect('/')
         
 class DeletePost(webapp.RequestHandler):

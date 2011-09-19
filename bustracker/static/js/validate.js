@@ -1,4 +1,4 @@
-function validate() {
+function validate_stop() {
 	var title = $('#title').val();
 	var agency = $('#agency-select').val();
 	var nextbusLine = $('#nextbus-line-select').val();
@@ -26,6 +26,16 @@ function validate() {
 	}
 	else if (!timeToStop || parseInt(timeToStop) != timeToStop) {
 		alert("Time to stop must be a whole positive number.");
+		return false;
+	}
+	else {
+		return true;
+	}
+}
+
+function validate_post() {
+	if (!$('#title').val()) {
+		alert("You must enter a post body.");
 		return false;
 	}
 	else {

@@ -1,12 +1,13 @@
 from google.appengine.ext import db
 from datetime import timedelta, datetime
+import timezone
 
 class User(db.Model):
     user = db.UserProperty()
     max_arrivals = db.IntegerProperty(default=3)
     show_missed = db.BooleanProperty(default=False)
     show_news_feed = db.IntegerProperty(default=0)
-    time_zone_offset = db.IntegerProperty(default=-8)
+    timezone = db.StringProperty(default="pacific")
     
 class Stop(db.Model):
     user = db.ReferenceProperty(User, collection_name='stops')
@@ -26,7 +27,7 @@ class Post(db.Model):
     updated = db.DateTimeProperty(auto_now_add=True)
     
     @property
-    def local_created(self): return self.created + timedelta(hours=self.user.time_zone_offset)
+    def local_created(self): return self.created.replace(tzinfo=timezone.tz("utc")).astimezone(timezone.tz(self.user.timezone))
     
     @property
     def pretty_created(self): return pretty_date(self, self.created)
