@@ -62,6 +62,11 @@
 		</select>
 		</div>
 		
+		<label>Banner Message:
+		<span class="small">entering text will display a banner which also acts as a screensaver</span>
+		</label>
+		<input type="text" name="show-banner" id="show-banner"{% if show_banner %} value="{{ show_banner }}"{% endif %}>
+		
 		<button name="submit" type="submit">Save Changes</button>
 	</form>
 </div>

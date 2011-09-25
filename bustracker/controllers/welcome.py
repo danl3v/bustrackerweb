@@ -14,7 +14,7 @@ class MainPage(webapp.RequestHandler):
                 user = models.User()
                 user.user = current_user
                 user.put()
-            view.renderTemplate(self, 'predictions.html', { 'show_news_feed' : user.show_news_feed })
+            view.renderTemplate(self, 'predictions.html', { 'show_news_feed' : user.show_news_feed, 'show_banner': user.show_banner })
         else:
             view.renderTemplate(self, 'index.html', {})
 
@@ -38,7 +38,7 @@ class Settings(webapp.RequestHandler):
         '''Render the settings page.'''
         current_user = users.get_current_user()
         user = models.User.all().filter('user =', current_user).get()
-        view.renderTemplate(self, 'settings.html', { 'max_arrivals': user.max_arrivals, 'show_missed': user.show_missed, 'show_news_feed' : user.show_news_feed, 'timezone' : user.timezone })
+        view.renderTemplate(self, 'settings.html', { 'max_arrivals': user.max_arrivals, 'show_missed': user.show_missed, 'show_news_feed' : user.show_news_feed, 'timezone' : user.timezone, 'show_banner': user.show_banner })
     def post(self):
         current_user = users.get_current_user()
         user = models.User.all().filter('user =', current_user).get()
@@ -47,5 +47,6 @@ class Settings(webapp.RequestHandler):
             user.show_missed = True if self.request.get("show-missed") == "yes" else False
             user.show_news_feed = int(self.request.get("show-news-feed"))
             user.timezone = self.request.get("timezone")
+            user.show_banner = self.request.get("show-banner") if self.request.get("show-banner") != "" else None
             user.put()
         self.redirect("/")
