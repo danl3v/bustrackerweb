@@ -1,5 +1,6 @@
 var timer;
 var bannerTimer;
+var previous_predictions;
 
 function initLayout(newsFeedWidth) {
 	$('#header').css('width', 100 - newsFeedWidth + '%');
@@ -24,7 +25,16 @@ function adjustLayout(newsFeedWidth) {
 
 function getPredictions() {
 	$.get('/predictions', function(predictions) {
-		$('#stop-list').html(predictions);
+		if (predictions != previous_predictions) {
+			$('#stop-list').fadeOut('fast', function() {
+				$('#stop-list').html(predictions);
+				$('#stop-list').fadeIn('fast');			
+			});
+		}
+		else {
+			$('#stop-list').html(predictions);
+		}
+		previous_predictions = predictions;
 	});
 	setTimeout("getPredictions()", 20000);
 }
@@ -40,7 +50,7 @@ function hideBanner() {
 	$('#wrapper').fadeIn('slow');
 	$('#banner').fadeOut('slow');
 	clearTimeout(bannerTimer);
-	bannerTimer = setTimeout("showBanner()", 10000);
+	bannerTimer = setTimeout("showBanner()", 20000);
 }
 
 function showScrollBars() {
