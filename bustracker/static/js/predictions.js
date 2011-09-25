@@ -48,10 +48,14 @@ function showBanner() {
 }
 
 function hideBanner() {
+	hardHideBanner();
+	bannerTimer = setTimeout("showBanner()", 20000);
+}
+
+function hardHideBanner() {
 	$('#wrapper').fadeIn('slow');
 	$('#banner').fadeOut('slow');
 	clearTimeout(bannerTimer);
-	bannerTimer = setTimeout("showBanner()", 20000);
 }
 
 function showScrollBars() {
@@ -70,12 +74,18 @@ $(document).ready(function() {
 	adjustLayout();
 	initLayout();
 	
+	$(window).blur(function() { hardHideBanner(); }).focus(function() { setTimeout("hideBanner()", 500); });
+	
 	$(document).mousemove(function(event) {
 		if (pageX != event.pageX || pageY != event.pageY) {
+			hardHideBanner();
 			$('*').css('cursor', 'auto');
 			$('#footer-content').fadeIn('slow');
 			clearTimeout(cursorTimeout);
 			cursorTimeout = setTimeout('hideExtras()', 1000);
+		}
+		else {
+			hideBanner();
 		}
 		pageX = event.pageX;
 		pageY = event.pageY;
