@@ -12,7 +12,7 @@ class Posts(webapp.RequestHandler):
         else:
             self.response.out.write('<tr class="header1"><td class="header1-left">News Feed</td><td class="header1-right"><a href="/post/new">new post</a></td></tr>')
             for post in posts:
-                self.response.out.write('<tr class="header4"><td colspan="2"><span class="body">' + post.body + '</span>')
+                self.response.out.write('<tr class="header4"><td class="header4-post" colspan="2"><span class="body">' + post.body + '</span>')
                 self.response.out.write('<span class="details">' + post.pretty_created + '<span class="tools"> <span class="separator">|</span> <a href="/post/edit/' + str(post.key().id()) + '">edit</a> <span class="separator">|</span> <a href="/post/delete/' + str(post.key().id()) + '">delete</a></span></span></td></tr>')
 
 class NewPost(webapp.RequestHandler):
