@@ -7,7 +7,7 @@
 {% if show_news_feed %}
 <script src="/js/posts.js" type="text/javascript"></script>
 <script>
-var newsFeedWidth = {{ show_news_feed }};
+newsFeedWidth = {{ show_news_feed }};
 $(document).ready(function() {
 	{% if show_banner %}setTimeout("hideBanner()", 500);{% else %}$('#wrapper').fadeIn('slow');{% endif %}
 });

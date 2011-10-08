@@ -1,9 +1,33 @@
+/* 
+ * crushes.js
+ * Last Chance Dance 2011
+ */
+
+/*global document, window, setTimeout, clearTimeout, $ */
+/*jslint browser: true, undef: true, sloppy: true, eqeq: true, white: true, maxerr: 50, indent: 4 */
+
+
+/* Variables */
 var timer;
+var newsFeedWidth;
 var bannerTimer;
-var previous_predictions;
+var previousPredictions;
 var cursorTimeout;
 var pageX;
 var pageY;
+
+/* Methods */
+
+var initLayout;
+var adjustLayout;
+var getPredictions;
+var showBanner;
+var hideBanner;
+var hardHideBanner;
+var hideExtras;
+var showScrollBars;
+
+/* Layout */
 
 function initLayout() {
 	$('#wrapper').css('display', 'none');
@@ -24,32 +48,36 @@ function adjustLayout() {
 	$('#news-feed-background').css('width', newsFeedWidth + '%');
 	$('#news-feed-background').css('height', documentHeight);
 	clearTimeout(timer);
-	timer = setTimeout("showScrollBars()", 1000);
+	timer = setTimeout(showScrollBars, 1000);
 }
+
+/* Predictions */
 
 function getPredictions() {
 	$.get('/predictions', function(predictions) {
-		if (predictions != previous_predictions) {
+		if (predictions !== previousPredictions) {
 			$('#stop-list').fadeOut('fast', function() {
 				$('#stop-list').html(predictions);
 				$('#stop-list').fadeIn('fast', function() { adjustLayout(); });			
 			});
-			previous_predictions = predictions;
+			previousPredictions = predictions;
 		}
 	});
-	setTimeout("getPredictions()", 20000);
+	setTimeout(getPredictions, 20000);
 }
+
+/* Banner */
 
 function showBanner() {
 	$('#wrapper').fadeOut('slow');
 	$('#banner').fadeIn('slow');
 	clearTimeout(bannerTimer);
-	bannerTimer = setTimeout("hideBanner()", 5000);
+	bannerTimer = setTimeout(hideBanner, 5000);
 }
 
 function hideBanner() {
 	hardHideBanner();
-	bannerTimer = setTimeout("showBanner()", 20000);
+	bannerTimer = setTimeout(showBanner, 20000);
 }
 
 function hardHideBanner() {
@@ -58,15 +86,21 @@ function hardHideBanner() {
 	clearTimeout(bannerTimer);
 }
 
-function showScrollBars() {
-	document.documentElement.style.overflow = 'auto';
-	clearTimeout(timer);
-}
+/* Hiding Footer and Cursor */
 
 function hideExtras() {
 	$('*').css('cursor', 'none');
 	$('#footer-content').fadeOut('slow');
 }
+
+/* Scroll Bars */
+
+function showScrollBars() {
+	document.documentElement.style.overflow = 'auto';
+	clearTimeout(timer);
+}
+
+/* Document Ready */
 
 $(document).ready(function() {
 	hideExtras();
@@ -74,15 +108,15 @@ $(document).ready(function() {
 	adjustLayout();
 	initLayout();
 	
-	$(window).blur(function() { hardHideBanner(); }).focus(function() { setTimeout("hideBanner()", 500); });
+	$(window).blur(function() { hardHideBanner(); }).focus(function() { setTimeout(hideBanner, 500); });
 	
 	$(document).mousemove(function(event) {
-		if (pageX != event.pageX || pageY != event.pageY) {
+		if (pageX !== event.pageX || pageY !== event.pageY) {
 			hardHideBanner();
 			$('*').css('cursor', 'auto');
 			$('#footer-content').fadeIn('slow');
 			clearTimeout(cursorTimeout);
-			cursorTimeout = setTimeout('hideExtras()', 1000);
+			cursorTimeout = setTimeout(hideExtras, 1000);
 		}
 		else {
 			hideBanner();
@@ -91,5 +125,5 @@ $(document).ready(function() {
 		pageY = event.pageY;
 	});
 
-	window.onresize = function(event) { adjustLayout(); };
+	window.onresize = function() { adjustLayout(); };
 });
