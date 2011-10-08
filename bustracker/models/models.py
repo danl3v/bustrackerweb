@@ -6,7 +6,8 @@ class User(db.Model):
     user = db.UserProperty()
     max_arrivals = db.IntegerProperty(default=3)
     show_missed = db.BooleanProperty(default=False)
-    show_news_feed = db.IntegerProperty(default=0)
+    show_news_feed = db.StringProperty(default="no")
+    news_feed_width = db.IntegerProperty(default=0)
     show_banner = db.StringProperty(default="");
     timezone = db.StringProperty(default="pacific")
     

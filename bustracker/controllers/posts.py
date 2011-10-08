@@ -1,19 +1,18 @@
 from google.appengine.ext import webapp
 from google.appengine.api import users
 from models import models
-import view
+
+import json, functions, view, time, datetime
 
 class Posts(webapp.RequestHandler):
     def get(self):
-        current_user = users.get_current_user()
-        posts = models.User.all().filter('user =', current_user).get().posts.order('-created').fetch(limit=15)
-        if len(posts) == 0:
-            self.response.out.write('<tr class="header1" colspan="2"><td class="header1-left">You have no posts. <a href="/post/new">Add one</a>.</td></tr>')
-        else:
-            self.response.out.write('<tr class="header1"><td class="header1-left">News Feed</td><td class="header1-right"><a href="/post/new">new post</a></td></tr>')
-            for post in posts:
-                self.response.out.write('<tr class="header4"><td class="header4-post" colspan="2"><span class="body">' + post.body + '</span>')
-                self.response.out.write('<span class="details">' + post.pretty_created + '<span class="tools"> <span class="separator">|</span> <a href="/post/edit/' + str(post.key().id()) + '">edit</a> <span class="separator">|</span> <a href="/post/delete/' + str(post.key().id()) + '">delete</a></span></span></td></tr>')
+        '''Return Posts or Tweets'''
+        current_user = models.User.all().filter('user =', users.get_current_user()).get()
+        show_news_feed = current_user.show_news_feed
+        if (show_news_feed == "yes"):
+			self.response.out.write(getPosts(current_user))
+        elif (show_news_feed != "no"):
+        	self.response.out.write(getTweets(show_news_feed))
 
 class NewPost(webapp.RequestHandler):
     def get(self):
@@ -58,3 +57,25 @@ class DeletePost(webapp.RequestHandler):
         if post and post.user.user == current_user:
             post.delete()
         self.redirect('/')
+        
+def getPosts(current_user):
+	'''Return Posts.'''
+	posts = current_user.posts.order('-created').fetch(limit=15)
+	if len(posts) == 0:
+		html = '<tr class="header1" colspan="2"><td class="header1-left">You have no posts. <a href="/post/new">Add one</a>.</td></tr>'
+	else:
+		html = '<tr class="header1"><td class="header1-left">News Feed</td><td class="header1-right"><a href="/post/new">new post</a></td></tr>'
+		for post in posts:
+			html += '<tr class="header4"><td class="header4-post" colspan="2"><span class="body">' + post.body + '</span>'
+			html += '<span class="details">' + post.pretty_created + '<span class="tools"> <span class="separator">|</span> <a href="/post/edit/' + str(post.key().id()) + '">edit</a> <span class="separator">|</span> <a href="/post/delete/' + str(post.key().id()) + '">delete</a></span></span></td></tr>'
+	return html
+
+def getTweets(twitter_username):
+	'''Return Tweets.'''
+	html = '<tr class="header1"><td class="header1-left" colspan="2">News Feed</td></tr>'
+	theJSON = json.loads(functions.get_xml("http://search.twitter.com/search.json?q=from:" + twitter_username + "&rpp=15&include_entities=true&with_twitter_user_id=true&result_type=recent"))
+	for result in theJSON['results']:
+		created_at = datetime.datetime.fromtimestamp(time.mktime(time.strptime(result['created_at'], "%a, %d %b %Y %H:%M:%S +0000")))
+		html += '<tr class="header4"><td class="header4-post" colspan="2"><span class="body">' + result['text'] + '</span>'
+		html += '<span class="details">' + created_at.strftime("%B %d, %Y at %I:%M%p") + '</span></td></tr>'
+	return html

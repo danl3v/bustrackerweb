@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 
 {% block extrahead %}
-
+<script src="/js/jquery-1.6.2.min.js" type="text/javascript"></script>
+<script src="/js/settings.js" type="text/javascript"></script>
 {% endblock %}
 
 {% block content %}
@@ -37,17 +38,36 @@
 		</div>
 		
 		<label>Show News Feed:
-		<span class="small">choose a width for it too</span>
+		<span class="small">want some news feed?</span>
 		</label>
 		<div class="select-set">
 		<select name="show-news-feed" id="show-news-feed">
-			<option value="0"{% if show_news_feed == 0 %} selected{% endif %}>Do not show</option>
-			<option value="10"{% if show_news_feed == 10 %} selected{% endif %}>10%</option>
-			<option value="20"{% if show_news_feed == 20 %} selected{% endif %}>20%</option>
-			<option value="30"{% if show_news_feed == 30 %} selected{% endif %}>30%</option>
-			<option value="40"{% if show_news_feed == 40 %} selected{% endif %}>40%</option>
-			<option value="50"{% if show_news_feed == 50 %} selected{% endif %}>50%</option>
+			<option value="no"{% if show_news_feed == 'no' %} selected{% endif %}>Do not show</option>
+			<option value="yes"{% if show_news_feed == 'yes' %} selected{% endif %}>Built-in News Feed</option>
+			<option value="twitter"{% if show_news_feed != 'no' and show_news_feed != 'yes' %} selected{% endif %}>Twitter</option>
 		</select>
+		</div>
+		
+		<div id="settings-news-feed">
+		<div id="settings-twitter">
+		<label>Twitter Username:
+		<span class="small">enter your twitter username</span>
+		</label>
+		<input type="text" name="twitter-username" id="twitter-username" placeholder="e.g. awakencafe"{% if show_news_feed != 'no' and show_news_feed != 'yes' %} value="{{ show_news_feed }}"{% endif %}>
+		</div>
+		
+		<label>News Feed Width:
+		<span class="small">choose a width for the news feed</span>
+		</label>
+		<div class="select-set">
+		<select name="news-feed-width" id="news-feed-width">
+			<option value="10"{% if news_feed_width == 10 %} selected{% endif %}>10%</option>
+			<option value="20"{% if news_feed_width == 20 %} selected{% endif %}>20%</option>
+			<option value="30"{% if news_feed_width == 30 %} selected{% endif %}>30%</option>
+			<option value="40"{% if news_feed_width == 40 %} selected{% endif %}>40%</option>
+			<option value="50"{% if news_feed_width == 50 %} selected{% endif %}>50%</option>
+		</select>
+		</div>
 		</div>
 		
 		<label>Select Time Zone:
@@ -65,7 +85,7 @@
 		<label>Banner Message:
 		<span class="small">entering text will display a banner which also acts as a screensaver</span>
 		</label>
-		<input type="text" name="show-banner" id="show-banner"{% if show_banner %} value="{{ show_banner }}"{% endif %}>
+		<input type="text" name="show-banner" id="show-banner" placeholder="e.g. Awaken Cafe"{% if show_banner %} value="{{ show_banner }}"{% endif %}>
 		
 		<button name="submit" type="submit">Save Changes</button>
 	</form>
