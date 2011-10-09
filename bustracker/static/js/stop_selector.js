@@ -1,3 +1,8 @@
+/* 
+ * stop_selector.js
+ * TrackMyBus
+ */
+
 $(document).ready(function() {
 	
 	$('#nextbus-menus').hide();

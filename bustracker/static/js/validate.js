@@ -1,3 +1,8 @@
+/* 
+ * validate.js
+ * TrackMyBus
+ */
+
 function validate_stop() {
 	var title = $('#title').val();
 	var agency = $('#agency-select').val();

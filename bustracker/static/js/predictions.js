@@ -1,6 +1,6 @@
 /* 
- * crushes.js
- * Last Chance Dance 2011
+ * predictions.js
+ * TrackMyBus
  */
 
 /*global document, window, setTimeout, clearTimeout, $ */

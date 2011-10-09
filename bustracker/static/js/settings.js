@@ -1,3 +1,8 @@
+/* 
+ * settings.js
+ * TrackMyBus
+ */
+ 
 $(document).ready(function() {
 	if ($('#show-news-feed').val() == "no") {
 			$('#settings-news-feed').hide();

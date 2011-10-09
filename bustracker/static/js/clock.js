@@ -1,3 +1,8 @@
+/* 
+ * clock.js
+ * TrackMyBus
+ */
+ 
 function updateClock() {
   var currentTime = new Date();
   
