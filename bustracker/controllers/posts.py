@@ -1,8 +1,9 @@
 from google.appengine.ext import webapp
 from google.appengine.api import users
 from models import models
+from django.utils import simplejson as json
 
-import json, functions, view, time, datetime
+import functions, view, time, datetime
 
 class Posts(webapp.RequestHandler):
     def get(self):

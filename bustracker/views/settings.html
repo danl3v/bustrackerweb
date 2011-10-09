@@ -37,8 +37,10 @@
 		</select>
 		</div>
 		
+		<h2></h2>
+		
 		<label>Show News Feed:
-		<span class="small">want some news feed?</span>
+		<span class="small">select a news feed type</span>
 		</label>
 		<div class="select-set">
 		<select name="show-news-feed" id="show-news-feed">
@@ -61,14 +63,15 @@
 		</label>
 		<div class="select-set">
 		<select name="news-feed-width" id="news-feed-width">
-			<option value="10"{% if news_feed_width == 10 %} selected{% endif %}>10%</option>
-			<option value="20"{% if news_feed_width == 20 %} selected{% endif %}>20%</option>
 			<option value="30"{% if news_feed_width == 30 %} selected{% endif %}>30%</option>
 			<option value="40"{% if news_feed_width == 40 %} selected{% endif %}>40%</option>
 			<option value="50"{% if news_feed_width == 50 %} selected{% endif %}>50%</option>
+			<option value="60"{% if news_feed_width == 60 %} selected{% endif %}>60%</option>
 		</select>
 		</div>
 		</div>
+		
+		<h2></h2>
 		
 		<label>Select Time Zone:
 		<span class="small">for news feed times to display correctly</span>
@@ -86,6 +89,8 @@
 		<span class="small">entering text will display a banner which also acts as a screensaver</span>
 		</label>
 		<input type="text" name="show-banner" id="show-banner" placeholder="e.g. Awaken Cafe"{% if show_banner %} value="{{ show_banner }}"{% endif %}>
+		
+		<h2></h2>
 		
 		<button name="submit" type="submit">Save Changes</button>
 	</form>
