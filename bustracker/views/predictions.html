@@ -5,14 +5,18 @@
 <script src="/js/clock.js" type="text/javascript"></script>
 <script src="/js/predictions.js" type="text/javascript"></script>
 {% if show_news_feed != 'no' and news_feed_width %}
-<script src="/js/posts.js" type="text/javascript"></script>
 <script>
 newsFeedWidth = {{ news_feed_width }};
 $(document).ready(function() {
-	{% if show_banner %}setTimeout("hideBanner()", 500);{% else %}$('#wrapper').fadeIn('slow');{% endif %}
+	getPosts();
 });
 </script>
 {% endif %}
+<script>
+$(document).ready(function() {
+	{% if show_banner %}setTimeout(hideBanner, 500);{% else %}$('#wrapper').fadeIn('slow');{% endif %}
+});
+</script>
 {% endblock %}
 
 {% block extrahtml %}{% if show_banner %}<div id="banner"><p style="padding-top: 20%;">{{ show_banner }}</p></div>{% endif %}{% endblock %}

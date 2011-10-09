@@ -12,6 +12,7 @@ var timer;
 var newsFeedWidth;
 var bannerTimer;
 var previousPredictions;
+var previousPosts;
 var cursorTimeout;
 var pageX;
 var pageY;
@@ -64,6 +65,21 @@ function getPredictions() {
 		}
 	});
 	setTimeout(getPredictions, 20000);
+}
+
+/* Posts */
+
+function getPosts() {
+	$.get('/posts', function(posts) {
+		if (posts !== previousPosts) {
+			$('#news-feed-list').fadeOut('fast', function() {
+				$('#news-feed-list').html(posts);
+				$('#news-feed-list').fadeIn('fast', function() { adjustLayout(); });
+			});
+			previousPosts = posts;
+		}
+	});
+	setTimeout(getPosts, 60000);
 }
 
 /* Banner */

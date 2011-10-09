@@ -1,6 +1,16 @@
 $(document).ready(function() {
-	$('#settings-news-feed').hide();
-	$('#settings-twitter').hide();
+	if ($('#show-news-feed').val() == "no") {
+			$('#settings-news-feed').hide();
+			$('#settings-twitter').hide();
+		}
+		else if ($('#show-news-feed').val() == "yes") {
+			$('#settings-news-feed').show();
+			$('#settings-twitter').hide();
+		}
+		else {
+			$('#settings-news-feed').show();
+			$('#settings-twitter').show();
+		}
 
 	$('#show-news-feed').change(function() {
 		if ($('#show-news-feed').val() == "no") {
@@ -16,6 +26,4 @@ $(document).ready(function() {
 			$('#settings-twitter').fadeIn();
 		}
 	});
-	
-	$('#show-news-feed').change();
 });
