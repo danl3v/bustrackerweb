@@ -16,6 +16,7 @@ var previousPosts;
 var cursorTimeout;
 var pageX;
 var pageY;
+var isActive;
 
 /* Methods */
 
@@ -85,8 +86,10 @@ function getPosts() {
 /* Banner */
 
 function showBanner() {
-	$('#wrapper').fadeOut('slow');
-	$('#banner').fadeIn('slow');
+	if (isActive) {	
+		$('#wrapper').fadeOut('slow');
+		$('#banner').fadeIn('slow');
+	}
 	clearTimeout(bannerTimer);
 	bannerTimer = setTimeout(hideBanner, 5000);
 }
@@ -123,11 +126,12 @@ $(document).ready(function() {
 	getPredictions();
 	adjustLayout();
 	initLayout();
+	isActive = true;
 	
-	$(window).blur(function() { hardHideBanner(); }).focus(function() { setTimeout(hideBanner, 500); });
+	$([window, document]).focus(function() { isActive = true; }).blur(function() { isActive = false; });
 	
 	$(document).mousemove(function(event) {
-		if (pageX !== event.pageX || pageY !== event.pageY) {
+		if (isActive && (pageX !== event.pageX || pageY !== event.pageY)) {
 			hardHideBanner();
 			$('*').css('cursor', 'auto');
 			$('#footer-content').fadeIn('slow');
