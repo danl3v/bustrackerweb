@@ -62,22 +62,15 @@ class Stops(webapp.RequestHandler):
                 html += '<option value="' + stop['tag'] + '">' + stop['title'] + '</option>'
         self.response.out.write(html)
 
-def get_prediction(stop, max_arrivals, show_missed):
+def get_directions(stop, max_arrivals, show_missed):
     '''Return a parsed prediction.'''
     soup = BeautifulStoneSoup(functions.get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=' + stop.agency_tag + '&r=' + stop.line_tag + '&d=' + stop.direction_tag + '&s=' + stop.stop_tag), selfClosingTags=['prediction'])
-    predictions = soup.findAll('prediction')
-    if not show_missed:
-        predictions = filter(lambda prediction: True if functions.get_leave_at(stop.time_to_stop, prediction['minutes']) != -1 else False, predictions)
-    predictions = sorted(predictions, key=lambda prediction: int(prediction['minutes']))[:max_arrivals]
-    html = ""
-    if predictions:
-        for prediction in predictions:
-            if prediction['minutes'] == "0":
-                html += '<tr class="header4"><td class="header4-left"><span class="big">Arriving</span></td><td class="header4-right">' + functions.get_leave_at_html(stop.time_to_stop, prediction['minutes']) + '</td><tr>'
-            elif prediction['minutes'] == "1":
-                html += '<tr class="header4"><td class="header4-left"><span class="big">' + prediction['minutes'] + '</span> minute</td><td class="header4-right">' + functions.get_leave_at_html(stop.time_to_stop, prediction['minutes']) + '</td><tr>'
-            else:
-                 html += '<tr class="header4"><td class="header4-left"><span class="big">' + prediction['minutes'] + '</span> minutes</td><td class="header4-right">' + functions.get_leave_at_html(stop.time_to_stop, prediction['minutes']) + '</td><tr>'
-    else:
-         html += '<tr class="header4"><td class="header4-left" colspan="2">no arrivals</td><tr>'
-    return html
+    destinations = soup.findAll('direction')
+    list = []
+    for destination in destinations:
+        predictions = destination.findAll('prediction')
+        if not show_missed:
+            predictions = filter(lambda prediction: True if functions.get_leave_at(stop.time_to_stop, prediction['minutes']) != -1 else False, predictions)
+        predictions = sorted(predictions, key=lambda prediction: int(prediction['minutes']))[:max_arrivals]
+        list.append({"title": destination['title'], "vehicles": [{"minutes" : prediction['minutes']} for prediction in predictions]})
+    return [{"title": "", "destinations": list}]
