@@ -10,7 +10,7 @@ class Predictions(webapp.RequestHandler):
         '''Write out the JSON for the user's saved stops and predicitons.'''
         current_user = users.get_current_user()
         stops = models.User.all().filter('user =', current_user).get().stops.order('position')
-        self.response.out.write(json.dumps([{"title": stop.title, "timeToStop": stop.time_to_stop, "directions": get_directions(stop)} for stop in stops]))
+        self.response.out.write(json.dumps([{"id": stop.key().id(), "title": stop.title, "timeToStop": stop.time_to_stop, "directions": get_directions(stop)} for stop in stops]))
 
 def get_directions(stop):
     '''Return JSON predictions for given stop.'''

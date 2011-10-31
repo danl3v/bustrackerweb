@@ -6,6 +6,8 @@ use_library('django', '1.2')
 
 from google.appengine.ext.webapp import template
 
+template.register_template_library('tags.verbatim_templatetag')
+
 def getHeaderFooterData(self):
     '''Get and return the template values to render the header and footer which are standard on all pages. Also sets standard data across all pages.'''
     current_user = users.get_current_user()

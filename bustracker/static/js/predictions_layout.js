@@ -119,11 +119,81 @@ function showScrollBars() {
 	clearTimeout(timer);
 }
 
+/* View Model */
+
+var stop = function(id, title, timeToStop, directions)
+{
+	this.id = ko.observable(id);
+	this.title = ko.observable(title);
+	this.timeToStop = ko.observable(timeToStop);
+	this.directions = ko.observableArray([]);
+	
+	var mappedDirections = $.map(directions, function(aDirection) {
+		return new direction(timeToStop, aDirection.title, aDirection.destinations);
+	});
+	this.directions(mappedDirections);
+}
+
+var direction = function(timeToStop, title, destinations)
+{
+	this.stop = ko.observable(stop);
+	this.title = ko.observable(title);
+	this.destinations = ko.observableArray([]);
+	
+	var mappedDestinations = $.map(destinations, function(aDestination) {
+		return new destination(timeToStop, aDestination.title, aDestination.vehicles);
+	});
+	this.destinations(mappedDestinations);
+}
+
+var destination = function(timeToStop, title, vehicles)
+{
+	this.direction = ko.observable(direction);
+	this.title = ko.observable(title);
+	this.vehicles = ko.observableArray([]);
+	
+	var mappedVehicles = $.map(vehicles, function(aVehicle) {
+		return new vehicle(timeToStop, aVehicle.minutes);
+	});
+	this.vehicles(mappedVehicles);
+}
+
+var vehicle = function(timeToStop, minutes)
+{
+	this.destination = ko.observable(destination);
+	this.minutes = ko.observable(minutes);
+	this.timeToLeave = minutes - timeToStop;
+	
+	if (this.timeToLeave < 0) {
+		this.prettyTimeToLeave = "missed";
+	}
+	else if (this.timeToLeave == 0) {
+		this.prettyTimeToLeave = "leave now";
+	}
+	else {
+		this.prettyTimeToLeave = "leave in " + this.timeToLeave.toString() + "m";
+	}
+}
+
+var viewModel = function() {
+	this.stops = ko.observableArray([]);
+	
+	var self = this;
+	$.get("/predictions", function(stops) {
+		var mappedStops = $.map(stops, function(aStop) {
+			return new stop(aStop.id, aStop.title, aStop.timeToStop, aStop.directions);
+		});
+		self.stops(mappedStops);
+	}, 'json');	
+};
+
+ko.applyBindings(new viewModel());
+
 /* Document Ready */
 
 $(document).ready(function() {
 	hideExtras();
-	getPredictions();
+	//getPredictions();
 	adjustLayout();
 	initLayout();
 	isActive = true;

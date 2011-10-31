@@ -5,7 +5,6 @@
 <script src="/js/jquery.tmpl.js" type="text/javascript"></script>
 <script src="/js/knockout.js" type="text/javascript"></script>
 <script src="/js/clock.js" type="text/javascript"></script>
-<script src="/js/predictions_layout.js" type="text/javascript"></script>
 {% if show_news_feed != 'no' %}
 <script>
 newsFeedWidth = {{ news_feed_width }};
@@ -32,9 +31,7 @@ $(document).ready(function() {
 	
 	<div id="container">
 		<div id="stop-list-container">
-			<table id="stop-list" class="list">
-				<tr class="header1"><td class="header1-left">Loading arrivals...</td></tr>
-			</table>
+			<table id="stop-list" class="list" data-bind="template: {name:'stopTemplate', foreach: stops}"></table>
 		</div>
 		<div id="news-feed-list-container">
 			<table id="news-feed-list" class="list">
@@ -44,8 +41,34 @@ $(document).ready(function() {
 	</div>
 	{% else %}
 	<table id="stop-list" class="list">
-		<tr class="header1"><td class="header1-left">Loading arrivals...</td></tr>
+		<table id="stop-list" class="list" data-bind="template: {name:'stopTemplate', foreach: stops}"></table>
 	</table>
 	{% endif %}
 </div>
+
+{% verbatim %}
+
+<script type="text/x-jquery-tmpl" id="stopTemplate">
+	<tr class="header1"><td class="header1-left">${title}</td><td class="header1-right"><a href="/stop/edit/${id}">edit</a></td></tr>
+	{{tmpl(directions) "#directionTemplate"}}
+</script>
+
+<script type="text/x-jquery-tmpl" id="directionTemplate">
+	{{if title}}<tr class="header2"><td class="header2-left" colspan="2">${title}</td></tr>{{/if}}
+	{{tmpl(destinations) "#destinationTemplate"}}
+</script>
+
+<script type="text/x-jquery-tmpl" id="destinationTemplate">
+	<tr class="header3"><td class="header3-left" colspan="2">${title}</td></tr>
+	{{tmpl(vehicles) "#vehicleTemplate"}}
+</script>
+
+<script type="text/x-jquery-tmpl" id="vehicleTemplate">
+	<tr class="header4"><td class="header4-left"><span class="big">${minutes}</span> minutes</td><td class="header4-right">${prettyTimeToLeave}</td></tr>
+</script>
+
+{% endverbatim %} 
+
+<script src="/js/predictions_layout.js" type="text/javascript"></script>
+
 {% endblock %}
