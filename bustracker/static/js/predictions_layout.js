@@ -121,12 +121,14 @@ function showScrollBars() {
 
 /* View Model */
 
-var stop = function(id, title, timeToStop, directions)
+var stop = function(id, title, timeToStop, directions, position)
 {
+	var self = this;
 	this.id = ko.observable(id);
 	this.title = ko.observable(title);
 	this.timeToStop = ko.observable(timeToStop);
 	this.directions = ko.observableArray([]);
+	this.position = ko.observable(position);
 	
 	var mappedDirections = $.map(directions, function(aDirection) {
 		return new direction(timeToStop, aDirection.title, aDirection.destinations);
@@ -170,24 +172,56 @@ var vehicle = function(timeToStop, minutes)
 	else if (this.timeToLeave == 0) {
 		this.prettyTimeToLeave = "leave now";
 	}
+	else if (this.timeToLeave == 1) {
+		this.prettyTimeToLeave = "leave in 1m";
+	}
 	else {
 		this.prettyTimeToLeave = "leave in " + this.timeToLeave.toString() + "m";
 	}
 }
 
 var viewModel = function() {
+	var self = this;
 	this.stops = ko.observableArray([]);
 	
-	var self = this;
-	$.get("/predictions", function(stops) {
-		var mappedStops = $.map(stops, function(aStop) {
-			return new stop(aStop.id, aStop.title, aStop.timeToStop, aStop.directions);
-		});
-		self.stops(mappedStops);
-	}, 'json');	
+	this.moveup = function(i) {
+		if (i > 0) {
+			stop = self.stops()[i];
+			self.stops.splice(i, 1);
+			self.stops.splice(i-1, 0, stop);
+		}
+	};
+	
+	this.movedown = function(i) {
+		if (i < self.stops().length) {
+			stop = self.stops()[i];
+			self.stops.splice(i, 1);
+			self.stops.splice(i+1, 0, stop);
+		}
+	};
+	
+	this.edit = function(i) {
+		alert("show popup");
+	}
+	
+	this.delete = function(i) {
+		if (confirm("Do you really want to delete this stop?")) {
+			self.stops.splice(i, 1);
+		}
+	}
+	
+	this.refresh = function() {
+		$.get("/predictions", function(stops) {
+			var mappedStops = $.map(stops, function(aStop, index) {
+				return new stop(aStop.id, aStop.title, aStop.timeToStop, aStop.directions, aStop.position);
+			});
+			self.stops(mappedStops);
+		}, 'json');
+	}
 };
-
-ko.applyBindings(new viewModel());
+var vm = new viewModel();
+ko.applyBindings(vm);
+vm.refresh();
 
 /* Document Ready */
 

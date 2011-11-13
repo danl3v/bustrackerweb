@@ -31,7 +31,7 @@ $(document).ready(function() {
 	
 	<div id="container">
 		<div id="stop-list-container">
-			<table id="stop-list" class="list" data-bind="template: {name:'stopTemplate', foreach: stops}"></table>
+			<table id="stop-list" class="list" data-bind="template: 'stopTemplate'"></table>
 		</div>
 		<div id="news-feed-list-container">
 			<table id="news-feed-list" class="list">
@@ -41,7 +41,7 @@ $(document).ready(function() {
 	</div>
 	{% else %}
 	<table id="stop-list" class="list">
-		<table id="stop-list" class="list" data-bind="template: {name:'stopTemplate', foreach: stops}"></table>
+		<table id="stop-list" class="list" data-bind="template:'stopTemplate'"></table>
 	</table>
 	{% endif %}
 </div>
@@ -49,22 +49,30 @@ $(document).ready(function() {
 {% verbatim %}
 
 <script type="text/x-jquery-tmpl" id="stopTemplate">
-	<tr class="header1"><td class="header1-left">${title}</td><td class="header1-right"><a href="/stop/edit/${id}">edit</a></td></tr>
-	{{tmpl(directions) "#directionTemplate"}}
-</script>
 
-<script type="text/x-jquery-tmpl" id="directionTemplate">
-	{{if title}}<tr class="header2"><td class="header2-left" colspan="2">${title}</td></tr>{{/if}}
-	{{tmpl(destinations) "#destinationTemplate"}}
-</script>
-
-<script type="text/x-jquery-tmpl" id="destinationTemplate">
-	<tr class="header3"><td class="header3-left" colspan="2">${title}</td></tr>
-	{{tmpl(vehicles) "#vehicleTemplate"}}
-</script>
-
-<script type="text/x-jquery-tmpl" id="vehicleTemplate">
-	<tr class="header4"><td class="header4-left"><span class="big">${minutes}</span> minutes</td><td class="header4-right">${prettyTimeToLeave}</td></tr>
+	{{if stops().length == 0}}
+		<tr class="header1"><td class="header1-left">Loading...</td></tr>
+	{{/if}}
+	{{each(i, stop) stops()}}
+		<tr class="header1">
+			<td class="header1-left">${title}</td>
+			<td class="header1-right">
+				<button data-bind="click: function() { vm.moveup(i) }, visible: i > 0">move up</button>
+				<button data-bind="click: function() { vm.movedown(i) }, visible: i < vm.stops().length-1">move down</button>
+				<button data-bind="click: function() { vm.edit(i) }">edit</button>
+				<button data-bind="click: function() { vm.delete(i) }">delete</button>
+			</td>
+		</tr>
+		{{each(j, direction) directions()}}
+			{{if title}}<tr class="header2"><td class="header2-left" colspan="2">${title}</td></tr>{{/if}}
+			{{each(k, destination) destinations()}}
+				<tr class="header3"><td class="header3-left" colspan="2">${title}</td></tr>
+				{{each(l, vehicle) vehicles()}}
+					<tr class="header4"><td class="header4-left"><span class="big">${minutes}</span> minutes</td><td class="header4-right">${prettyTimeToLeave}</td></tr>
+				{{/each}}
+			{{/each}}
+		{{/each}}
+	{{/each}}
 </script>
 
 {% endverbatim %} 
