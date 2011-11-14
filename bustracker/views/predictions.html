@@ -46,6 +46,56 @@ $(document).ready(function() {
 	{% endif %}
 </div>
 
+<div class="new-stop-form" style="position: absolute; top: 20%; left: 30%; z-index: 9999;" data-bind="visible: editingStop">
+	<form>
+		
+		<h1 data-bind="text: editingStop().title"></h1>
+		<p>edit stop</p>
+		
+		<label>Stop Title:
+		<span class="small">your personal description</span>
+		</label>
+		<input type="text" name="title" class="title" id="title" placeholder="e.g. Line 18 at Everett to Downtown Oakland" data-bind="value: editingStop().title">
+		
+		<label>Your origin:
+		<span class="small">use the menus</span>
+		</label>
+		<div class="select-set">
+		<select name="agency-select" id="agency-select" data-bind="options: agencyChoices, value: editingStop().agencyTag"></select>
+		
+		<div id="nextbus-menus" data-bind="visible: editingStop().agencyTag != 'bart'">
+		<select name="nextbus-line-select" id="nextbus-line-select"></select>
+		<select name="nextbus-direction-select" id="nextbus-direction-select"></select>
+		<select name="nextbus-stop-select" id="nextbus-stop-select"></select>
+		</div>
+		<div id="bart-menus" data-bind="visible: editingStop().agencyTag == 'bart'">
+		<select name="bart-station-select" id="bart-station-select"></select>
+		<select name="bart-direction-select" id="bart-direction-select"></select>
+		</div>
+		</div>
+		
+		<label>Time to Get to Stop:
+		<span class="small">this is your estimation in minutes</span>
+		</label>
+		<input type="text" name="time-to-stop" id="time-to-stop" placeholder="e.g. 12" data-bind="value: editingStop().timeToStop">
+
+		<button data-bind="click: function() { vm.editingStop(false) }">Done</button>
+	</form>
+</div>
+
+<style>
+#fade {
+	background: #000; 
+	position: fixed; left: 0; top: 0; 
+	z-index: 10;
+	width: 100%; height: 100%;
+	opacity: .70;
+	z-index: 999;
+}
+</style>
+
+<div id="fade" data-bind="visible: editingStop"></div>
+
 {% verbatim %}
 
 <script type="text/x-jquery-tmpl" id="stopTemplate">

@@ -119,26 +119,32 @@ function showScrollBars() {
 	clearTimeout(timer);
 }
 
-/* View Model */
+/* Data to represent returned data */
 
-var stop = function(id, title, timeToStop, directions, position)
+var stop = function(aStop)
 {
 	var self = this;
-	this.id = ko.observable(id);
-	this.title = ko.observable(title);
-	this.timeToStop = ko.observable(timeToStop);
-	this.directions = ko.observableArray([]);
-	this.position = ko.observable(position);
+	this.id = ko.observable(aStop.id);
+	this.title = ko.observable(aStop.title);
 	
-	var mappedDirections = $.map(directions, function(aDirection) {
-		return new direction(timeToStop, aDirection.title, aDirection.destinations);
+	this.agencyTag = ko.observable(aStop.agencyTag);
+	this.lineTag = ko.observable(aStop.lineTag);
+	this.directionTag = ko.observable(aStop.directionTag);
+	this.stopTag = ko.observable(aStop.stopTag);
+	this.destinationTag = ko.observable(aStop.destinationTag);
+	
+	this.timeToStop = ko.observable(aStop.timeToStop);
+	this.directions = ko.observableArray([]);
+	this.position = ko.observable(aStop.position);
+	
+	var mappedDirections = $.map(aStop.directions, function(aDirection) {
+		return new direction(self.timeToStop, aDirection.title, aDirection.destinations);
 	});
 	this.directions(mappedDirections);
 }
 
 var direction = function(timeToStop, title, destinations)
 {
-	this.stop = ko.observable(stop);
 	this.title = ko.observable(title);
 	this.destinations = ko.observableArray([]);
 	
@@ -164,26 +170,32 @@ var vehicle = function(timeToStop, minutes)
 {
 	this.destination = ko.observable(destination);
 	this.minutes = ko.observable(minutes);
-	this.timeToLeave = minutes - timeToStop;
+	this.timeToLeave = ko.observable(minutes - timeToStop());
 	
-	if (this.timeToLeave < 0) {
+	if (this.timeToLeave() < 0) {
 		this.prettyTimeToLeave = "missed";
 	}
-	else if (this.timeToLeave == 0) {
+	else if (this.timeToLeave() == 0) {
 		this.prettyTimeToLeave = "leave now";
 	}
-	else if (this.timeToLeave == 1) {
+	else if (this.timeToLeave() == 1) {
 		this.prettyTimeToLeave = "leave in 1m";
 	}
 	else {
-		this.prettyTimeToLeave = "leave in " + this.timeToLeave.toString() + "m";
+		this.prettyTimeToLeave = "leave in " + this.timeToLeave().toString() + "m";
 	}
 }
+
+/* View Model */
 
 var viewModel = function() {
 	var self = this;
 	this.stops = ko.observableArray([]);
+	this.editingStop = ko.observable(false);
 	
+	this.agencyChoices = ["actransit", "sf-muni", "bart"];
+	
+	// stop actions
 	this.moveup = function(i) {
 		if (i > 0) {
 			stop = self.stops()[i];
@@ -201,7 +213,7 @@ var viewModel = function() {
 	};
 	
 	this.edit = function(i) {
-		alert("show popup");
+		self.editingStop(self.stops()[i]);
 	}
 	
 	this.delete = function(i) {
@@ -210,13 +222,15 @@ var viewModel = function() {
 		}
 	}
 	
+	// board actions
 	this.refresh = function() {
 		$.get("/predictions", function(stops) {
 			var mappedStops = $.map(stops, function(aStop, index) {
-				return new stop(aStop.id, aStop.title, aStop.timeToStop, aStop.directions, aStop.position);
+				return new stop(aStop);
 			});
 			self.stops(mappedStops);
 		}, 'json');
+		setTimeout(vm.refresh, 20000);	
 	}
 };
 var vm = new viewModel();
