@@ -16,52 +16,52 @@
 
 html, body
 {
-	margin: 0;
-	padding: 0;
-	height: 100%;
+    margin: 0;
+    padding: 0;
+    height: 100%;
 }
 
 div#wrapper
 {
-	min-height: 100%;
-	position: relative;
+    min-height: 100%;
+    position: relative;
 }
 
 div#header
 {
-	text-align: center;
-	padding-bottom: .4em;
-	font-size: 2em;
+    text-align: center;
+    padding-bottom: .4em;
+    font-size: 2em;
 }
 
 div#main
 {
-	padding-bottom: @footer-height;
+    padding-bottom: @footer-height;
 }
 
 div#container
 {
-	display: inline-block;
-	width: 100%;
+    display: inline-block;
+    width: 100%;
 }
 
 div#stop-list-container
 {
-	float: left;
+    float: left;
 }
 
 div#news-feed-list-container
 {
-	float: right;
+    float: right;
 }
 
 div#footer
 {
-	position: absolute;
-	bottom: 0;
-	width: 100%;
-	height: @footer-height;
-	opacity: 0;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: @footer-height;
+    opacity: 0;
     -webkit-transition: all 0.2s ease;
     -moz-transition: all 0.2s ease;
     -o-transition: all 0.2s ease;
@@ -69,58 +69,68 @@ div#footer
 
 div#news-feed-background
 {
-	position: absolute;
-	right: 0;
-	top: 0;
-	background-color: @news-feed-list-background-color;
-	z-index: -10;
+    position: absolute;
+    right: 0;
+    top: 0;
+    background-color: @news-feed-list-background-color;
+    z-index: -10;
 }
 
 div#divider
 {
-	position: absolute;
-	border-right: 3px solid orange;
-	z-index: 10;
+    position: absolute;
+    border-right: 3px solid orange;
+    z-index: 10;
 }
 
 div#banner
 {
-	position: absolute;
-	left: 0;
-	top: 0;
-	width: 100%;
-	height: 100%;
-	
-	background-color: #057685;
-	color: #FFFFFF;
-	
-	font-size: 5em;
-	font-weight: bold;
-	text-align: center;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
     
-	z-index: 10;
+    background-color: #057685;
+    color: #FFFFFF;
+    
+    font-size: 5em;
+    font-weight: bold;
+    text-align: center;
+    
+    z-index: 10;
+}
+
+div#fade
+{
+    background: #000; 
+    position: fixed; left: 0; top: 0; 
+    z-index: 10;
+    width: 100%; height: 100%;
+    opacity: .70;
+    z-index: 999;
 }
 
 /* LINKS AND BODY */
 
 body
 {
-	background-color: @background-color;
-	color: @text-color;
-	font-family: 'News Cycle', sans-serif;
+    background-color: @background-color;
+    color: @text-color;
+    font-family: 'News Cycle', sans-serif;
 }
 
 a, a:hover, a:visited, a:active
 {
-	color: #FFFFFF;
-	text-decoration: none;
+    color: #FFFFFF;
+    text-decoration: none;
 }
 
 /* HEADER STYLING */
 
 div#header span#clock
 {
-	color: #FFFFFF;
+    color: #FFFFFF;
 }
 
 /* FOOTER STYLING */
@@ -132,49 +142,49 @@ div#wrapper:hover > div#footer
 
 div#footer-content
 {
-	text-align: center;
-	color: #FFFFFF;
-	margin-top: 1em;
+    text-align: center;
+    color: #FFFFFF;
+    margin-top: 1em;
 }
 
 /* LIST */
 
 table.list
 {
-	width: 100%;
-	border-collapse: collapse;
+    width: 100%;
+    border-collapse: collapse;
 }
 
 /* HEADER 1 ROW */
 
 table.list tr.header1 td
 {
-	padding: .3em @left-right-margin;
+    padding: .3em @left-right-margin;
 }
 
 table.list tr.header1 td.header1-left
 {
-	text-align: left;
-	font-size: 2.5em;
-	font-weight: bold;
-	width: 70%;
-	vertical-align: middle;
+    text-align: left;
+    font-size: 2.5em;
+    font-weight: bold;
+    width: 70%;
+    vertical-align: middle;
 }
 
 table.list tr.header1 td.header1-right
 {
-	text-align: right;
-	width: 30%;
-	font-size: 1.5em;
-	font-weight: normal;
-	vertical-align: middle;
-	opacity: 0;
+    text-align: right;
+    width: 30%;
+    font-size: 1.5em;
+    font-weight: normal;
+    vertical-align: middle;
+    opacity: 0;
     -webkit-transition: all 0.2s ease;
     -moz-transition: all 0.2s ease;
     -o-transition: all 0.2s ease;
 }
 
-table.list tr.header1:hover > td.header1-right
+div#wrapper:hover td.header1-right
 {
     opacity: 1;
 }
@@ -183,103 +193,103 @@ table.list tr.header1:hover > td.header1-right
 
 table.list tr.header2
 {
-	background: @highlight-color;
+    background: @highlight-color;
 }
 
 table.list tr.header2 td
 {
-	padding: .5em @left-right-margin;
+    padding: .5em @left-right-margin;
 }
 
 table.list tr.header2 td.header2-left
 {
-	text-align: left;
-	font-size: 1.7em;
-	font-weight: bold;
-	width: 70%;
-	vertical-align: middle;
+    text-align: left;
+    font-size: 1.7em;
+    font-weight: bold;
+    width: 70%;
+    vertical-align: middle;
 }
 
 /* HEADER 3 ROW */
 
 table.list tr.header3
 {
-	background: #293028;
+    background: #293028;
 }
 
 table.list tr.header3 td
 {
-	padding: .5em @left-right-margin;
+    padding: .5em @left-right-margin;
 }
 
 table.list tr.header3 td.header3-left
 {
-	text-align: left;
-	font-size: 1.3em;
-	font-weight: bold;
-	width: 70%;
-	vertical-align: middle;
+    text-align: left;
+    font-size: 1.3em;
+    font-weight: bold;
+    width: 70%;
+    vertical-align: middle;
 }
 
 /* HEADER 4 ROW */
 
 table.list tr.header4 td
 {
-	padding: .2em @left-right-margin;
-	color: #FFFFFF;
+    padding: .2em @left-right-margin;
+    color: #FFFFFF;
 }
 
 table.list tr.header4 td.header4-left
 {
-	text-align: left;
-	width: 50%;
-	font-size: 1.2em;
+    text-align: left;
+    width: 50%;
+    font-size: 1.2em;
 }
 
 table.list tr.header4 td.header4-right
 {
-	width: 50%;
-	text-align: right;
-	font-size: 1.2em;
+    width: 50%;
+    text-align: right;
+    font-size: 1.2em;
 }
 
 table.list tr.header4 td.header4-subtitle
 {
-	text-align: left;
-	width: 50%;
-	color: #3BBA00;
-	font-size: 1.5em;
-	padding-bottom: .4em !important;
+    text-align: left;
+    width: 50%;
+    color: #3BBA00;
+    font-size: 1.5em;
+    padding-bottom: .4em !important;
 }
 
 table.list tr.header4 td.header4-post
 {
-	font-size: 1.5em;
-	color: @text-color;
+    font-size: 1.5em;
+    color: @text-color;
 }
 
 /* NON-ROW SPECIFIC STYLING */
 
 table.list tr td span.big
 {
-	font-size: 2em;
-	font-weight: bold;
+    font-size: 2em;
+    font-weight: bold;
 }
 
 table.list tr td span.body
 {
-	display: block;
+    display: block;
 }
 
 table.list tr td span.details
 {
-	font-size: .6em;
-	color: #FFFFFF;
+    font-size: .6em;
+    color: #FFFFFF;
 }
 
 table.list tr td span.tools
 {
-	opacity: 0;
+    opacity: 0;
     -webkit-transition: all 0.2s ease;
     -moz-transition: all 0.2s ease;
     -o-transition: all 0.2s ease;
@@ -294,38 +304,38 @@ table.list tr.header4:hover > td span.details span.tools
 
 table#stop-list
 {
-	border-top: 1px solid @border-color;
-	border-bottom: 1px solid @border-color;
+    border-top: 1px solid @border-color;
+    border-bottom: 1px solid @border-color;
 }
 
 table#stop-list tr td
 {
-	border-top: 1px solid @border-color;
-	border-bottom: 1px solid @border-color;
+    border-top: 1px solid @border-color;
+    border-bottom: 1px solid @border-color;
 }
 
 table#stop-list tr.header1
 {
-	background: @highlight-color;
+    background: @highlight-color;
 }
 
 /* NEWS-FEED-LIST STYLING */
 
 table#news-feed-list
 {
-	border-top: 1px solid @news-feed-list-border-color;
-	border-bottom: 1px solid @news-feed-list-border-color;
+    border-top: 1px solid @news-feed-list-border-color;
+    border-bottom: 1px solid @news-feed-list-border-color;
 }
 
 table#news-feed-list tr td
 {
-	border-top: 1px solid @news-feed-list-border-color;
-	border-bottom: 1px solid @news-feed-list-border-color;
+    border-top: 1px solid @news-feed-list-border-color;
+    border-bottom: 1px solid @news-feed-list-border-color;
 }
 
 table#news-feed-list tr.header1
 {
-	background: @news-feed-list-highlight-color;
+    background: @news-feed-list-highlight-color;
 }
 
 /* STOP MANAGEMENT */
@@ -354,15 +364,15 @@ div.new-stop-form h2
     display: block;
     width: 100%;
     float: left;
-	margin-bottom: 20px;
-	padding-bottom: 10px;
-	border-bottom: solid 1px #FFFFFF;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: solid 1px #FFFFFF;
 }
 
 div.new-stop-form p
 {
     color: #FFFFFF;
-	text-align: center;
+    text-align: center;
     margin-bottom: 20px;
     border-bottom: solid 1px #FFFFFF;
     padding-bottom: 10px;
@@ -399,7 +409,7 @@ div.new-stop-form input, div.new-stop-form textarea
 
 div.new-stop-form textarea
 {
-	height: 5em;
+    height: 5em;
 }
 
 div.new-stop-form div.select-set
@@ -412,7 +422,18 @@ div.new-stop-form div.select-set
 
 div.new-stop-form div.select-set select
 {
-	display: block;
+    display: block;
+}
+
+button
+{
+    border: 0;
+    background: #666666;
+    text-align: center;
+    line-height: 31px;
+    color: #FFFFFF;
+    font-size: .5em;
+    font-weight: bold;
 }
 
 div.new-stop-form button
@@ -434,5 +455,5 @@ div.new-stop-form button
 
 span.separator
 {
-	color: @text-color;
+    color: @text-color;
 }

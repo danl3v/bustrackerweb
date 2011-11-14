@@ -109,7 +109,7 @@ function hardHideBanner() {
 
 function hideExtras() {
 	$('*').css('cursor', 'none');
-	$('#footer-content').fadeOut('slow');
+	$('#footer-content, .header1-right button').fadeOut('slow');
 }
 
 /* Scroll Bars */
@@ -252,7 +252,7 @@ $(document).ready(function() {
 		if (isActive && (pageX !== event.pageX || pageY !== event.pageY)) {
 			hardHideBanner();
 			$('*').css('cursor', 'auto');
-			$('#footer-content').fadeIn('slow');
+			$('#footer-content, .header1-right button').fadeIn('slow');
 			clearTimeout(cursorTimeout);
 			cursorTimeout = setTimeout(hideExtras, 1000);
 		}

@@ -83,18 +83,7 @@ $(document).ready(function() {
 	</form>
 </div>
 
-<style>
-#fade {
-	background: #000; 
-	position: fixed; left: 0; top: 0; 
-	z-index: 10;
-	width: 100%; height: 100%;
-	opacity: .70;
-	z-index: 999;
-}
-</style>
-
-<div id="fade" data-bind="visible: editingStop"></div>
+<div id="fade" data-bind="visible: editingStop, click: function() { vm.editingStop(false) } "></div>
 
 {% verbatim %}
 
@@ -117,6 +106,9 @@ $(document).ready(function() {
 			{{if title}}<tr class="header2"><td class="header2-left" colspan="2">${title}</td></tr>{{/if}}
 			{{each(k, destination) destinations()}}
 				<tr class="header3"><td class="header3-left" colspan="2">${title}</td></tr>
+				{{if vehicles().length == 0}}
+					<tr class="header4"><td class="header4-left">no vehicles predicted</td><td class="header4-right"></td></tr>
+				{{/if}}
 				{{each(l, vehicle) vehicles()}}
 					<tr class="header4"><td class="header4-left"><span class="big">${minutes}</span> minutes</td><td class="header4-right">${prettyTimeToLeave}</td></tr>
 				{{/each}}
