@@ -4,10 +4,10 @@ from google.appengine.api import users
 from models import models
 
 import nextbus, bart
-    
-class Predictions(webapp.RequestHandler):
+
+class Stops(webapp.RequestHandler):
     def get(self):
-        '''Write out the JSON for the user's saved stops and predicitons.'''
+        '''Write out the JSON for the user's saved stops.'''
         current_user = users.get_current_user()
         stops = models.User.all().filter('user =', current_user).get().stops.order('position')
         self.response.out.write(json.dumps([
@@ -21,8 +21,17 @@ class Predictions(webapp.RequestHandler):
                                     "destinationTag": stop.destination_tag,
                                     
                                     "timeToStop": stop.time_to_stop,
-                                    "directions": get_directions(stop),
                                     "position": stop.position,
+                                } for stop in stops]))
+
+class Predictions(webapp.RequestHandler):
+    def get(self):
+        '''Write out the JSON for the user's saved stops and predicitons.'''
+        current_user = users.get_current_user()
+        stops = models.User.all().filter('user =', current_user).get().stops.order('position')
+        self.response.out.write(json.dumps([
+                                {   "id": stop.key().id(),
+                                    "directions": get_directions(stop),
                                 } for stop in stops]))
 
 def get_directions(stop):

@@ -8,6 +8,7 @@ def main():
            ('/', welcome.MainPage),
            ('/feedback', welcome.Feedback),
            ('/settings', welcome.Settings),
+           ('/stops', predictions.Stops),
            ('/predictions', predictions.Predictions),
            
            # stop management

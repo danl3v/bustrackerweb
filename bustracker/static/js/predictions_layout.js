@@ -136,11 +136,6 @@ var stop = function(aStop)
 	this.timeToStop = ko.observable(aStop.timeToStop);
 	this.directions = ko.observableArray([]);
 	this.position = ko.observable(aStop.position);
-	
-	var mappedDirections = $.map(aStop.directions, function(aDirection) {
-		return new direction(self.timeToStop, aDirection.title, aDirection.destinations);
-	});
-	this.directions(mappedDirections);
 }
 
 var direction = function(timeToStop, title, destinations)
@@ -195,6 +190,16 @@ var viewModel = function() {
 	
 	this.agencyChoices = ["actransit", "sf-muni", "bart"];
 	
+	this.stopWithId = function(id) {
+		var stopToReturn = null;
+		self.stops().forEach(function(aStop, i) {
+			if (aStop.id() == id) {
+				stopToReturn = aStop;
+			}
+		});
+		return stopToReturn;
+	};
+	
 	// stop actions
 	this.moveup = function(i) {
 		if (i > 0) {
@@ -223,19 +228,33 @@ var viewModel = function() {
 	}
 	
 	// board actions
-	this.refresh = function() {
-		$.get("/predictions", function(stops) {
+	
+	this.loadStops = function() {
+		$.get("/stops", function(stops) {
 			var mappedStops = $.map(stops, function(aStop, index) {
 				return new stop(aStop);
 			});
 			self.stops(mappedStops);
+			self.refresh();
 		}, 'json');
-		setTimeout(vm.refresh, 20000);	
+	
+	}
+	
+	this.refresh = function() {
+		$.get("/predictions", function(predictions) {
+			$.map(predictions, function(aPrediction, i) {
+				var mappedDirections = $.map(aPrediction.directions, function(aDirection) {
+					return new direction(self.stops()[i].timeToStop, aDirection.title, aDirection.destinations);
+				});
+				self.stopWithId(aPrediction.id).directions(mappedDirections);
+			});
+		}, 'json');
+		setTimeout(self.refresh, 20000);	
 	}
 };
 var vm = new viewModel();
 ko.applyBindings(vm);
-vm.refresh();
+vm.loadStops();
 
 /* Document Ready */
 
