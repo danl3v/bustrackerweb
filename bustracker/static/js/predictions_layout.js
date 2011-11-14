@@ -256,7 +256,7 @@ $(document).ready(function() {
 			clearTimeout(cursorTimeout);
 			cursorTimeout = setTimeout(hideExtras, 1000);
 		}
-		else {
+		else if ($('#banner').length) {
 			hideBanner();
 		}
 		pageX = event.pageX;
