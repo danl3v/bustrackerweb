@@ -127,6 +127,8 @@ var stop = function(aStop)
 	this.id = ko.observable(aStop.id);
 	this.title = ko.observable(aStop.title);
 	
+	this.agencyChoice = vm.agencyFromTag(aStop.agencyTag);
+	
 	this.agencyTag = ko.observable(aStop.agencyTag);
 	this.lineTag = ko.observable(aStop.lineTag);
 	this.directionTag = ko.observable(aStop.directionTag);
@@ -181,6 +183,11 @@ var vehicle = function(timeToStop, minutes)
 	}
 }
 
+var agencyChoice = function(title, tag) {
+	this.title = title;
+	this.tag = tag;
+}
+
 /* View Model */
 
 var viewModel = function() {
@@ -188,7 +195,17 @@ var viewModel = function() {
 	this.stops = ko.observableArray([]);
 	this.editingStop = ko.observable(false);
 	
-	this.agencyChoices = ["actransit", "sf-muni", "bart"];
+	this.agencyChoices = [];
+	
+	this.agencyFromTag = function(tag) {
+		var theChoice = null;
+		self.agencyChoices.forEach(function(anAgencyChoice, i) {
+			if (anAgencyChoice.tag == tag) {
+				theChoice = anAgencyChoice;
+			}
+		});
+		return theChoice;
+	};
 	
 	this.stopWithId = function(id) {
 		var stopToReturn = null;
@@ -222,13 +239,13 @@ var viewModel = function() {
 	}
 	
 	this.delete = function(i) {
+		alert(self.agencyFromTag('actransit').title);
 		if (confirm("Do you really want to delete this stop?")) {
 			self.stops.splice(i, 1);
 		}
 	}
 	
 	// board actions
-	
 	this.loadStops = function() {
 		$.get("/stops", function(stops) {
 			var mappedStops = $.map(stops, function(aStop, index) {
@@ -251,6 +268,15 @@ var viewModel = function() {
 		}, 'json');
 		setTimeout(self.refresh, 20000);	
 	}
+	
+	// board initialization
+	$.get("/agencies", function(agencies) {
+		var mappedAgencies = $.map(agencies, function(anAgency, index) {
+			return new agencyChoice(anAgency.title, anAgency.tag);
+		});
+		self.agencyChoices = mappedAgencies;
+	}, 'json');
+	
 };
 var vm = new viewModel();
 ko.applyBindings(vm);

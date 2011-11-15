@@ -61,7 +61,7 @@ $(document).ready(function() {
 		<span class="small">use the menus</span>
 		</label>
 		<div class="select-set">
-		<select name="agency-select" id="agency-select" data-bind="options: agencyChoices, value: editingStop().agencyTag"></select>
+		<select name="agency-select" id="agency-select" data-bind="options: agencyChoices, optionsText: 'title', value: editingStop().agencyChoice, optionsCaption: 'Select a transit agency...'"></select>
 		
 		<div id="nextbus-menus" data-bind="visible: editingStop().agencyTag != 'bart'">
 		<select name="nextbus-line-select" id="nextbus-line-select"></select>

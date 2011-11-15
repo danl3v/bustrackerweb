@@ -8,6 +8,8 @@ def main():
            ('/', welcome.MainPage),
            ('/feedback', welcome.Feedback),
            ('/settings', welcome.Settings),
+           
+           # user specific data
            ('/stops', predictions.Stops),
            ('/predictions', predictions.Predictions),
            
@@ -17,6 +19,9 @@ def main():
            ('/stop/moveup/(.*)', stops.MoveUp),
            ('/stop/movedown/(.*)', stops.MoveDown),
            ('/stop/delete/(.*)', stops.DeleteStop),
+           
+           # general api
+           ('/agencies', predictions.Agencies),
            
            # nextbus
            ('/nextbus/lines', nextbus.Lines),

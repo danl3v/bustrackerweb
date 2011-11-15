@@ -5,6 +5,15 @@ from models import models
 
 import nextbus, bart
 
+class Agencies(webapp.RequestHandler):
+    def get(self):
+        '''Return the agencies.'''
+        self.response.out.write(json.dumps([
+            {"title": "AC Transit", "tag": "actransit"},
+            {"title": "SF MUNI", "tag": "sf-muni"},
+            {"title": "BART", "tag": "bart"},
+        ]))
+        
 class Stops(webapp.RequestHandler):
     def get(self):
         '''Write out the JSON for the user's saved stops.'''
@@ -26,7 +35,7 @@ class Stops(webapp.RequestHandler):
 
 class Predictions(webapp.RequestHandler):
     def get(self):
-        '''Write out the JSON for the user's saved stops and predicitons.'''
+        '''Write out the JSON predictions for the user's stops.'''
         current_user = users.get_current_user()
         stops = models.User.all().filter('user =', current_user).get().stops.order('position')
         self.response.out.write(json.dumps([
