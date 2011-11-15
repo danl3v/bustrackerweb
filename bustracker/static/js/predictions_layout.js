@@ -127,7 +127,7 @@ var stop = function(aStop)
 	this.id = ko.observable(aStop.id);
 	this.title = ko.observable(aStop.title);
 	
-	this.agencyChoice = vm.agencyFromTag(aStop.agencyTag);
+	this.agencyChoice = ko.observable(vm.agencyFromTag(aStop.agencyTag));
 	
 	this.agencyTag = ko.observable(aStop.agencyTag);
 	this.lineTag = ko.observable(aStop.lineTag);
@@ -183,7 +183,7 @@ var vehicle = function(timeToStop, minutes)
 	}
 }
 
-var agencyChoice = function(title, tag) {
+var selectionChoice = function(title, tag) {
 	this.title = title;
 	this.tag = tag;
 }
@@ -196,6 +196,10 @@ var viewModel = function() {
 	this.editingStop = ko.observable(false);
 	
 	this.agencyChoices = [];
+	this.lineChoices = [
+		new selectionChoice("12", "12"),
+		new selectionChoice("13", "13")
+	]
 	
 	this.agencyFromTag = function(tag) {
 		var theChoice = null;
@@ -272,7 +276,7 @@ var viewModel = function() {
 	// board initialization
 	$.get("/agencies", function(agencies) {
 		var mappedAgencies = $.map(agencies, function(anAgency, index) {
-			return new agencyChoice(anAgency.title, anAgency.tag);
+			return new selectionChoice(anAgency.title, anAgency.tag);
 		});
 		self.agencyChoices = mappedAgencies;
 	}, 'json');
@@ -297,7 +301,7 @@ $(document).ready(function() {
 		if (isActive && (pageX !== event.pageX || pageY !== event.pageY)) {
 			hardHideBanner();
 			$('*').css('cursor', 'auto');
-			$('#footer-content, .header1-right button').fadeIn('slow');
+			$('#footer-content, .header1-right button:visible').fadeIn('slow');
 			clearTimeout(cursorTimeout);
 			cursorTimeout = setTimeout(hideExtras, 1000);
 		}

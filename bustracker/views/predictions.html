@@ -64,14 +64,14 @@ $(document).ready(function() {
 		<select name="agency-select" id="agency-select" data-bind="options: agencyChoices, optionsText: 'title', value: editingStop().agencyChoice, optionsCaption: 'Select a transit agency...'"></select>
 		
 		<div id="nextbus-menus" data-bind="visible: editingStop().agencyTag != 'bart'">
-		<select name="nextbus-line-select" id="nextbus-line-select"></select>
+		<select name="nextbus-line-select" id="nextbus-line-select" data-bind="options: lineChoices, optionsText: 'title', optionsCaption: 'Select a line...'"></select>
 		<select name="nextbus-direction-select" id="nextbus-direction-select"></select>
 		<select name="nextbus-stop-select" id="nextbus-stop-select"></select>
 		</div>
-		<div id="bart-menus" data-bind="visible: editingStop().agencyTag == 'bart'">
+		<!--<div id="bart-menus" data-bind="visible: editingStop().agencyTag == 'bart'">
 		<select name="bart-station-select" id="bart-station-select"></select>
 		<select name="bart-direction-select" id="bart-direction-select"></select>
-		</div>
+		</div>-->
 		</div>
 		
 		<label>Time to Get to Stop:
