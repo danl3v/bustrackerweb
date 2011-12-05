@@ -48,7 +48,6 @@ $(document).ready(function() {
 
 <div class="new-stop-form" style="position: absolute; top: 20%; left: 30%; z-index: 9999;" data-bind="visible: editingStop">
 	<form>
-		
 		<h1 data-bind="text: editingStop().title"></h1>
 		<p>edit stop</p>
 		
@@ -90,14 +89,15 @@ $(document).ready(function() {
 <script type="text/x-jquery-tmpl" id="stopTemplate">
 
 	{{if stops().length == 0}}
-		<tr class="header1"><td class="header1-left">Loading...</td></tr>
+		{{if isLoading}}<tr class="header1"><td class="header1-left">${isLoading}Loading...</td></tr>{{/if}}
+		{{if !isLoading}}<tr class="header1"><td class="header1-left">No stops</td></tr>{{/if}}
 	{{/if}}
 	{{each(i, stop) stops()}}
 		<tr class="header1">
 			<td class="header1-left">${title}</td>
 			<td class="header1-right">
-				<button data-bind="click: function() { vm.moveup(i) }, visible: i > 0">move up</button>
-				<button data-bind="click: function() { vm.movedown(i) }, visible: i < vm.stops().length-1">move down</button>
+				{{if i > 0}}<button data-bind="click: function() { vm.moveup(i) }">move up</button>{{/if}}
+				{{if i < vm.stops().length-1}}<button data-bind="click: function() { vm.movedown(i) }">move down</button>{{/if}}
 				<button data-bind="click: function() { vm.edit(i) }">edit</button>
 				<button data-bind="click: function() { vm.delete(i) }">delete</button>
 			</td>

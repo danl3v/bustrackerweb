@@ -192,6 +192,8 @@ var selectionChoice = function(title, tag) {
 
 var viewModel = function() {
 	var self = this;
+	
+	this.isLoading = ko.observable(false);
 	this.stops = ko.observableArray([]);
 	this.editingStop = ko.observable(false);
 	
@@ -243,7 +245,6 @@ var viewModel = function() {
 	}
 	
 	this.delete = function(i) {
-		alert(self.agencyFromTag('actransit').title);
 		if (confirm("Do you really want to delete this stop?")) {
 			self.stops.splice(i, 1);
 		}
@@ -251,11 +252,13 @@ var viewModel = function() {
 	
 	// board actions
 	this.loadStops = function() {
+		self.isLoading = true;
 		$.get("/stops", function(stops) {
 			var mappedStops = $.map(stops, function(aStop, index) {
 				return new stop(aStop);
 			});
 			self.stops(mappedStops);
+			self.isLoading = false;
 			self.refresh();
 		}, 'json');
 	
@@ -301,7 +304,7 @@ $(document).ready(function() {
 		if (isActive && (pageX !== event.pageX || pageY !== event.pageY)) {
 			hardHideBanner();
 			$('*').css('cursor', 'auto');
-			$('#footer-content, .header1-right button:visible').fadeIn('slow');
+			$('#footer-content, .header1-right button').fadeIn('slow');
 			clearTimeout(cursorTimeout);
 			cursorTimeout = setTimeout(hideExtras, 1000);
 		}
