@@ -11,9 +11,25 @@ class Agencies(webapp.RequestHandler):
         self.response.out.write(json.dumps([
             {"title": "AC Transit", "tag": "actransit"},
             {"title": "SF MUNI", "tag": "sf-muni"},
-            {"title": "BART", "tag": "bart"},
+            #{"title": "BART", "tag": "bart"},
         ]))
         
+class Lines(webapp.RequestHandler):
+    def get(self, agency):
+        '''Return the lines.'''
+        if agency == 'bart':
+            self.response.out.write(json.dumps(bart.lines(agency)))
+        else:
+            self.response.out.write(json.dumps(nextbus.lines(agency)))
+    
+class Directions(webapp.RequestHandler):
+    def get(self):
+        '''Return the directions.'''
+        if agency == 'bart':
+            self.response.out.write(json.dumps(bart.directions(agency)))
+        else:
+            self.response.out.write(json.dumps(nextbus.directions(agency)))
+
 class Stops(webapp.RequestHandler):
     def get(self):
         '''Write out the JSON for the user's saved stops.'''

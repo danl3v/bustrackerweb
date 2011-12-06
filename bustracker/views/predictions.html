@@ -28,7 +28,6 @@ $(document).ready(function() {
 
 <div id="main">
 	{% if show_news_feed != 'no' %}
-	
 	<div id="container">
 		<div id="stop-list-container">
 			<table id="stop-list" class="list" data-bind="template: 'stopTemplate'"></table>
@@ -41,6 +40,7 @@ $(document).ready(function() {
 	</div>
 	{% else %}
 	<table id="stop-list" class="list">
+		<button data-bind="click: function() { vm.new() }"><span data-bind="text: vm.agencyChoices.length"></span></button>
 		<table id="stop-list" class="list" data-bind="template:'stopTemplate'"></table>
 	</table>
 	{% endif %}
@@ -63,7 +63,7 @@ $(document).ready(function() {
 		<select name="agency-select" id="agency-select" data-bind="options: agencyChoices, optionsText: 'title', value: editingStop().agencyChoice, optionsCaption: 'Select a transit agency...'"></select>
 		
 		<div id="nextbus-menus" data-bind="visible: editingStop().agencyTag != 'bart'">
-		<select name="nextbus-line-select" id="nextbus-line-select" data-bind="options: lineChoices, optionsText: 'title', optionsCaption: 'Select a line...'"></select>
+		<select name="nextbus-line-select" id="nextbus-line-select" data-bind="options: lineChoices, optionsText: 'title', value: editingStop().lineChoice, optionsCaption: 'Select a line...'"></select>
 		<select name="nextbus-direction-select" id="nextbus-direction-select"></select>
 		<select name="nextbus-stop-select" id="nextbus-stop-select"></select>
 		</div>

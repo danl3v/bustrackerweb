@@ -124,20 +124,39 @@ function showScrollBars() {
 var stop = function(aStop)
 {
 	var self = this;
-	this.id = ko.observable(aStop.id);
-	this.title = ko.observable(aStop.title);
 	
-	this.agencyChoice = ko.observable(vm.agencyFromTag(aStop.agencyTag));
-	
-	this.agencyTag = ko.observable(aStop.agencyTag);
-	this.lineTag = ko.observable(aStop.lineTag);
-	this.directionTag = ko.observable(aStop.directionTag);
-	this.stopTag = ko.observable(aStop.stopTag);
-	this.destinationTag = ko.observable(aStop.destinationTag);
-	
-	this.timeToStop = ko.observable(aStop.timeToStop);
-	this.directions = ko.observableArray([]);
-	this.position = ko.observable(aStop.position);
+	if (aStop) {
+		this.id = ko.observable(aStop.id);
+		this.title = ko.observable(aStop.title);
+		
+		this.agencyChoice = ko.observable(vm.agencyFromTag(aStop.agencyTag));
+		
+		this.agencyTag = ko.observable(aStop.agencyTag);
+		this.lineTag = ko.observable(aStop.lineTag);
+		this.directionTag = ko.observable(aStop.directionTag);
+		this.stopTag = ko.observable(aStop.stopTag);
+		this.destinationTag = ko.observable(aStop.destinationTag);
+		
+		this.timeToStop = ko.observable(aStop.timeToStop);
+		this.directions = ko.observableArray([]);
+		this.position = ko.observable(aStop.position);
+	}
+	else {
+		this.id = ko.observable(null);
+		this.title = ko.observable("");
+		
+		this.agencyChoice = ko.observable(null);
+		
+		this.agencyTag = ko.observable("");
+		this.lineTag = ko.observable("");
+		this.directionTag = ko.observable("");
+		this.stopTag = ko.observable("");
+		this.destinationTag = ko.observable("");
+		
+		this.timeToStop = ko.observable(0);
+		this.directions = ko.observableArray([]);
+		this.position = ko.observable(0);
+	}
 }
 
 var direction = function(timeToStop, title, destinations)
@@ -197,12 +216,6 @@ var viewModel = function() {
 	this.stops = ko.observableArray([]);
 	this.editingStop = ko.observable(false);
 	
-	this.agencyChoices = [];
-	this.lineChoices = [
-		new selectionChoice("12", "12"),
-		new selectionChoice("13", "13")
-	]
-	
 	this.agencyFromTag = function(tag) {
 		var theChoice = null;
 		self.agencyChoices.forEach(function(anAgencyChoice, i) {
@@ -244,6 +257,11 @@ var viewModel = function() {
 		self.editingStop(self.stops()[i]);
 	}
 	
+	this.new = function() {
+		self.stops.push(new stop(null));
+		self.editingStop(self.stops()[self.stops().length-1]);
+	}
+	
 	this.delete = function(i) {
 		if (confirm("Do you really want to delete this stop?")) {
 			self.stops.splice(i, 1);
@@ -276,15 +294,32 @@ var viewModel = function() {
 		setTimeout(self.refresh, 20000);	
 	}
 	
-	// board initialization
-	$.get("/agencies", function(agencies) {
-		var mappedAgencies = $.map(agencies, function(anAgency, index) {
-			return new selectionChoice(anAgency.title, anAgency.tag);
-		});
-		self.agencyChoices = mappedAgencies;
-	}, 'json');
+	// selections
+	this.agencyChoices = [];
+	this.lineChoices = [];
 	
+	this.updateAgencyChoices = function() {
+		$.get("/agencies", function(agencies) {
+			var mappedAgencies = $.map(agencies, function(anAgency, index) {
+				return new selectionChoice(anAgency.title, anAgency.tag);
+			});
+			self.agencyChoices = mappedAgencies;
+		}, 'json');
+	};
+	
+	this.updateLineChoices = function() {
+		$.get("/actransit/lines", function(lineChoices) {
+			var mappedLineChoices = $.map(lineChoices, function(aLineChoice, index) {
+				return new selectionChoice(aLineChoice.title, aLineChoice.tag);
+			});
+			self.lineChoices = mappedLineChoices;
+		}, 'json');
+	};
+	
+	this.updateAgencyChoices();
+	this.updateLineChoices();
 };
+
 var vm = new viewModel();
 ko.applyBindings(vm);
 vm.loadStops();

@@ -3,23 +3,17 @@ from google.appengine.ext import webapp
 from BeautifulSoup import BeautifulStoneSoup
 import functions
 
-class Lines(webapp.RequestHandler):
-    def post(self):
-        '''Return the lines for an agency.'''
-        agency = self.request.get('agency')
-        selected_line = self.request.get('line')
-        if not agency:
-            return
-        lines = functions.get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=routeList&a=' + agency)
-        soup = BeautifulStoneSoup(lines, selfClosingTags=['route'])
-        lines = soup.findAll('route')
-        html = '<option value="">Select line...</option>'
-        for line in lines:
-            if line['tag'] == selected_line:
-                html += '<option value="' + line['tag'] + '" selected>' + line['title'] + '</option>'
-            else:
-                html += '<option value="' + line['tag'] + '">' + line['title'] + '</option>'
-        self.response.out.write(html)
+def lines(agency):
+	'''Return the lines for an agency.'''
+	if not agency:
+		return []
+	lines = functions.get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=routeList&a=' + agency)
+	soup = BeautifulStoneSoup(lines, selfClosingTags=['route'])
+	lines = soup.findAll('route')
+	list = []
+	for line in lines:
+		list.append({"tag" : line['tag'], "title" : line['title']})
+	return list
         
 class Directions(webapp.RequestHandler):
     def post(self):

@@ -22,9 +22,11 @@ def main():
            
            # general api
            ('/agencies', predictions.Agencies),
+           ('/(.*)/lines', predictions.Lines),
+           ('/(.*)/(.*)/directions', predictions.Directions),
+           ('/(.*)/(.*)/(.*)/stops', predictions.Stops),
            
            # nextbus
-           ('/nextbus/lines', nextbus.Lines),
            ('/nextbus/directions', nextbus.Directions),
            ('/nextbus/stops', nextbus.Stops),
            
