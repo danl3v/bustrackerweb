@@ -15,25 +15,17 @@ def lines(agency):
 		list.append({"tag" : line['tag'], "title" : line['title']})
 	return list
         
-class Directions(webapp.RequestHandler):
-    def post(self):
-        '''Return the directions for a line for an agency.'''
-        agency = self.request.get('agency')
-        line = self.request.get('line')
-        selected_direction = self.request.get('direction')
-        if not agency or not line:
-            return
-        directions = functions.get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=' + agency + '&r=' + line)
-        soup = BeautifulStoneSoup(directions, selfClosingTags=['stop'])
-        directions = soup.findAll('direction')
-        html = ""
-        html += '<option value="">Select direction...</option>'
-        for direction in directions:
-            if direction['tag'] == selected_direction:
-                html += '<option value="' + direction['tag'] + '" selected>' + direction['title'] + '</option>'
-            else:
-                html += '<option value="' + direction['tag'] + '">' + direction['title'] + '</option>'
-        self.response.out.write(html)
+def directions(agency, line):
+	'''Return the directions for a line for an agency.'''
+	if not agency or not line:
+		return []
+	directions = functions.get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=' + agency + '&r=' + line)
+	soup = BeautifulStoneSoup(directions, selfClosingTags=['stop'])
+	directions = soup.findAll('direction')
+	list = []
+	for direction in directions:
+		list.append({"tag" : direction['tag'], "title" : direction['title']})
+	return list
     
 class Stops(webapp.RequestHandler):
     def post(self):

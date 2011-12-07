@@ -27,7 +27,6 @@ def main():
            ('/(.*)/(.*)/(.*)/stops', predictions.Stops),
            
            # nextbus
-           ('/nextbus/directions', nextbus.Directions),
            ('/nextbus/stops', nextbus.Stops),
            
            # bart

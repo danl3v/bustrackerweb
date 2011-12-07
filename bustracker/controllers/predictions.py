@@ -23,12 +23,12 @@ class Lines(webapp.RequestHandler):
             self.response.out.write(json.dumps(nextbus.lines(agency)))
     
 class Directions(webapp.RequestHandler):
-    def get(self):
+    def get(self, agency, line):
         '''Return the directions.'''
         if agency == 'bart':
-            self.response.out.write(json.dumps(bart.directions(agency)))
+            self.response.out.write(json.dumps(bart.directions(agency, line)))
         else:
-            self.response.out.write(json.dumps(nextbus.directions(agency)))
+            self.response.out.write(json.dumps(nextbus.directions(agency, line)))
 
 class Stops(webapp.RequestHandler):
     def get(self):
