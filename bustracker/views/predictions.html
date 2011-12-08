@@ -77,11 +77,14 @@ $(document).ready(function() {
 		</label>
 		<input type="text" name="time-to-stop" id="time-to-stop" placeholder="e.g. 12" data-bind="value: editingStop().timeToStop">
 
-		<button data-bind="click: function() { vm.doneEditingStop() }">Done</button>
+		<div id="buttons">
+		<button id="cancelButton" data-bind="click: function() { vm.cancelEditingStop() }">Cancel</button>
+		<button id="doneButton" data-bind="click: function() { vm.doneEditingStop() }">Done</button>
+		</div>
 	</form>
 </div>
 
-<div id="fade" data-bind="visible: editingStop, click: function() { vm.editingStop(false) }"></div>
+<div id="fade" data-bind="visible: editingStop, click: function() { vm.cancelEditingStop() }"></div>
 
 {% verbatim %}
 

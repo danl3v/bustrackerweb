@@ -1,22 +1,48 @@
+
+// from http://www.knockmeout.net/2011/03/guard-your-model-accept-or-cancel-edits.html
+ko.protectedObservable = function(initialValue) {
+        var _actualValue = ko.observable(initialValue);
+        var _tempValue = initialValue;
+        
+        var result = ko.dependentObservable({
+            read: function() {
+               return _actualValue(); 
+            },
+            write: function(newValue) {
+                 _tempValue = newValue; 
+            }
+        }); 
+        
+        result.tempValue = _tempValue;
+        
+        result.commit = function() {
+            if (_tempValue !== _actualValue()) {
+                 _actualValue(_tempValue); 
+            }  
+        };
+        
+        result.reset = function() {
+            _actualValue.valueHasMutated();
+            _tempValue = _actualValue();   //reset temp value 
+        };
+     
+        return result;
+    };
+
+
 var stop = function(aStop)
 {
 	var self = this;
 
 	if (aStop != null) {
 		this.id = ko.observable(aStop.id);
-		this.title = ko.observable(aStop.title);
-		
-		this.timeToStop = ko.observable(aStop.timeToStop);
-		this.directions = ko.observableArray([]);
-		this.position = ko.observable(aStop.position);
+		this.title = ko.protectedObservable(aStop.title);		
+		this.timeToStop = ko.protectedObservable(aStop.timeToStop);
 	}
 	else {
 		this.id = ko.observable();
-		this.title = ko.observable("untitled stop");
-		
-		this.timeToStop = ko.observable(0);
-		this.directions = ko.observableArray([]);
-		this.position = ko.observable(0);
+		this.title = ko.protectedObservable("untitled stop");
+		this.timeToStop = ko.protectedObservable(0);
 	}
 	
 	this.agencyChoices = ko.observableArray([]);
@@ -24,10 +50,12 @@ var stop = function(aStop)
 	this.directionChoices = ko.observableArray([]);
 	this.stopChoices = ko.observableArray([]);
 	
-	this.agencyChoice = ko.observable(null);
-	this.lineChoice = ko.observable(null);
-	this.directionChoice = ko.observable(null);
-	this.stopChoice = ko.observable(null);
+	this.agencyChoice = ko.protectedObservable(null);
+	this.lineChoice = ko.protectedObservable(null);
+	this.directionChoice = ko.protectedObservable(null);
+	this.stopChoice = ko.protectedObservable(null);
+	
+	this.directions = ko.observableArray([]);
 	
 	// choiceFromTag
 	this.choiceFromTag = function(tag, choices) {
@@ -40,6 +68,24 @@ var stop = function(aStop)
 		return theChoice;
 	};
 	
+	this.commitAll = function() {
+		self.title.commit();
+		self.timeToStop.commit();
+		self.agencyChoice.commit();
+		self.lineChoice.commit();
+		self.directionChoice.commit();
+		self.stopChoice.commit();
+	}
+	
+	this.resetAll = function() {
+		self.title.reset();
+		self.timeToStop.reset();
+		self.agencyChoice.reset();
+		self.lineChoice.reset();
+		self.directionChoice.reset();
+		self.stopChoice.reset();
+	}
+	
 	// choice updating functions
 	this.updateAgencyChoices = ko.dependentObservable(function() {
 		$.get("/agencies", function(agencies) {
@@ -49,6 +95,7 @@ var stop = function(aStop)
 			self.agencyChoices(mappedAgencyChoices);
 			if (aStop.agencyTag) {
 				self.agencyChoice(self.choiceFromTag(aStop.agencyTag, mappedAgencyChoices));
+				self.agencyChoice.commit();
 				aStop.agencyTag = null;
 			}
 		}, 'json');
@@ -64,6 +111,7 @@ var stop = function(aStop)
 				self.lineChoices(mappedLineChoices);
 				if (aStop.lineTag) {
 					self.lineChoice(self.choiceFromTag(aStop.lineTag, mappedLineChoices));
+					self.lineChoice.commit();
 					aStop.lineTag = null;
 				}
 			}, 'json');
@@ -84,6 +132,7 @@ var stop = function(aStop)
 				self.directionChoices(mappedDirectionChoices);
 				if (aStop.directionTag) {
 					self.directionChoice(self.choiceFromTag(aStop.directionTag, mappedDirectionChoices));
+					self.directionChoice.commit();
 					aStop.direcitonTag = null;
 				}
 			}, 'json');
@@ -104,6 +153,7 @@ var stop = function(aStop)
 				self.stopChoices(mappedStopChoices);
 				if (aStop.stopTag) {
 					self.stopChoice(self.choiceFromTag(aStop.stopTag, mappedStopChoices));
+					self.stopChoice.commit();
 					aStop.stopTag = null;
 				}
 			}, 'json');
@@ -228,8 +278,14 @@ var viewModel = function() {
 		self.editingStop(self.stops()[i]);
 	}
 	
+	this.cancelEditingStop = function() {
+		self.editingStop().resetAll()
+		self.editingStop(false);
+	}
+	
 	this.doneEditingStop = function() {
 		stop = self.editingStop();
+		self.editingStop().commitAll()
 		if (stop.agencyChoice() && stop.lineChoice() && stop.directionChoice() && stop.stopChoice()) {
 			$.post("/stop/save", { "id" : stop.id(), "title" : stop.title(), "agencyTag" : stop.agencyChoice().tag,	"lineTag" : stop.lineChoice().tag, "directionTag" : stop.directionChoice().tag,	"stopTag" : stop.stopChoice().tag, "timeToStop" : stop.timeToStop() }, function(data) {
 				if (data) {
