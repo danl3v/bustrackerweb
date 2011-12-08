@@ -87,13 +87,14 @@ class EditStop(webapp.RequestHandler):
         self.redirect('/')
         
 class DeleteStop(webapp.RequestHandler):
-    def get(self, id):
+    def post(self):
         '''Delete a stop.'''
         current_user = users.get_current_user()
+        id = self.request.get('id')
         stop = models.Stop.get_by_id(int(id))
         if stop and stop.user.user == current_user:
             stop.delete()
-        self.redirect('/')
+        self.response.out.write('{"id": ' + str(id) + '}')
         
 class MoveUp(webapp.RequestHandler):
     def get(self, id):

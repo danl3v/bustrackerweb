@@ -243,6 +243,11 @@ var viewModel = function() {
 	
 	this.delete = function(i) {
 		if (confirm("Do you really want to delete this stop?")) {
+			$.post("/stop/delete", { "id" : self.stops()[i].id() }, function(data) {
+				if (!data && !data.id) {
+					alert("Problem updating data on server.");
+				}
+			});
 			self.stops.splice(i, 1);
 		}
 	}

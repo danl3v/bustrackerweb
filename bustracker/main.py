@@ -18,7 +18,7 @@ def main():
            ('/stop/edit/(.*)', stops.EditStop),
            ('/stop/moveup/(.*)', stops.MoveUp),
            ('/stop/movedown/(.*)', stops.MoveDown),
-           ('/stop/delete/(.*)', stops.DeleteStop),
+           ('/stop/delete', stops.DeleteStop),
            
            ('/stop/save', stops.SaveStop),
            
