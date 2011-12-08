@@ -16,12 +16,6 @@ var stop = function(aStop)
 		this.directionChoice = ko.observable(null);
 		this.stopChoice = ko.observable(null);
 		
-		this.agencyTag = ko.observable(aStop.agencyTag); // phase these out in favor of above things
-		this.lineTag = ko.observable(aStop.lineTag);
-		this.directionTag = ko.observable(aStop.directionTag);
-		this.stopTag = ko.observable(aStop.stopTag);
-		this.destinationTag = ko.observable(aStop.destinationTag);
-		
 		this.timeToStop = ko.observable(aStop.timeToStop);
 		this.directions = ko.observableArray([]);
 		this.position = ko.observable(aStop.position);
@@ -40,12 +34,6 @@ var stop = function(aStop)
 		this.directionChoice = ko.observable(null);
 		this.stopChoice = ko.observable(null);
 		
-		this.agencyTag = ko.observable("");
-		this.lineTag = ko.observable("");
-		this.directionTag = ko.observable("");
-		this.stopTag = ko.observable("");
-		this.destinationTag = ko.observable("");
-		
 		this.timeToStop = ko.observable(0);
 		this.directions = ko.observableArray([]);
 		this.position = ko.observable(0);
@@ -61,7 +49,6 @@ var stop = function(aStop)
 		});
 		return theChoice;
 	};
-	
 	
 	// choice updating functions
 	this.updateAgencyChoices = ko.dependentObservable(function() {
@@ -91,6 +78,10 @@ var stop = function(aStop)
 				}
 			}, 'json');
 		}
+		else {
+			self.lineChoice(null);
+			self.lineChoices([]);
+		}
 		return "";
 	}, this);
 	
@@ -107,6 +98,10 @@ var stop = function(aStop)
 				}
 			}, 'json');
 		}
+		else {
+			self.directionChoice(null);
+			self.directionChoices([]);
+		}
 		return "";
 	}, this);
 	
@@ -122,6 +117,10 @@ var stop = function(aStop)
 					aStop.stopTag = null;
 				}
 			}, 'json');
+		}
+		else {
+			self.stopChoice(null);
+			self.stopChoices([]);
 		}
 		return "";
 	}, this);
@@ -225,8 +224,9 @@ var viewModel = function() {
 		stop = self.editingStop();
 		if (stop.agencyChoice() && stop.lineChoice() && stop.directionChoice() && stop.stopChoice()) {
 			$.post("/stop/save", { "id" : stop.id(), "title" : stop.title(), "agencyTag" : stop.agencyChoice().tag,	"lineTag" : stop.lineChoice().tag, "directionTag" : stop.directionChoice().tag,	"stopTag" : stop.stopChoice().tag, "timeToStop" : stop.timeToStop() }, function(data) {
-				alert(data);
+				self.editingStop().directions([])
 				self.editingStop(false);
+				self.refresh();
 			});
 			
 		}
@@ -250,8 +250,13 @@ var viewModel = function() {
 			});
 			self.stops(mappedStops);
 			self.isLoading = false;
-			self.refresh();
+			self.refreshTimer();
 		}, 'json');	
+	}
+	
+	this.refreshTimer = function() {
+		self.refresh();
+		setTimeout(self.refreshTimer, 20000);
 	}
 	
 	this.refresh = function() {
@@ -263,6 +268,5 @@ var viewModel = function() {
 				self.stopWithId(aPrediction.id).directions(mappedDirections);
 			});
 		}, 'json');
-		setTimeout(self.refresh, 20000);	
 	}
 };
