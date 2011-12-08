@@ -14,13 +14,10 @@ def main():
            ('/predictions', predictions.UserPredictions),
            
            # stop management
-           ('/stop/new', stops.NewStop),
-           ('/stop/edit/(.*)', stops.EditStop),
+		   ('/stop/save', stops.SaveStop),
            ('/stop/moveup/(.*)', stops.MoveUp),
            ('/stop/movedown/(.*)', stops.MoveDown),
            ('/stop/delete', stops.DeleteStop),
-           
-           ('/stop/save', stops.SaveStop),
            
            # general api
            ('/agencies', predictions.Agencies),
