@@ -6,8 +6,13 @@ var stop = function(aStop)
 		this.id = ko.observable(aStop.id);
 		this.title = ko.observable(aStop.title);
 		
-		this.agencyChoice = ko.observable(vm.agencyFromTag(aStop.agencyTag));
-		this.lineChoice = ko.observable(vm.lineFromTag(aStop.lineTag));
+		this.agencyChoices = ko.observableArray([]);
+		this.lineChoices = ko.observableArray([]);
+		this.directionChoices = ko.observableArray([]);
+		this.stopChoices = ko.observableArray([]);
+		
+		this.agencyChoice = ko.observable(vm.choiceFromTag(aStop.agencyTag, vm.agencyChoices)); // vm.agencyChoices could be wrong. check when loading from db
+		this.lineChoice = ko.observable(vm.lineFromTag(aStop.lineTag, vm.lineChoices));
 		this.directionChoice = ko.observable(null);
 		this.stopChoice = ko.observable(null);
 		
@@ -25,6 +30,11 @@ var stop = function(aStop)
 		this.id = ko.observable(null);
 		this.title = ko.observable("untitled stop");
 		
+		this.agencyChoices = ko.observableArray([]);
+		this.lineChoices = ko.observableArray([]);
+		this.directionChoices = ko.observableArray([]);
+		this.stopChoices = ko.observableArray([]);
+		
 		this.agencyChoice = ko.observable(null);
 		this.lineChoice = ko.observable(null);
 		this.directionChoice = ko.observable(null);
@@ -40,6 +50,53 @@ var stop = function(aStop)
 		this.directions = ko.observableArray([]);
 		this.position = ko.observable(0);
 	}
+	
+	// choice updating functions
+	this.updateAgencyChoices = ko.dependentObservable(function() {
+		$.get("/agencies", function(agencies) {
+			var mappedAgencies = $.map(agencies, function(anAgency, index) {
+				return new selectionChoice(anAgency.title, anAgency.tag);
+			});
+			self.agencyChoices(mappedAgencies);
+		}, 'json');
+		return "";
+	}, this);
+	
+	this.updateLineChoices = ko.dependentObservable(function() {
+		if (self.agencyChoice()) {
+			$.get("/" + self.agencyChoice().tag + "/lines", function(lineChoices) {
+				var mappedLineChoices = $.map(lineChoices, function(aLineChoice, index) {
+					return new selectionChoice(aLineChoice.title, aLineChoice.tag);
+				});
+				self.lineChoices(mappedLineChoices);
+			}, 'json');
+		}
+		return "";
+	}, this);
+	
+	this.updateDirectionChoices = ko.dependentObservable(function() {
+		if (self.agencyChoice() && self.lineChoice()) {
+			$.get("/" + self.agencyChoice().tag + "/" + self.lineChoice().tag + "/directions", function(directionChoices) {
+				var mappedDirectionChoices = $.map(directionChoices, function(aDirectionChoice, index) {
+					return new selectionChoice(aDirectionChoice.title, aDirectionChoice.tag);
+				});
+				self.directionChoices(mappedDirectionChoices);
+			}, 'json');
+		}
+		return "";
+	}, this);
+	
+	this.updateStopChoices = ko.dependentObservable(function() {
+		if (self.agencyChoice() && self.lineChoice()  && self.directionChoice()) {
+			$.get("/" + self.agencyChoice().tag + "/" + self.lineChoice().tag + "/" + self.directionChoice().tag + "/stops", function(stopChoices) {
+				var mappedStopChoices = $.map(stopChoices, function(aStopChoice, index) {
+					return new selectionChoice(aStopChoice.title, aStopChoice.tag);
+				});
+				self.stopChoices(mappedStopChoices);
+			}, 'json');
+		}
+		return "";
+	}, this);
 }
 
 var direction = function(timeToStop, title, destinations)
@@ -99,21 +156,11 @@ var viewModel = function() {
 	this.stops = ko.observableArray([]);
 	this.editingStop = ko.observable(false);
 	
-	this.agencyFromTag = function(tag) {
+	this.choiceFromTag = function(tag, choices) {
 		var theChoice = null;
-		self.agencyChoices.forEach(function(anAgencyChoice, i) {
-			if (anAgencyChoice.tag == tag) {
-				theChoice = anAgencyChoice;
-			}
-		});
-		return theChoice;
-	};
-	
-	this.lineFromTag = function(tag) {
-		var theChoice = null;
-		self.lineChoices.forEach(function(aLineChoice, i) {
-			if (aLineChoice.tag == tag) {
-				theChoice = aLineChoice;
+		self.choices.forEach(function(aChoice, i) {
+			if (aChoice.tag == tag) {
+				theChoice = aChoice;
 			}
 		});
 		return theChoice;
@@ -187,56 +234,4 @@ var viewModel = function() {
 		}, 'json');
 		setTimeout(self.refresh, 20000);	
 	}
-	
-	// selections
-	this.agencyChoices = ko.observableArray([]);
-	this.lineChoices = ko.observableArray([]);
-	this.directionChoices = ko.observableArray([]);
-	this.stopChoices = ko.observableArray([]);
-	
-	this.updateAgencyChoices = ko.dependentObservable(function() {
-		$.get("/agencies", function(agencies) {
-			var mappedAgencies = $.map(agencies, function(anAgency, index) {
-				return new selectionChoice(anAgency.title, anAgency.tag);
-			});
-			self.agencyChoices(mappedAgencies);
-		}, 'json');
-		return "";
-	}, this);
-	
-	this.updateLineChoices = ko.dependentObservable(function() {
-		if (self.editingStop() && self.editingStop().agencyChoice()) {
-			$.get("/" + self.editingStop().agencyChoice().tag + "/lines", function(lineChoices) {
-				var mappedLineChoices = $.map(lineChoices, function(aLineChoice, index) {
-					return new selectionChoice(aLineChoice.title, aLineChoice.tag);
-				});
-				self.lineChoices(mappedLineChoices);
-			}, 'json');
-		}
-		return "";
-	}, this);
-	
-	this.updateDirectionChoices = ko.dependentObservable(function() {
-		if (self.editingStop() && self.editingStop().agencyChoice() && self.editingStop().lineChoice()) {
-			$.get("/" + self.editingStop().agencyChoice().tag + "/" + self.editingStop().lineChoice().tag + "/directions", function(directionChoices) {
-				var mappedDirectionChoices = $.map(directionChoices, function(aDirectionChoice, index) {
-					return new selectionChoice(aDirectionChoice.title, aDirectionChoice.tag);
-				});
-				self.directionChoices(mappedDirectionChoices);
-			}, 'json');
-		}
-		return "";
-	}, this);
-	
-	this.updateStopChoices = ko.dependentObservable(function() {
-		if (self.editingStop() && self.editingStop().agencyChoice() && self.editingStop().lineChoice()  && self.editingStop().directionChoice()) {
-			$.get("/" + self.editingStop().agencyChoice().tag + "/" + self.editingStop().lineChoice().tag + "/" + self.editingStop().directionChoice().tag + "/stops", function(stopChoices) {
-				var mappedStopChoices = $.map(stopChoices, function(aStopChoice, index) {
-					return new selectionChoice(aStopChoice.title, aStopChoice.tag);
-				});
-				self.stopChoices(mappedStopChoices);
-			}, 'json');
-		}
-		return "";
-	}, this);
 };
