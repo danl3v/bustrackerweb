@@ -20,6 +20,8 @@ def main():
            ('/stop/movedown/(.*)', stops.MoveDown),
            ('/stop/delete/(.*)', stops.DeleteStop),
            
+           ('/stop/save', stops.SaveStop),
+           
            # general api
            ('/agencies', predictions.Agencies),
            ('/(.*)/lines', predictions.Lines),

@@ -77,7 +77,7 @@ $(document).ready(function() {
 		</label>
 		<input type="text" name="time-to-stop" id="time-to-stop" placeholder="e.g. 12" data-bind="value: editingStop().timeToStop">
 
-		<button data-bind="click: function() { vm.editingStop(false) }">Done</button>
+		<button data-bind="click: function() { vm.doneEditingStop() }">Done</button>
 	</form>
 </div>
 
@@ -89,7 +89,7 @@ $(document).ready(function() {
 
 	{{if stops().length == 0}}
 		{{if vm.isLoading()}}<tr class="header1"><td class="header1-left">${isLoading}Loading...</td></tr>{{/if}}
-		{{if !vm.isLoading()}}<tr class="header1"><td class="header1-left">No stops. <a href="#" onclick="vm.new()">Add one!</a>.</td></tr>{{/if}}
+		{{if !vm.isLoading()}}<tr class="header1"><td class="header1-left">No stops. <a href="#" onclick="vm.newStop()">Add one!</a>.</td></tr>{{/if}}
 	{{/if}}
 	{{each(i, stop) stops()}}
 		<tr class="header1">
@@ -97,7 +97,7 @@ $(document).ready(function() {
 			<td class="header1-right">
 				{{if i > 0}}<button data-bind="click: function() { vm.moveup(i) }">move up</button>{{/if}}
 				{{if i < vm.stops().length-1}}<button data-bind="click: function() { vm.movedown(i) }">move down</button>{{/if}}
-				<button data-bind="click: function() { vm.edit(i) }">edit</button>
+				<button data-bind="click: function() { vm.editStop(i) }">edit</button>
 				<button data-bind="click: function() { vm.delete(i) }">delete</button>
 			</td>
 		</tr>

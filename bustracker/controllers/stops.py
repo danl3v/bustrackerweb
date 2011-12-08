@@ -3,6 +3,36 @@ from google.appengine.api import users
 from models import models
 import view
 
+
+class SaveStop(webapp.RequestHandler):
+    def post(self):
+        '''Add or edit a stop.'''
+        current_user = users.get_current_user()
+        id = self.request.get('id')
+        if id:
+            stop = models.Stop.get_by_id(int(id))
+        else:
+            stop = models.Stop()
+            stop.user = models.User.all().filter('user =', current_user).get()
+        
+        if stop and stop.user.user == current_user:
+            stop.title = self.request.get('title')
+            stop.agency_tag = self.request.get('agencyTag')
+            if stop.agency_tag == "bart":
+                stop.direction_tag = self.request.get('bart-direction-select')
+                stop.stop_tag = self.request.get('bart-station-select')
+            else:
+                stop.line_tag = self.request.get('lineTag')
+                stop.direction_tag = self.request.get('directionTag')
+                stop.stop_tag = self.request.get('stopTag')
+            stop.time_to_stop = int(self.request.get('timeToStop'))
+            stop.position = 0
+            stop.put()
+            
+        self.response.out.write("done")
+    
+
+
 class NewStop(webapp.RequestHandler):
     def get(self):
         '''Load the new stop page.'''

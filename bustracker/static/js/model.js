@@ -1,7 +1,7 @@
 var stop = function(aStop)
 {
 	var self = this;
-	
+
 	if (aStop != null) {
 		this.id = ko.observable(aStop.id);
 		this.title = ko.observable(aStop.title);
@@ -10,9 +10,9 @@ var stop = function(aStop)
 		this.lineChoices = ko.observableArray([]);
 		this.directionChoices = ko.observableArray([]);
 		this.stopChoices = ko.observableArray([]);
-		
-		this.agencyChoice = ko.observable(vm.choiceFromTag(aStop.agencyTag, vm.agencyChoices)); // vm.agencyChoices could be wrong. check when loading from db
-		this.lineChoice = ko.observable(vm.lineFromTag(aStop.lineTag, vm.lineChoices));
+
+		this.agencyChoice = ko.observable(null);
+		this.lineChoice = ko.observable(null);
 		this.directionChoice = ko.observable(null);
 		this.stopChoice = ko.observable(null);
 		
@@ -27,7 +27,7 @@ var stop = function(aStop)
 		this.position = ko.observable(aStop.position);
 	}
 	else {
-		this.id = ko.observable(null);
+		this.id = ko.observable();
 		this.title = ko.observable("untitled stop");
 		
 		this.agencyChoices = ko.observableArray([]);
@@ -51,13 +51,29 @@ var stop = function(aStop)
 		this.position = ko.observable(0);
 	}
 	
+	// choiceFromTag
+	this.choiceFromTag = function(tag, choices) {
+		var theChoice = null;
+		choices.forEach(function(aChoice, i) {
+			if (aChoice.tag == tag) {
+				theChoice = aChoice;
+			}
+		});
+		return theChoice;
+	};
+	
+	
 	// choice updating functions
 	this.updateAgencyChoices = ko.dependentObservable(function() {
 		$.get("/agencies", function(agencies) {
-			var mappedAgencies = $.map(agencies, function(anAgency, index) {
+			var mappedAgencyChoices = $.map(agencies, function(anAgency, index) {
 				return new selectionChoice(anAgency.title, anAgency.tag);
 			});
-			self.agencyChoices(mappedAgencies);
+			self.agencyChoices(mappedAgencyChoices);
+			if (aStop.agencyTag) {
+				self.agencyChoice(self.choiceFromTag(aStop.agencyTag, mappedAgencyChoices));
+				aStop.agencyTag = null;
+			}
 		}, 'json');
 		return "";
 	}, this);
@@ -69,6 +85,10 @@ var stop = function(aStop)
 					return new selectionChoice(aLineChoice.title, aLineChoice.tag);
 				});
 				self.lineChoices(mappedLineChoices);
+				if (aStop.lineTag) {
+					self.lineChoice(self.choiceFromTag(aStop.lineTag, mappedLineChoices));
+					aStop.lineTag = null;
+				}
 			}, 'json');
 		}
 		return "";
@@ -81,6 +101,10 @@ var stop = function(aStop)
 					return new selectionChoice(aDirectionChoice.title, aDirectionChoice.tag);
 				});
 				self.directionChoices(mappedDirectionChoices);
+				if (aStop.directionTag) {
+					self.directionChoice(self.choiceFromTag(aStop.directionTag, mappedDirectionChoices));
+					aStop.direcitonTag = null;
+				}
 			}, 'json');
 		}
 		return "";
@@ -93,6 +117,10 @@ var stop = function(aStop)
 					return new selectionChoice(aStopChoice.title, aStopChoice.tag);
 				});
 				self.stopChoices(mappedStopChoices);
+				if (aStop.stopTag) {
+					self.stopChoice(self.choiceFromTag(aStop.stopTag, mappedStopChoices));
+					aStop.stopTag = null;
+				}
 			}, 'json');
 		}
 		return "";
@@ -156,16 +184,6 @@ var viewModel = function() {
 	this.stops = ko.observableArray([]);
 	this.editingStop = ko.observable(false);
 	
-	this.choiceFromTag = function(tag, choices) {
-		var theChoice = null;
-		self.choices.forEach(function(aChoice, i) {
-			if (aChoice.tag == tag) {
-				theChoice = aChoice;
-			}
-		});
-		return theChoice;
-	};
-	
 	this.stopWithId = function(id) {
 		var stopToReturn = null;
 		self.stops().forEach(function(aStop, i) {
@@ -193,14 +211,28 @@ var viewModel = function() {
 		}
 	};
 	
-	this.edit = function(i) {
-		self.editingStop(self.stops()[i]);
-	}
-	
-	this.new = function() {
+	this.newStop = function() {
 		var newStop = new stop(null);
 		self.stops.push(newStop);
 		self.editingStop(newStop);
+	}
+	
+	this.editStop = function(i) {
+		self.editingStop(self.stops()[i]);
+	}
+	
+	this.doneEditingStop = function() {
+		stop = self.editingStop();
+		if (stop.agencyChoice() && stop.lineChoice() && stop.directionChoice() && stop.stopChoice()) {
+			$.post("/stop/save", { "id" : stop.id(), "title" : stop.title(), "agencyTag" : stop.agencyChoice().tag,	"lineTag" : stop.lineChoice().tag, "directionTag" : stop.directionChoice().tag,	"stopTag" : stop.stopChoice().tag, "timeToStop" : stop.timeToStop() }, function(data) {
+				alert(data);
+				self.editingStop(false);
+			});
+			
+		}
+		else {
+			alert("Please fill out the entire form.");
+		}
 	}
 	
 	this.delete = function(i) {
@@ -219,8 +251,7 @@ var viewModel = function() {
 			self.stops(mappedStops);
 			self.isLoading = false;
 			self.refresh();
-		}, 'json');
-	
+		}, 'json');	
 	}
 	
 	this.refresh = function() {

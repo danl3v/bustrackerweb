@@ -12,13 +12,13 @@ class User(db.Model):
 class Stop(db.Model):
     user = db.ReferenceProperty(User, collection_name='stops')
     title = db.StringProperty(default="untitled")
-    agency_tag = db.StringProperty()
+    agency_tag = db.StringProperty(default="")
     line_tag = db.StringProperty(default="")
-    direction_tag = db.StringProperty()
-    stop_tag = db.StringProperty()
-    destination_tag = db.StringProperty()
-    time_to_stop = db.IntegerProperty()
-    position = db.IntegerProperty()
+    direction_tag = db.StringProperty(default="")
+    stop_tag = db.StringProperty(default="")
+    destination_tag = db.StringProperty(default="")
+    time_to_stop = db.IntegerProperty(0)
+    position = db.IntegerProperty(0)
     
 class Post(db.Model):
     user = db.ReferenceProperty(User, collection_name='posts')
