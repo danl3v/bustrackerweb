@@ -11,9 +11,7 @@ ko.protectedObservable = function(initialValue) {
             write: function(newValue) {
                  _tempValue = newValue; 
             }
-        }); 
-        
-        result.tempValue = _tempValue;
+        });
         
         result.commit = function() {
             if (_tempValue !== _actualValue()) {
@@ -229,6 +227,7 @@ var viewModel = function() {
 	
 	this.isLoading = ko.observable(false);
 	this.stops = ko.observableArray([]);
+	this.isNewStop;
 	this.editingStop = ko.observable(false);
 	
 	this.stopWithId = function(id) {
@@ -269,12 +268,12 @@ var viewModel = function() {
 	};
 	
 	this.newStop = function() {
-		var newStop = new stop(null);
-		self.stops.push(newStop);
-		self.editingStop(newStop);
+		self.isNewStop = true;
+		self.editingStop(new stop(null));
 	}
 	
 	this.editStop = function(i) {
+		self.isNewStop = false;
 		self.editingStop(self.stops()[i]);
 	}
 	
@@ -284,6 +283,9 @@ var viewModel = function() {
 	}
 	
 	this.doneEditingStop = function() {
+		if (self.isNewStop) {
+			self.stops.push(newStop);
+		}
 		stop = self.editingStop();
 		self.editingStop().commitAll()
 		if (stop.agencyChoice() && stop.lineChoice() && stop.directionChoice() && stop.stopChoice()) {
