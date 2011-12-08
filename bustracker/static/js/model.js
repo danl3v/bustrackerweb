@@ -141,22 +141,30 @@ var destination = function(timeToStop, title, vehicles)
 
 var vehicle = function(timeToStop, minutes)
 {
+	var self = this;
+	
 	this.destination = ko.observable(destination);
 	this.minutes = ko.observable(minutes);
-	this.timeToLeave = ko.observable(minutes - timeToStop());
 	
-	if (this.timeToLeave() < 0) {
-		this.prettyTimeToLeave = "missed";
-	}
-	else if (this.timeToLeave() == 0) {
-		this.prettyTimeToLeave = "leave now";
-	}
-	else if (this.timeToLeave() == 1) {
-		this.prettyTimeToLeave = "leave in 1m";
-	}
-	else {
-		this.prettyTimeToLeave = "leave in " + this.timeToLeave().toString() + "m";
-	}
+	this.timeToLeave = ko.dependentObservable(function() {
+		return minutes - timeToStop();
+	}, this);
+
+	this.prettyTimeToLeave = ko.dependentObservable(function() {
+		if (self.timeToLeave() < 0) {
+			return "missed";
+		}
+		else if (self.timeToLeave() == 0) {
+			return "leave now";
+		}
+		else if (self.timeToLeave() == 1) {
+			return "leave in 1m";
+		}
+		else {
+			return "leave in " + self.timeToLeave().toString() + "m";
+		}
+		
+	}, this);
 }
 
 var selectionChoice = function(title, tag) {
