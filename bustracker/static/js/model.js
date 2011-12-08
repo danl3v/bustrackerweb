@@ -6,16 +6,6 @@ var stop = function(aStop)
 		this.id = ko.observable(aStop.id);
 		this.title = ko.observable(aStop.title);
 		
-		this.agencyChoices = ko.observableArray([]);
-		this.lineChoices = ko.observableArray([]);
-		this.directionChoices = ko.observableArray([]);
-		this.stopChoices = ko.observableArray([]);
-
-		this.agencyChoice = ko.observable(null);
-		this.lineChoice = ko.observable(null);
-		this.directionChoice = ko.observable(null);
-		this.stopChoice = ko.observable(null);
-		
 		this.timeToStop = ko.observable(aStop.timeToStop);
 		this.directions = ko.observableArray([]);
 		this.position = ko.observable(aStop.position);
@@ -24,20 +14,20 @@ var stop = function(aStop)
 		this.id = ko.observable();
 		this.title = ko.observable("untitled stop");
 		
-		this.agencyChoices = ko.observableArray([]);
-		this.lineChoices = ko.observableArray([]);
-		this.directionChoices = ko.observableArray([]);
-		this.stopChoices = ko.observableArray([]);
-		
-		this.agencyChoice = ko.observable(null);
-		this.lineChoice = ko.observable(null);
-		this.directionChoice = ko.observable(null);
-		this.stopChoice = ko.observable(null);
-		
 		this.timeToStop = ko.observable(0);
 		this.directions = ko.observableArray([]);
 		this.position = ko.observable(0);
 	}
+	
+	this.agencyChoices = ko.observableArray([]);
+	this.lineChoices = ko.observableArray([]);
+	this.directionChoices = ko.observableArray([]);
+	this.stopChoices = ko.observableArray([]);
+	
+	this.agencyChoice = ko.observable(null);
+	this.lineChoice = ko.observable(null);
+	this.directionChoice = ko.observable(null);
+	this.stopChoice = ko.observable(null);
 	
 	// choiceFromTag
 	this.choiceFromTag = function(tag, choices) {
