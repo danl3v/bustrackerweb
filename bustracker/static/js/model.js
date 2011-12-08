@@ -8,6 +8,8 @@ var stop = function(aStop)
 		
 		this.agencyChoice = ko.observable(vm.agencyFromTag(aStop.agencyTag));
 		this.lineChoice = ko.observable(vm.lineFromTag(aStop.lineTag));
+		this.directionChoice = ko.observable(null);
+		this.stopChoice = ko.observable(null);
 		
 		this.agencyTag = ko.observable(aStop.agencyTag); // phase these out in favor of above things
 		this.lineTag = ko.observable(aStop.lineTag);
@@ -21,9 +23,12 @@ var stop = function(aStop)
 	}
 	else {
 		this.id = ko.observable(null);
-		this.title = ko.observable("");
+		this.title = ko.observable("untitled stop");
 		
 		this.agencyChoice = ko.observable(null);
+		this.lineChoice = ko.observable(null);
+		this.directionChoice = ko.observable(null);
+		this.stopChoice = ko.observable(null);
 		
 		this.agencyTag = ko.observable("");
 		this.lineTag = ko.observable("");
@@ -187,13 +192,14 @@ var viewModel = function() {
 	this.agencyChoices = ko.observableArray([]);
 	this.lineChoices = ko.observableArray([]);
 	this.directionChoices = ko.observableArray([]);
+	this.stopChoices = ko.observableArray([]);
 	
 	this.updateAgencyChoices = ko.dependentObservable(function() {
 		$.get("/agencies", function(agencies) {
 			var mappedAgencies = $.map(agencies, function(anAgency, index) {
 				return new selectionChoice(anAgency.title, anAgency.tag);
 			});
-			self.agencyChoices = mappedAgencies;
+			self.agencyChoices(mappedAgencies);
 		}, 'json');
 		return "";
 	}, this);
@@ -211,19 +217,26 @@ var viewModel = function() {
 	}, this);
 	
 	this.updateDirectionChoices = ko.dependentObservable(function() {
-		if (self.editingStop()) {
-							alert("going");
-			if (self.editingStop().agencyChoice() && self.editingStop().lineChoice()) {
-
-				$.get("/" + self.editingStop().agencyChoice().tag + "/" + self.editingStop().lineChoice().tag + "/directions", function(directionChoices) {
-					alert(directionChoices);
+		if (self.editingStop() && self.editingStop().agencyChoice() && self.editingStop().lineChoice()) {
+			$.get("/" + self.editingStop().agencyChoice().tag + "/" + self.editingStop().lineChoice().tag + "/directions", function(directionChoices) {
+				var mappedDirectionChoices = $.map(directionChoices, function(aDirectionChoice, index) {
+					return new selectionChoice(aDirectionChoice.title, aDirectionChoice.tag);
 				});
-			}
+				self.directionChoices(mappedDirectionChoices);
+			}, 'json');
 		}
 		return "";
 	}, this);
 	
-	
-	
-	
+	this.updateStopChoices = ko.dependentObservable(function() {
+		if (self.editingStop() && self.editingStop().agencyChoice() && self.editingStop().lineChoice()  && self.editingStop().directionChoice()) {
+			$.get("/" + self.editingStop().agencyChoice().tag + "/" + self.editingStop().lineChoice().tag + "/" + self.editingStop().directionChoice().tag + "/stops", function(stopChoices) {
+				var mappedStopChoices = $.map(stopChoices, function(aStopChoice, index) {
+					return new selectionChoice(aStopChoice.title, aStopChoice.tag);
+				});
+				self.stopChoices(mappedStopChoices);
+			}, 'json');
+		}
+		return "";
+	}, this);
 };

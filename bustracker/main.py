@@ -10,8 +10,8 @@ def main():
            ('/settings', welcome.Settings),
            
            # user specific data
-           ('/stops', predictions.Stops),
-           ('/predictions', predictions.Predictions),
+           ('/stops', predictions.UserStops),
+           ('/predictions', predictions.UserPredictions),
            
            # stop management
            ('/stop/new', stops.NewStop),
@@ -25,9 +25,6 @@ def main():
            ('/(.*)/lines', predictions.Lines),
            ('/(.*)/(.*)/directions', predictions.Directions),
            ('/(.*)/(.*)/(.*)/stops', predictions.Stops),
-           
-           # nextbus
-           ('/nextbus/stops', nextbus.Stops),
            
            # bart
            ('/bart/stations', bart.Stations),

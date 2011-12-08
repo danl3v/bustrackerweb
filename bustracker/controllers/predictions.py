@@ -29,8 +29,16 @@ class Directions(webapp.RequestHandler):
             self.response.out.write(json.dumps(bart.directions(agency, line)))
         else:
             self.response.out.write(json.dumps(nextbus.directions(agency, line)))
-
+            
 class Stops(webapp.RequestHandler):
+    def get(self, agency, line, direction):
+        '''Return the stops.'''
+        if agency == 'bart':
+            self.response.out.write(json.dumps(bart.stops(agency, line, direction)))
+        else:
+            self.response.out.write(json.dumps(nextbus.stops(agency, line, direction)))
+
+class UserStops(webapp.RequestHandler):
     def get(self):
         '''Write out the JSON for the user's saved stops.'''
         current_user = users.get_current_user()
@@ -49,7 +57,7 @@ class Stops(webapp.RequestHandler):
                                     "position": stop.position,
                                 } for stop in stops]))
 
-class Predictions(webapp.RequestHandler):
+class UserPredictions(webapp.RequestHandler):
     def get(self):
         '''Write out the JSON predictions for the user's stops.'''
         current_user = users.get_current_user()

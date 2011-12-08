@@ -27,26 +27,18 @@ def directions(agency, line):
 		list.append({"tag" : direction['tag'], "title" : direction['title']})
 	return list
     
-class Stops(webapp.RequestHandler):
-    def post(self):
-        '''Return the stops for a direction for a line for an agency.'''
-        agency = self.request.get('agency')
-        line = self.request.get('line')
-        direction = self.request.get('direction')
-        selected_stop = self.request.get('stop')
-        if not agency or not line or not direction:
-            return
-        directions = functions.get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=' + agency + '&r=' + line)
-        soup = BeautifulStoneSoup(directions, selfClosingTags=['stop'])
-        stop_ids = soup.find('direction', tag=direction).findAll('stop')
-        html = '<option value="">Select stop...</option>'
-        for stop_id in stop_ids:
-            stop = soup.find('stop', tag=stop_id['tag'])
-            if stop['tag'] == selected_stop:
-                html += '<option value="' + stop['tag'] + '" selected>' + stop['title'] + '</option>'
-            else:
-                html += '<option value="' + stop['tag'] + '">' + stop['title'] + '</option>'
-        self.response.out.write(html)
+def stops(agency, line, direction):
+	'''Return the stops for a direction for a line for an agency.'''
+	if not agency or not line or not direction:
+		return []
+	directions = functions.get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=' + agency + '&r=' + line)
+	soup = BeautifulStoneSoup(directions, selfClosingTags=['stop'])
+	stop_ids = soup.find('direction', tag=direction).findAll('stop')
+	list = []
+	for stop_id in stop_ids:
+		stop = soup.find('stop', tag=stop_id['tag'])
+		list.append({"tag" : stop['tag'], "title" : stop['title']})
+	return list
 
 def get_directions(stop, max_arrivals, show_missed):
     '''Return a parsed prediction.'''
