@@ -62,9 +62,9 @@ $(document).ready(function() {
 		<select name="agency-select" id="agency-select" data-bind="options: editingStop().agencyChoices, optionsText: 'title', value: editingStop().agencyChoice, optionsCaption: 'Select a transit agency...'"></select>
 		
 		<div id="nextbus-menus" data-bind="visible: editingStop().agencyTag != 'bart'">
-		<select name="nextbus-line-select" id="nextbus-line-select" data-bind="options: editingStop().lineChoices, optionsText: 'title', value: editingStop().lineChoice, optionsCaption: 'Select a line...'"></select>
-		<select name="nextbus-direction-select" id="nextbus-direction-select" data-bind="options: editingStop().directionChoices, optionsText: 'title', value: editingStop().directionChoice, optionsCaption: 'Select a direction...'"></select>
-		<select name="nextbus-stop-select" id="nextbus-stop-select" data-bind="options: editingStop().stopChoices, optionsText: 'title', value: editingStop().stopChoice, optionsCaption: 'Select a stop...'"></select>
+		<select name="nextbus-line-select" id="nextbus-line-select" data-bind="options: editingStop().lineChoices, optionsText: 'title', value: editingStop().lineChoice, optionsCaption: 'Select a line...', enable: editingStop().agencyChoice"></select>
+		<select name="nextbus-direction-select" id="nextbus-direction-select" data-bind="options: editingStop().directionChoices, optionsText: 'title', value: editingStop().directionChoice, optionsCaption: 'Select a direction...', enable: editingStop().lineChoice"></select>
+		<select name="nextbus-stop-select" id="nextbus-stop-select" data-bind="options: editingStop().stopChoices, optionsText: 'title', value: editingStop().stopChoice, optionsCaption: 'Select a stop...', enable: editingStop().directionChoice"></select>
 		</div>
 		<!--<div id="bart-menus" data-bind="visible: editingStop().agencyTag == 'bart'">
 		<select name="bart-station-select" id="bart-station-select"></select>
@@ -86,7 +86,6 @@ $(document).ready(function() {
 {% verbatim %}
 
 <script type="text/x-jquery-tmpl" id="stopTemplate">
-
 	{{if stops().length == 0}}
 		{{if vm.isLoading()}}<tr class="header1"><td class="header1-left">${isLoading}Loading...</td></tr>{{/if}}
 		{{if !vm.isLoading()}}<tr class="header1"><td class="header1-left">No stops. <a href="#" onclick="vm.newStop()">Add one!</a>.</td></tr>{{/if}}
@@ -101,6 +100,9 @@ $(document).ready(function() {
 				<button data-bind="click: function() { vm.delete(i) }">delete</button>
 			</td>
 		</tr>
+		{{if directions().length == 0}}
+			<tr class="header3"><td class="header3-left" colspan="2">loading...</td></tr>
+		{{/if}}
 		{{each(j, direction) directions()}}
 			{{if title}}<tr class="header2"><td class="header2-left" colspan="2">${title}</td></tr>{{/if}}
 			{{each(k, destination) destinations()}}

@@ -224,14 +224,20 @@ var viewModel = function() {
 		stop = self.editingStop();
 		if (stop.agencyChoice() && stop.lineChoice() && stop.directionChoice() && stop.stopChoice()) {
 			$.post("/stop/save", { "id" : stop.id(), "title" : stop.title(), "agencyTag" : stop.agencyChoice().tag,	"lineTag" : stop.lineChoice().tag, "directionTag" : stop.directionChoice().tag,	"stopTag" : stop.stopChoice().tag, "timeToStop" : stop.timeToStop() }, function(data) {
-				self.editingStop().directions([])
-				self.editingStop(false);
-				self.refresh();
-			});
-			
+				if (data) {
+					stop.id(parseInt(data.id));
+					self.refresh();
+				}
+				else {
+					alert("Problem updating data on server. Please submit again.");
+					self.editingStop(stop);
+				}
+			}, 'json');
+			self.editingStop().directions([])
+			self.editingStop(false);
 		}
 		else {
-			alert("Please fill out the entire form.");
+			alert("Please select an agency, line, direction, and stop.");
 		}
 	}
 	

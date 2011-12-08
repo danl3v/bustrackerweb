@@ -27,11 +27,8 @@ class SaveStop(webapp.RequestHandler):
                 stop.stop_tag = self.request.get('stopTag')
             stop.time_to_stop = int(self.request.get('timeToStop'))
             stop.position = 0
-            stop.put()
-            
-        self.response.out.write("done")
-    
-
+            key = stop.put()
+            self.response.out.write('{"id": ' + str(key.id()) + '}')
 
 class NewStop(webapp.RequestHandler):
     def get(self):
