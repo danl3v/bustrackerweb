@@ -15,8 +15,8 @@ def main():
            
            # stop management
 		   ('/stop/save', stops.SaveStop),
-           ('/stop/moveup/(.*)', stops.MoveUp),
-           ('/stop/movedown/(.*)', stops.MoveDown),
+           ('/stop/moveup', stops.MoveUp),
+           ('/stop/movedown', stops.MoveDown),
            ('/stop/delete', stops.DeleteStop),
            
            # general api

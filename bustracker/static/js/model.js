@@ -196,6 +196,11 @@ var viewModel = function() {
 	// stop actions
 	this.moveup = function(i) {
 		if (i > 0) {
+			$.post("/stop/moveup", { "id" : self.stops()[i].id() }, function(data) {
+				if (!data || !(data.id)) {
+					alert("Problem updating data on server.");
+				}
+			}, 'json');
 			stop = self.stops()[i];
 			self.stops.splice(i, 1);
 			self.stops.splice(i-1, 0, stop);
@@ -204,6 +209,11 @@ var viewModel = function() {
 	
 	this.movedown = function(i) {
 		if (i < self.stops().length) {
+			$.post("/stop/movedown", { "id" : self.stops()[i].id() }, function(data) {
+				if (!data || !(data.id)) {
+					alert("Problem updating data on server.");
+				}
+			}, 'json');
 			stop = self.stops()[i];
 			self.stops.splice(i, 1);
 			self.stops.splice(i+1, 0, stop);
@@ -244,10 +254,10 @@ var viewModel = function() {
 	this.delete = function(i) {
 		if (confirm("Do you really want to delete this stop?")) {
 			$.post("/stop/delete", { "id" : self.stops()[i].id() }, function(data) {
-				if (!data && !data.id) {
+				if (!data || !(data.id)) {
 					alert("Problem updating data on server.");
 				}
-			});
+			}, 'json');
 			self.stops.splice(i, 1);
 		}
 	}
