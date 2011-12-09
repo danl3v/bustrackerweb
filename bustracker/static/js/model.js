@@ -1,48 +1,20 @@
-// from http://www.knockmeout.net/2011/03/guard-your-model-accept-or-cancel-edits.html
-ko.protectedObservable = function(initialValue) {
-        var _actualValue = ko.observable(initialValue);
-        var _tempValue = initialValue;
-        
-        var result = ko.dependentObservable({
-            read: function() {
-               return _actualValue(); 
-            },
-            write: function(newValue) {
-                 _tempValue = newValue; 
-            }
-        });
-        
-        result.commit = function() {
-            if (_tempValue !== _actualValue()) {
-                 _actualValue(_tempValue); 
-            }  
-        };
-        
-        result.reset = function() {
-            _actualValue.valueHasMutated();
-            _tempValue = _actualValue();   //reset temp value 
-        };
-     
-        return result;
-    };
-
 var stop = function(aStop)
 {
 	var self = this;
 
 	if (aStop != null) {
 		this.id = ko.observable(aStop.id);
-		this.title = ko.protectedObservable(aStop.title);
+		this.title = ko.observable(aStop.title);
 		this.lat = ko.observable(aStop.lat);
 		this.lon = ko.observable(aStop.lon);
-		this.timeToStop = ko.protectedObservable(aStop.timeToStop);
+		this.timeToStop = ko.observable(aStop.timeToStop);
 	}
 	else {
 		this.id = ko.observable();
-		this.title = ko.protectedObservable("untitled stop");
+		this.title = ko.observable("untitled stop");
 		this.lat = ko.observable(0);
 		this.lon = ko.observable(0);
-		this.timeToStop = ko.protectedObservable(0);
+		this.timeToStop = ko.observable(0);
 	}
 	
 	this.marker = new google.maps.Marker({
@@ -57,10 +29,10 @@ var stop = function(aStop)
 	this.directionChoices = ko.observableArray([]);
 	this.stopChoices = ko.observableArray([]);
 	
-	this.agencyChoice = ko.protectedObservable(null);
-	this.lineChoice = ko.protectedObservable(null);
-	this.directionChoice = ko.protectedObservable(null);
-	this.stopChoice = ko.protectedObservable(null);
+	this.agencyChoice = ko.observable(null);
+	this.lineChoice = ko.observable(null);
+	this.directionChoice = ko.observable(null);
+	this.stopChoice = ko.observable(null);
 	
 	this.directions = ko.observableArray([]);
 	
@@ -75,24 +47,6 @@ var stop = function(aStop)
 		return theChoice;
 	};
 	
-	this.commitAll = function() {
-		self.title.commit();
-		self.timeToStop.commit();
-		self.agencyChoice.commit();
-		self.lineChoice.commit();
-		self.directionChoice.commit();
-		self.stopChoice.commit();
-	}
-	
-	this.resetAll = function() {
-		self.title.reset();
-		self.timeToStop.reset();
-		self.agencyChoice.reset();
-		self.lineChoice.reset();
-		self.directionChoice.reset();
-		self.stopChoice.reset();
-	}
-	
 	// choice updating functions
 	this.updateAgencyChoices = ko.dependentObservable(function() {
 		$.get("/agencies", function(agencies) {
@@ -102,7 +56,6 @@ var stop = function(aStop)
 			self.agencyChoices(mappedAgencyChoices);
 			if (aStop.agencyTag) {
 				self.agencyChoice(self.choiceFromTag(aStop.agencyTag, mappedAgencyChoices));
-				self.agencyChoice.commit();
 				aStop.agencyTag = null;
 			}
 		}, 'json');
@@ -118,7 +71,6 @@ var stop = function(aStop)
 				self.lineChoices(mappedLineChoices);
 				if (aStop.lineTag) {
 					self.lineChoice(self.choiceFromTag(aStop.lineTag, mappedLineChoices));
-					self.lineChoice.commit();
 					aStop.lineTag = null;
 				}
 			}, 'json');
@@ -139,7 +91,6 @@ var stop = function(aStop)
 				self.directionChoices(mappedDirectionChoices);
 				if (aStop.directionTag) {
 					self.directionChoice(self.choiceFromTag(aStop.directionTag, mappedDirectionChoices));
-					self.directionChoice.commit();
 					aStop.direcitonTag = null;
 				}
 			}, 'json');
@@ -160,7 +111,6 @@ var stop = function(aStop)
 				self.stopChoices(mappedStopChoices);
 				if (aStop.stopTag) {
 					self.stopChoice(self.choiceFromTag(aStop.stopTag, mappedStopChoices));
-					self.stopChoice.commit();
 					aStop.stopTag = null;
 				}
 			}, 'json');
@@ -308,17 +258,15 @@ var viewModel = function() {
 	}
 	
 	this.cancelEditingStop = function() {
-		self.editingStop().resetAll()
 		self.editingStop(false);
 	}
 	
 	this.doneEditingStop = function() {
-		if (self.isNewStop) {
-			self.stops.push(newStop);
-		}
 		stop = self.editingStop();
-		self.editingStop().commitAll()
 		if (stop.agencyChoice() && stop.lineChoice() && stop.directionChoice() && stop.stopChoice()) {
+			if (self.isNewStop) {
+				self.stops.push(stop);
+			}
 			$.post("/stop/save", { "id" : stop.id(), "title" : stop.title(), "agencyTag" : stop.agencyChoice().tag,	"lineTag" : stop.lineChoice().tag, "directionTag" : stop.directionChoice().tag,	"stopTag" : stop.stopChoice().tag, "timeToStop" : stop.timeToStop() }, function(data) {
 				if (data) {
 					stop.id(parseInt(data.id));
