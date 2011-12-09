@@ -47,6 +47,9 @@ class UserStops(webapp.RequestHandler):
                                 {   "id": stop.key().id(),
                                     "title": stop.title,
                                     
+                                    "lat" : 37.8039799,
+                                    "lon" : -122.27149,
+                                    
                                     "agencyTag": stop.agency_tag,
                                     "lineTag": stop.line_tag,
                                     "directionTag": stop.direction_tag,

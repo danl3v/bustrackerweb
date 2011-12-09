@@ -1,4 +1,3 @@
-
 // from http://www.knockmeout.net/2011/03/guard-your-model-accept-or-cancel-edits.html
 ko.protectedObservable = function(initialValue) {
         var _actualValue = ko.observable(initialValue);
@@ -27,21 +26,31 @@ ko.protectedObservable = function(initialValue) {
         return result;
     };
 
-
 var stop = function(aStop)
 {
 	var self = this;
 
 	if (aStop != null) {
 		this.id = ko.observable(aStop.id);
-		this.title = ko.protectedObservable(aStop.title);		
+		this.title = ko.protectedObservable(aStop.title);
+		this.lat = ko.observable(aStop.lat);
+		this.lon = ko.observable(aStop.lon);
 		this.timeToStop = ko.protectedObservable(aStop.timeToStop);
 	}
 	else {
 		this.id = ko.observable();
 		this.title = ko.protectedObservable("untitled stop");
+		this.lat = ko.observable(0);
+		this.lon = ko.observable(0);
 		this.timeToStop = ko.protectedObservable(0);
 	}
+	
+	this.marker = new google.maps.Marker({
+        position: new google.maps.LatLng(self.lat(), self.lon()),
+        title: self.title(),
+        map: map,
+        draggable: false
+    });
 	
 	this.agencyChoices = ko.observableArray([]);
 	this.lineChoices = ko.observableArray([]);
