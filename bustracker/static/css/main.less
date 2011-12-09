@@ -1,10 +1,16 @@
 /* VARIABLES */
-@background-color: #232625;
+@background-color: rgba(35, 38, 37, 0.8);
 @text-color: #FFAD29;
 @border-color: #647362;
-@highlight-color: #374036;
+
 @footer-height: 3em;
 @left-right-margin: 10px;
+
+@header1-background-color: rgba(55, 64, 54, 0.8);
+@header2-background-color: rgba(55, 64, 54, 0.8);
+@header3-background-color: rgba(41, 48, 40, 0.8);
+
+@popup-background-color: rgb(41, 48, 40);
 
 /* NEWS-FEED-LIST-VARIABLES */
 @news-feed-list-background-color: #272E2C;
@@ -21,8 +27,19 @@ html, body
     height: 100%;
 }
 
+div#map
+{
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+}
+
 div#wrapper
 {
+	background-color: @background-color;
+	width: 25em;
     min-height: 100%;
     position: relative;
 }
@@ -167,14 +184,14 @@ table.list tr.header1 td.header1-left
     text-align: left;
     font-size: 2.5em;
     font-weight: bold;
-    width: 70%;
+    width: 60%;
     vertical-align: middle;
 }
 
 table.list tr.header1 td.header1-right
 {
     text-align: right;
-    width: 30%;
+    width: 40%;
     font-size: 1.5em;
     font-weight: normal;
     vertical-align: middle;
@@ -193,7 +210,7 @@ div#wrapper:hover td.header1-right
 
 table.list tr.header2
 {
-    background: @highlight-color;
+    background-color: @header2-background-color;
 }
 
 table.list tr.header2 td
@@ -214,7 +231,7 @@ table.list tr.header2 td.header2-left
 
 table.list tr.header3
 {
-    background: #293028;
+    background-color: @header3-background-color;
 }
 
 table.list tr.header3 td
@@ -316,7 +333,7 @@ table#stop-list tr td
 
 table#stop-list tr.header1
 {
-    background: @highlight-color;
+    background-color: @header1-background-color;
 }
 
 /* NEWS-FEED-LIST STYLING */
@@ -348,7 +365,7 @@ div.new-stop-form
     margin-bottom: 1em;
     border: solid 2px @border-color;
     vertical-align: top;
-    background: @highlight-color;
+    background: @popup-background-color;
 }
 
 div.new-stop-form h1

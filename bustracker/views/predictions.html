@@ -5,16 +5,13 @@
 <script src="/js/jquery.tmpl.js" type="text/javascript"></script>
 <script src="/js/knockout.js" type="text/javascript"></script>
 <script src="/js/clock.js" type="text/javascript"></script>
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+<script src="/js/map.js" type="text/javascript"></script>
 {% endblock %}
 
-{% block content %}
-<div id="header"><p>Transit Arrival Times</p><span id="clock">&nbsp;</span></div>
+{% block extrahtml %}
 
-<div id="main">
-	<table id="stop-list" class="list">
-		<table id="stop-list" class="list" data-bind="template:'stopTemplate'"></table>
-	</table>
-</div>
+<div id="map"></div>
 
 <div class="new-stop-form" style="position: absolute; top: 20%; left: 30%; z-index: 9999;" data-bind="visible: editingStop()">
 	<form>
@@ -57,6 +54,17 @@
 
 <div id="fade" data-bind="visible: editingStop, click: function() { vm.cancelEditingStop() }"></div>
 
+{% endblock %}
+
+{% block content %}
+<div id="header"><p>Transit Arrival Times</p><span id="clock">&nbsp;</span></div>
+
+<div id="main">
+	<table id="stop-list" class="list">
+		<table id="stop-list" class="list" data-bind="template:'stopTemplate'"></table>
+	</table>
+</div>
+
 {% verbatim %}
 
 <script type="text/x-jquery-tmpl" id="stopTemplate">
@@ -68,8 +76,8 @@
 		<tr class="header1">
 			<td class="header1-left">${title}</td>
 			<td class="header1-right">
-				{{if i > 0}}<button data-bind="click: function() { vm.moveup(i) }">move up</button>{{/if}}
-				{{if i < vm.stops().length-1}}<button data-bind="click: function() { vm.movedown(i) }">move down</button>{{/if}}
+				{{if i > 0}}<button data-bind="click: function() { vm.moveup(i) }">↑</button>{{/if}}
+				{{if i < vm.stops().length-1}}<button data-bind="click: function() { vm.movedown(i) }">↓</button>{{/if}}
 				<button data-bind="click: function() { vm.editStop(i) }">edit</button>
 				<button data-bind="click: function() { vm.delete(i) }">delete</button>
 			</td>
