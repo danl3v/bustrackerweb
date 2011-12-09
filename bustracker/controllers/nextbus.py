@@ -55,13 +55,20 @@ def get_line_data(stop):
 
 def get_directions(stop, max_arrivals, show_missed):
     '''Return a parsed prediction.'''
-    soup = BeautifulStoneSoup(functions.get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=' + stop.agency_tag + '&r=' + stop.line_tag + '&d=' + stop.direction_tag + '&s=' + stop.stop_tag), selfClosingTags=['prediction'])
-    destinations = soup.findAll('direction')
-    list = []
+    t = "0"
+    vehicleSoup = BeautifulStoneSoup(functions.get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=vehicleLocations&a=' + stop.agency_tag + '&r=' + stop.line_tag + '&t=' + t), selfClosingTags=['vehicle', 'lasttime'])
+    vehicles = vehicleSoup.findAll('vehicle')
+    vehicles_dict = {}
+    for vehicle in vehicles:
+        vehicles_dict[vehicle['id']] = { 'lat' : vehicle['lat'], 'lon' : vehicle['lon'] }    
+    
+    predictionSoup = BeautifulStoneSoup(functions.get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=' + stop.agency_tag + '&r=' + stop.line_tag + '&d=' + stop.direction_tag + '&s=' + stop.stop_tag), selfClosingTags=['prediction'])
+    destinations = predictionSoup.findAll('direction')
+    destinations_list = []
     for destination in destinations:
         predictions = destination.findAll('prediction')
         if not show_missed:
             predictions = filter(lambda prediction: True if functions.get_leave_at(stop.time_to_stop, prediction['minutes']) != -1 else False, predictions)
         predictions = sorted(predictions, key=lambda prediction: int(prediction['minutes']))[:max_arrivals]
-        list.append({"title": destination['title'], "vehicles": [{"minutes" : prediction['minutes']} for prediction in predictions]})
-    return [{"title": "", "destinations": list}]
+        destinations_list.append({"title": destination['title'], "vehicles": [{"minutes" : prediction['minutes'], 'lat' : float(vehicles_dict[prediction['vehicle']]['lat'] if prediction['vehicle'] in vehicles_dict else 0), 'lon' : float(vehicles_dict[prediction['vehicle']]['lon'] if prediction['vehicle'] in vehicles_dict else 0)} for prediction in predictions]})
+    return [{"title": "", "destinations": destinations_list}]

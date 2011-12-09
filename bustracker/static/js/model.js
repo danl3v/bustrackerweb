@@ -1,25 +1,41 @@
+var colorList = function() {
+	var self = this;
+	this.i = 0;
+	this.colors = ["#FFAD29", "#5CE1FF", "#A89CFF", "#C23C3C"];
+	this.color = function() {
+		self.i++;
+		return self.colors[self.i % self.colors.length];
+	}
+}
+
+var aColorList = new colorList();
+
 var line = function(aLine) {
 
 	var self = this;
+	var color = aColorList.color();
 
 	for (var i=0; i < aLine.paths.length;i++) {
-
 		var coordinates = [];
-		
 		for (var j=0; j < aLine.paths[i].length;j++) {
 			coordinates.push(new google.maps.LatLng(aLine.paths[i][j].lat, aLine.paths[i][j].lon));
 		}
-		
-		var polyLine = new google.maps.Polyline({
+		var polyLineCasing = new google.maps.Polyline({
 			path: coordinates,
-			strokeColor: "#FF0000",
+			strokeColor: "#000000",
 			strokeOpacity: 1.0,
-			strokeWeight: 2
+			strokeWeight: 10
+		});
+		polyLineCasing.setMap(map);
+		var polyLineInside = new google.maps.Polyline({
+			path: coordinates,
+			strokeColor: color,
+			strokeOpacity: 1.0,
+			strokeWeight: 5
 		});
 		
-		polyLine.setMap(map);
+		polyLineInside.setMap(map);
 	}
-
 }
 
 var stop = function(aStop)
@@ -165,17 +181,27 @@ var destination = function(timeToStop, title, vehicles)
 	this.vehicles = ko.observableArray([]);
 	
 	var mappedVehicles = $.map(vehicles, function(aVehicle) {
-		return new vehicle(timeToStop, aVehicle.minutes);
+		return new vehicle(timeToStop, aVehicle.minutes, aVehicle.lat, aVehicle.lon);
 	});
 	this.vehicles(mappedVehicles);
 }
 
-var vehicle = function(timeToStop, minutes)
+var vehicle = function(timeToStop, minutes, lat, lon)
 {
 	var self = this;
 	
 	this.destination = ko.observable(destination);
 	this.minutes = ko.observable(minutes);
+	this.lat = lat;
+	this.lon = lon;
+	
+	if (lat != 0 && lon != 0) {
+		this.marker = new google.maps.Marker({
+			position: new google.maps.LatLng(self.lat, self.lon),
+			map: map,
+			icon: '/images/bus.png'
+		});
+	}
 	
 	this.timeToLeave = ko.dependentObservable(function() {
 		return minutes - timeToStop();
@@ -297,13 +323,14 @@ var viewModel = function() {
 				if (data) {
 					stop.id(parseInt(data.id));
 					self.refresh();
+					self.loadLines();
 				}
 				else {
 					alert("Problem updating data on server. Please submit again.");
 					self.editingStop(stop);
 				}
 			}, 'json');
-			self.editingStop().directions([])
+			self.editingStop().directions([]);
 			self.editingStop(false);
 		}
 		else {
@@ -317,6 +344,7 @@ var viewModel = function() {
 				if (!data || !(data.id)) {
 					alert("Problem updating data on server.");
 				}
+				self.loadLines();
 			}, 'json');
 			self.stops.splice(i, 1);
 		}
