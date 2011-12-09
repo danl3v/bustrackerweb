@@ -11,6 +11,7 @@ def main():
            
            # user specific data
            ('/stops', predictions.UserStops),
+           ('/lines', predictions.UserLines),
            ('/predictions', predictions.UserPredictions),
            
            # stop management

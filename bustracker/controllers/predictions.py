@@ -38,6 +38,20 @@ class Stops(webapp.RequestHandler):
         else:
             self.response.out.write(json.dumps(nextbus.stops(agency, line, direction)))
 
+
+class UserLines(webapp.RequestHandler):
+    def get(self):
+        '''Write out data for the user's saved lines.'''
+        current_user = users.get_current_user()
+        stops = models.User.all().filter('user =', current_user).get().stops.order('position')
+        lineDict = {}
+        for stop in stops:
+            if (stop.agency_tag + " " + stop.line_tag) in lineDict.keys():
+                continue
+            else:
+                lineDict[(stop.agency_tag + " " + stop.line_tag)] = nextbus.get_line_data(stop)
+        self.response.out.write(json.dumps(lineDict.values()))
+
 class UserStops(webapp.RequestHandler):
     def get(self):
         '''Write out the JSON for the user's saved stops.'''

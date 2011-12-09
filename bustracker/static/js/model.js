@@ -1,3 +1,27 @@
+var line = function(aLine) {
+
+	var self = this;
+
+	for (var i=0; i < aLine.paths.length;i++) {
+
+		var coordinates = [];
+		
+		for (var j=0; j < aLine.paths[i].length;j++) {
+			coordinates.push(new google.maps.LatLng(aLine.paths[i][j].lat, aLine.paths[i][j].lon));
+		}
+		
+		var polyLine = new google.maps.Polyline({
+			path: coordinates,
+			strokeColor: "#FF0000",
+			strokeOpacity: 1.0,
+			strokeWeight: 2
+		});
+		
+		polyLine.setMap(map);
+	}
+
+}
+
 var stop = function(aStop)
 {
 	var self = this;
@@ -207,6 +231,8 @@ var viewModel = function() {
 	
 	this.isLoading = ko.observable(false);
 	this.stops = ko.observableArray([]);
+	this.lines = ko.observableArray([]);
+	
 	this.isNewStop;
 	this.editingStop = ko.observable(false);
 	
@@ -296,7 +322,7 @@ var viewModel = function() {
 		}
 	}
 	
-	// board actions
+	// loading the stops
 	this.loadStops = function() {
 		self.isLoading = true;
 		$.get("/stops", function(stops) {
@@ -309,6 +335,7 @@ var viewModel = function() {
 		}, 'json');	
 	}
 	
+	// updating the predictions
 	this.refreshTimer = function() {
 		self.refresh();
 		setTimeout(self.refreshTimer, 20000);
@@ -323,5 +350,15 @@ var viewModel = function() {
 				self.stopWithId(aPrediction.id).directions(mappedDirections);
 			});
 		}, 'json');
+	}
+	
+	// loading the lines
+	this.loadLines = function() {
+		$.get("/lines", function(lines) {
+			var mappedLines = $.map(lines, function(aLine, index) {
+				return new line(aLine);
+			});
+			self.lines(mappedLines);
+		}, 'json');	
 	}
 };

@@ -4,41 +4,54 @@ from BeautifulSoup import BeautifulStoneSoup
 import functions
 
 def lines(agency):
-	'''Return the lines for an agency.'''
-	if not agency:
-		return []
-	lines = functions.get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=routeList&a=' + agency)
-	soup = BeautifulStoneSoup(lines, selfClosingTags=['route'])
-	lines = soup.findAll('route')
-	list = []
-	for line in lines:
-		list.append({"tag" : line['tag'], "title" : line['title']})
-	return list
+    '''Return the lines for an agency.'''
+    if not agency:
+        return []
+    lines = functions.get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=routeList&a=' + agency)
+    soup = BeautifulStoneSoup(lines, selfClosingTags=['route'])
+    lines = soup.findAll('route')
+    list = []
+    for line in lines:
+        list.append({"tag" : line['tag'], "title" : line['title']})
+    return list
         
 def directions(agency, line):
-	'''Return the directions for a line for an agency.'''
-	if not agency or not line:
-		return []
-	directions = functions.get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=' + agency + '&r=' + line)
-	soup = BeautifulStoneSoup(directions, selfClosingTags=['stop'])
-	directions = soup.findAll('direction')
-	list = []
-	for direction in directions:
-		list.append({"tag" : direction['tag'], "title" : direction['title']})
-	return list
+    '''Return the directions for a line for an agency.'''
+    if not agency or not line:
+        return []
+    directions = functions.get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=' + agency + '&r=' + line)
+    soup = BeautifulStoneSoup(directions, selfClosingTags=['stop'])
+    directions = soup.findAll('direction')
+    list = []
+    for direction in directions:
+        list.append({"tag" : direction['tag'], "title" : direction['title']})
+    return list
     
 def stops(agency, line, direction):
-	'''Return the stops for a direction for a line for an agency.'''
-	if not agency or not line or not direction:
-		return []
-	directions = functions.get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=' + agency + '&r=' + line)
-	soup = BeautifulStoneSoup(directions, selfClosingTags=['stop'])
-	stop_ids = soup.find('direction', tag=direction).findAll('stop')
-	list = []
-	for stop_id in stop_ids:
-		stop = soup.find('stop', tag=stop_id['tag'])
-		list.append({"tag" : stop['tag'], "title" : stop['title']})
-	return list
+    '''Return the stops for a direction for a line for an agency.'''
+    if not agency or not line or not direction:
+        return []
+    directions = functions.get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=' + agency + '&r=' + line)
+    soup = BeautifulStoneSoup(directions, selfClosingTags=['stop'])
+    stop_ids = soup.find('direction', tag=direction).findAll('stop')
+    list = []
+    for stop_id in stop_ids:
+        stop = soup.find('stop', tag=stop_id['tag'])
+        list.append({"tag" : stop['tag'], "title" : stop['title']})
+    return list
+
+def get_line_data(stop):
+    soup = BeautifulStoneSoup(functions.get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=' + stop.agency_tag + '&r=' + stop.line_tag), selfClosingTags=['stop', 'point'])
+    paths = soup.findAll('path')
+    path_list = []
+    for path in paths:
+        points = path.findAll('point')
+        point_list = []
+        for point in points:
+            point_list.append({ 'lat' : point['lat'], 'lon' : point['lon'] })
+        path_list.append(point_list)
+    
+    return { 'title' : stop.title, 'agencyTag' : stop.agency_tag, 'lineTag': stop.line_tag, 'paths' : path_list }
 
 def get_directions(stop, max_arrivals, show_missed):
     '''Return a parsed prediction.'''

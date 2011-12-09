@@ -7,7 +7,7 @@ var map;
 
 function initialize() {
 	var myOptions = {
-		zoom: 18,
+		zoom: 16,
 		center: new google.maps.LatLng(37.81154, -122.27744),
 		mapTypeId: google.maps.MapTypeId.SATELLITE,
 		disableDefaultUI: true,
