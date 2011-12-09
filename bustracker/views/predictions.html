@@ -93,7 +93,7 @@
 					<tr class="header4"><td class="header4-left">no vehicles predicted</td><td class="header4-right"></td></tr>
 				{{/if}}
 				{{each(l, vehicle) vehicles()}}
-					<tr class="header4"><td class="header4-left"><span class="big">${minutes}</span> minutes</td><td class="header4-right">${prettyTimeToLeave}</td></tr>
+					<tr class="header4"><td class="header4-left"><span class="big">${prettyMinutesToArrival}</span> ${prettyMinutesToArrivalSuffix}</td><td class="header4-right">${prettyTimeToLeave}</td></tr>
 				{{/each}}
 			{{/each}}
 		{{/each}}

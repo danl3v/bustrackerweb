@@ -198,6 +198,27 @@ var vehicle = function(timeToStop, minutes)
 		return minutes - timeToStop();
 	}, this);
 
+	this.prettyMinutesToArrival = ko.dependentObservable(function() {
+		if (self.minutes() < 0) {
+			return "Departed";
+		}
+		else if (self.minutes() == 0) {
+			return "Arriving";
+		}
+		else {
+			return self.minutes().toString();
+		}
+	}, this);
+	
+	this.prettyMinutesToArrivalSuffix = ko.dependentObservable(function() {
+		if (self.minutes() > 0) {
+			return "minutes";
+		}
+		else {
+			return "";
+		}
+	}, this);
+
 	this.prettyTimeToLeave = ko.dependentObservable(function() {
 		if (self.timeToLeave() < 0) {
 			return "missed";
