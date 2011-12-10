@@ -1,7 +1,7 @@
 var colorList = function() {
 	var self = this;
 	this.i = 0;
-	this.colors = ["#FFAD29", "#5CE1FF", "#A89CFF", "#C23C3C"];
+	this.colors = ["#FFAD29", "#5CE1FF", "#A89CFF", "#FF4FA7", "#FFF129", "#45FF70", "#C23C3C"];
 	this.color = function() {
 		self.i++;
 		return self.colors[self.i % self.colors.length];
@@ -57,11 +57,15 @@ var stop = function(aStop)
 		this.timeToStop = ko.observable(0);
 	}
 	
-	this.marker = new google.maps.Marker({
-        position: new google.maps.LatLng(self.lat(), self.lon()),
-        title: self.title(),
-        map: map,
-        draggable: false
+    this.stopCircle = new google.maps.Circle({
+		strokeColor: "#FFAD29",
+		strokeOpacity: 0.8,
+		strokeWeight: 2,
+		fillColor: "#000000",
+		fillOpacity: 0.2,
+		map: map,
+		center: new google.maps.LatLng(self.lat(), self.lon()),
+		radius: 200
     });
 	
 	this.agencyChoices = ko.observableArray([]);
@@ -255,7 +259,8 @@ var selectionChoice = function(title, tag) {
 var viewModel = function() {
 	var self = this;
 	
-	this.isLoading = ko.observable(false);
+	this.isLoadingStops = ko.observable(false);
+	this.isLoadingStops = ko.observable(false);
 	this.stops = ko.observableArray([]);
 	this.lines = ko.observableArray([]);
 	
@@ -352,13 +357,13 @@ var viewModel = function() {
 	
 	// loading the stops
 	this.loadStops = function() {
-		self.isLoading = true;
+		self.isLoadingStops = true;
 		$.get("/stops", function(stops) {
 			var mappedStops = $.map(stops, function(aStop, index) {
 				return new stop(aStop);
 			});
 			self.stops(mappedStops);
-			self.isLoading = false;
+			self.isLoadingStops = false;
 			self.refreshTimer();
 		}, 'json');	
 	}

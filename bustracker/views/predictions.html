@@ -69,8 +69,8 @@
 
 <script type="text/x-jquery-tmpl" id="stopTemplate">
 	{{if stops().length == 0}}
-		{{if vm.isLoading()}}<tr class="header1"><td class="header1-left">${isLoading}Loading...</td></tr>{{/if}}
-		{{if !vm.isLoading()}}<tr class="header1"><td class="header1-left">No stops. <a href="#" onclick="vm.newStop()">Add one!</a>.</td></tr>{{/if}}
+		{{if vm.isLoadingStops()}}<tr class="header1"><td class="header1-left">Loading...</td></tr>{{/if}}
+		{{if !vm.isLoadingStops()}}<tr class="header1"><td class="header1-left">No stops. <a href="#" onclick="vm.newStop()">Add one!</a>.</td></tr>{{/if}}
 	{{/if}}
 	{{each(i, stop) stops()}}
 		<tr class="header1">
@@ -87,6 +87,9 @@
 		{{/if}}
 		{{each(j, direction) directions()}}
 			{{if title}}<tr class="header2"><td class="header2-left" colspan="2">${title}</td></tr>{{/if}}
+			{{if destinations().length == 0}}
+				<tr class="header3"><td class="header3-left" colspan="2">no vehicles predicted</td></tr>
+			{{/if}}
 			{{each(k, destination) destinations()}}
 				<tr class="header3"><td class="header3-left" colspan="2">${title}</td></tr>
 				{{if vehicles().length == 0}}
