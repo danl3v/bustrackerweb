@@ -38,6 +38,21 @@ var line = function(aLine) {
 	}
 }
 
+var userLocation = function() {
+
+    this.locationCircle = new google.maps.Circle({
+		strokeColor: "#FFAD29",
+		strokeOpacity: 0.8,
+		strokeWeight: 2,
+		fillColor: "#000000",
+		fillOpacity: 0.2,
+		map: map,
+		center: new google.maps.LatLng(self.lat(), self.lon()),
+		radius: 200
+    });
+
+}
+
 var stop = function(aStop)
 {
 	var self = this;
@@ -57,16 +72,11 @@ var stop = function(aStop)
 		this.timeToStop = ko.observable(0);
 	}
 	
-    this.stopCircle = new google.maps.Circle({
-		strokeColor: "#FFAD29",
-		strokeOpacity: 0.8,
-		strokeWeight: 2,
-		fillColor: "#000000",
-		fillOpacity: 0.2,
+	this.marker = new google.maps.Marker({
+		position: new google.maps.LatLng(self.lat(), self.lon()),
 		map: map,
-		center: new google.maps.LatLng(self.lat(), self.lon()),
-		radius: 200
-    });
+		icon: '/images/stop.png'
+	});
 	
 	this.agencyChoices = ko.observableArray([]);
 	this.lineChoices = ko.observableArray([]);
@@ -260,7 +270,6 @@ var viewModel = function() {
 	var self = this;
 	
 	this.isLoadingStops = ko.observable(false);
-	this.isLoadingStops = ko.observable(false);
 	this.stops = ko.observableArray([]);
 	this.lines = ko.observableArray([]);
 	
@@ -357,13 +366,13 @@ var viewModel = function() {
 	
 	// loading the stops
 	this.loadStops = function() {
-		self.isLoadingStops = true;
+		self.isLoadingStops(true);
 		$.get("/stops", function(stops) {
 			var mappedStops = $.map(stops, function(aStop, index) {
 				return new stop(aStop);
 			});
 			self.stops(mappedStops);
-			self.isLoadingStops = false;
+			self.isLoadingStops(false);
 			self.refreshTimer();
 		}, 'json');	
 	}

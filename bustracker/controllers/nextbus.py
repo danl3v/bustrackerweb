@@ -53,6 +53,12 @@ def get_line_data(stop):
     
     return { 'title' : stop.title, 'agencyTag' : stop.agency_tag, 'lineTag': stop.line_tag, 'paths' : path_list }
 
+def get_stop_data(stop):
+    soup = BeautifulStoneSoup(functions.get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=' + stop.agency_tag + '&r=' + stop.line_tag), selfClosingTags=['stop', 'point'])
+    stops = soup.findAll('stop')
+    theStop = soup.find('stop', tag=stop.stop_tag)
+    return { 'lat' : theStop['lat'], 'lon' : theStop['lon'] }
+
 def get_directions(stop, max_arrivals, show_missed):
     '''Return a parsed prediction.'''
     t = "0"

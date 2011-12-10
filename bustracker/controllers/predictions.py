@@ -57,22 +57,26 @@ class UserStops(webapp.RequestHandler):
         '''Write out the JSON for the user's saved stops.'''
         current_user = users.get_current_user()
         stops = models.User.all().filter('user =', current_user).get().stops.order('position')
-        self.response.out.write(json.dumps([
-                                {   "id": stop.key().id(),
-                                    "title": stop.title,
-                                    
-                                    "lat" : 37.8039799,
-                                    "lon" : -122.27149,
-                                    
-                                    "agencyTag": stop.agency_tag,
-                                    "lineTag": stop.line_tag,
-                                    "directionTag": stop.direction_tag,
-                                    "stopTag": stop.stop_tag,
-                                    "destinationTag": stop.destination_tag,
-                                    
-                                    "timeToStop": stop.time_to_stop,
-                                    "position": stop.position,
-                                } for stop in stops]))
+        stopList = []
+        for stop in stops:
+            stop_data = nextbus.get_stop_data(stop)
+            stopList.append({"id": stop.key().id(),
+                             "title": stop.title,
+                             
+                             "lat" : float(stop_data['lat']),
+                             "lon" : float(stop_data['lon']),
+                             
+                             "agencyTag": stop.agency_tag,
+                             "lineTag": stop.line_tag,
+                             "directionTag": stop.direction_tag,
+                             "stopTag": stop.stop_tag,
+                             "destinationTag": stop.destination_tag,
+                            
+                             "timeToStop": stop.time_to_stop,
+                             "position": stop.position,
+            })
+        
+        self.response.out.write(json.dumps(stopList))
 
 class UserPredictions(webapp.RequestHandler):
     def get(self):

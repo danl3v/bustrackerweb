@@ -9,7 +9,7 @@ function initialize() {
 	var myOptions = {
 		zoom: 16,
 		center: new google.maps.LatLng(37.81154, -122.27744),
-		mapTypeId: google.maps.MapTypeId.SATELLITE,
+		mapTypeId: google.maps.MapTypeId.ROADMAP,
 		disableDefaultUI: true,
 	};
 	map = new google.maps.Map(document.getElementById('map'), myOptions);
