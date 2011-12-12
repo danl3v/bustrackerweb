@@ -109,6 +109,7 @@ var vm = new viewModel();
 ko.applyBindings(vm);
 vm.loadStops();
 vm.loadLines();
+vm.loadSettings();
 
 /* Document Ready */
 

@@ -400,6 +400,7 @@ var viewModel = function() {
 		}
 	};
 	
+	// stop editing
 	this.newStop = function() {
 		self.isNewStop = true;
 		self.editingStop(new stop(null));
@@ -453,6 +454,48 @@ var viewModel = function() {
 		}
 	}
 	
+	// settings
+	this.loadingSettings = ko.observable(true);
+	this.maxArrivals = ko.observable(3);
+	this.showMissed = ko.observable(false);
+	
+	this.editingSettings = ko.observable(false);
+	
+	this.editSettings = function() {
+		if (self.loadingSettings()) {
+			alert("Settings data still loading. Please wait");
+		}
+		else {
+			self.editingSettings(true);
+		}
+	}
+	
+	this.cancelEditingSettings = function() {
+		self.editingSettings(false); // make sure to revert back to old settings
+	}
+	
+	this.doneEditingSettings = function() {
+		$.post("/settings", { "maxArrivals": self.maxArrivals(), "showMissed": self.showMissed() }, function(data) {
+				if (!data || !data.saved) {
+					alert("Problem updating data on server. Please submit again.");
+					self.editingSettings(true);
+				}
+				else {
+					self.refresh();
+				}
+			}, 'json');
+		self.editingSettings(false);
+	}
+	
+	this.loadSettings = function() {
+		self.loadingSettings(true);
+		$.get("/settings", function(settings) {
+			self.maxArrivals(settings.maxArrivals);
+			self.showMissed(settings.showMissed);
+			self.loadingSettings(false);
+		}, 'json');
+	}
+	
 	// loading the stops
 	this.loadStops = function() {
 		self.isLoadingStops(true);
@@ -467,13 +510,16 @@ var viewModel = function() {
 		}, 'json');	
 	}
 	
-	// updating the predictions
+	// loading the predictions
+	this.isLoadingPredictions = ko.observable(true);
+	
 	this.refreshTimer = function() {
 		self.refresh();
 		setTimeout(self.refreshTimer, 20000);
 	}
 	
 	this.refresh = function() {
+		self.isLoadingPredictions(true);
 		$.get("/predictions", function(predictions) {
 			$.map(predictions, function(aPrediction, i) {
 				var theStop = self.stopWithId(aPrediction.id);
@@ -488,6 +534,7 @@ var viewModel = function() {
 					return new direction(theStop, aDirection.title, aDirection.destinations);
 				});
 				theStop.directions(mappedDirections);
+				self.isLoadingPredictions(false);
 				adjustLayout();
 			});
 		}, 'json');
