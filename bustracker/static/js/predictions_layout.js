@@ -126,7 +126,7 @@ $(document).ready(function() {
 			$('*').css('cursor', 'auto');
 			$('#footer-content, .header1-right button').fadeIn('slow');
 			clearTimeout(cursorTimeout);
-			cursorTimeout = setTimeout(hideExtras, 1000);
+			cursorTimeout = setTimeout(hideExtras, 3000);
 		}
 		else if ($('#banner').length) {
 			hideBanner();
