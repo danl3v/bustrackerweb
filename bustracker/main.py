@@ -13,6 +13,7 @@ def main():
            ('/stops', predictions.UserStops),
            ('/lines', predictions.UserLines),
            ('/predictions', predictions.UserPredictions),
+           ('/vehicles', predictions.UserVehicles),
            
            # stop management
 		   ('/stop/save', stops.SaveStop),

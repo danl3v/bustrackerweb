@@ -78,6 +78,10 @@ class UserStops(webapp.RequestHandler):
         
         self.response.out.write(json.dumps(stopList))
 
+class UserVehicles(webapp.RequestHandler):
+	def get(self):
+		pass
+
 class UserPredictions(webapp.RequestHandler):
     def get(self):
         '''Write out the JSON predictions for the user's stops.'''

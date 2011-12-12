@@ -1,3 +1,33 @@
+ko.protectedObservable = function(initialValue) {
+	var _actualValue = ko.observable(initialValue);
+	var _tempValue = initialValue;
+	
+	var result = ko.dependentObservable({
+		//always return the actual value
+		read: function() {
+		   return _actualValue(); 
+		},
+
+		write: function(newValue) {
+			 _tempValue = newValue; 
+		}
+	}); 
+	
+
+	result.commit = function() {
+		if (_tempValue !== _actualValue()) {
+			 _actualValue(_tempValue); 
+		}  
+	};
+	
+	result.reset = function() {
+		_actualValue.valueHasMutated();
+		_tempValue = _actualValue();   //reset temp value 
+	};
+ 
+	return result;
+};
+
 var colorList = function() {
 	var self = this;
 	this.i = 0;
@@ -456,8 +486,8 @@ var viewModel = function() {
 	
 	// settings
 	this.loadingSettings = ko.observable(true);
-	this.maxArrivals = ko.observable(3);
-	this.showMissed = ko.observable(false);
+	this.maxArrivals = ko.protectedObservable(3);
+	this.showMissed = ko.protectedObservable(false);
 	
 	this.editingSettings = ko.observable(false);
 	
@@ -471,10 +501,14 @@ var viewModel = function() {
 	}
 	
 	this.cancelEditingSettings = function() {
+		self.maxArrivals.reset();
+		self.showMissed.reset();
 		self.editingSettings(false); // make sure to revert back to old settings
 	}
 	
 	this.doneEditingSettings = function() {
+		self.maxArrivals.commit();
+		self.showMissed.commit();
 		$.post("/settings", { "maxArrivals": self.maxArrivals(), "showMissed": self.showMissed() }, function(data) {
 				if (!data || !data.saved) {
 					alert("Problem updating data on server. Please submit again.");
@@ -511,7 +545,7 @@ var viewModel = function() {
 	}
 	
 	// loading the predictions
-	this.isLoadingPredictions = ko.observable(true);
+	this.isLoadingPredictions = ko.observable(true); // use this in the ui
 	
 	this.refreshTimer = function() {
 		self.refresh();
