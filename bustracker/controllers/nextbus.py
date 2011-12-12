@@ -76,5 +76,5 @@ def get_directions(stop, max_arrivals, show_missed):
         if not show_missed:
             predictions = filter(lambda prediction: True if functions.get_leave_at(stop.time_to_stop, prediction['minutes']) != -1 else False, predictions)
         predictions = sorted(predictions, key=lambda prediction: int(prediction['minutes']))[:max_arrivals]
-        destinations_list.append({"title": destination['title'], "vehicles": [{"minutes" : prediction['minutes'], 'lat' : float(vehicles_dict[prediction['vehicle']]['lat'] if prediction['vehicle'] in vehicles_dict else 0), 'lon' : float(vehicles_dict[prediction['vehicle']]['lon'] if prediction['vehicle'] in vehicles_dict else 0)} for prediction in predictions]})
+        destinations_list.append({"title": destination['title'], "vehicles": [{"number" : prediction['vehicle'], "minutes" : prediction['minutes'], 'lat' : float(vehicles_dict[prediction['vehicle']]['lat'] if prediction['vehicle'] in vehicles_dict else 0), 'lon' : float(vehicles_dict[prediction['vehicle']]['lon'] if prediction['vehicle'] in vehicles_dict else 0)} for prediction in predictions]})
     return [{"title": "", "destinations": destinations_list}]

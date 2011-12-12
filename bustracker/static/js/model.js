@@ -197,43 +197,83 @@ var stop = function(aStop)
 
 var direction = function(timeToStop, title, destinations)
 {
+	var self = this;
 	this.title = ko.observable(title);
 	this.destinations = ko.observableArray([]);
 	
-	var mappedDestinations = $.map(destinations, function(aDestination) {
-		return new destination(timeToStop, aDestination.title, aDestination.vehicles);
-	});
-	this.destinations(mappedDestinations);
+	this.updateDestinations = function(destinations) {
+		var mappedDestinations = $.map(destinations, function(aDestination) {
+			for (var i=0; i < self.destinations().length; i++) {
+				if (self.destinations()[i].title() == aDestination.title) { // convert this to a dependant observable?
+					var theDestination = self.destinations()[i];
+					theDestination.updateVehicles(aDestination.vehicles);
+					return theDestination;
+				}
+			}
+			return new destination(timeToStop, aDestination.title, aDestination.vehicles);
+		});
+		self.destinations(mappedDestinations);
+	}
+	this.updateDestinations(destinations);
 }
 
 var destination = function(timeToStop, title, vehicles)
 {
+	var self = this;
+	
 	this.direction = ko.observable(direction);
 	this.title = ko.observable(title);
 	this.vehicles = ko.observableArray([]);
 	
-	var mappedVehicles = $.map(vehicles, function(aVehicle) {
-		return new vehicle(timeToStop, aVehicle.minutes, aVehicle.lat, aVehicle.lon);
-	});
-	this.vehicles(mappedVehicles);
+	this.updateVehicles = function(vehicles) {
+		var mappedVehicles = $.map(vehicles, function(aVehicle) {
+			for (var i=0; i < self.vehicles().length; i++) {
+				if (self.vehicles()[i].vehicleNumber == aVehicle.number) { // convert this to a dependant observable?
+					var theVehicle = self.vehicles()[i];
+					theVehicle.minutes(aVehicle.minutes);
+					theVehicle.lat(aVehicle.lat);
+					theVehicle.lon(aVehicle.lon);
+					return theVehicle;
+				}
+			}
+			return new vehicle(timeToStop, aVehicle.minutes, aVehicle.lat, aVehicle.lon, aVehicle.number);
+		});
+		self.vehicles(mappedVehicles);
+	}
+	
+	this.updateVehicles(vehicles);
 }
 
-var vehicle = function(timeToStop, minutes, lat, lon)
+var vehicle = function(timeToStop, minutes, lat, lon, vehicleNumber)
 {
 	var self = this;
 	
-	this.destination = ko.observable(destination);
+	this.vehicleNumber = vehicleNumber;
 	this.minutes = ko.observable(minutes);
-	this.lat = lat;
-	this.lon = lon;
+	this.lat = ko.observable(lat);
+	this.lon = ko.observable(lon);
+	this.marker = null;
 	
-	if (lat != 0 && lon != 0) {
-		this.marker = new google.maps.Marker({
-			position: new google.maps.LatLng(self.lat, self.lon),
-			map: map,
-			icon: '/images/bus.png'
-		});
+	this.lat.subscribe(function(newValue) {
+		self.updateVehicleMarker();
+	});
+	this.lon.subscribe(function(newValue) {
+		self.updateVehicleMarker();
+	});
+	
+	this.updateVehicleMarker = function() {
+		if (self.marker) {
+			self.marker.setMap(null); // eventually do some animation in here
+		}
+		if (self.lat() != 0 && self.lon() != 0) {
+			self.marker = new google.maps.Marker({
+				position: new google.maps.LatLng(self.lat(), self.lon()),
+				map: map,
+				icon: '/images/bus.png'
+			});
+		}
 	}
+	this.updateVehicleMarker();
 	
 	this.timeToLeave = ko.dependentObservable(function() {
 		return minutes - timeToStop();
@@ -407,10 +447,18 @@ var viewModel = function() {
 	this.refresh = function() {
 		$.get("/predictions", function(predictions) {
 			$.map(predictions, function(aPrediction, i) {
+				var theStop = self.stopWithId(aPrediction.id);
 				var mappedDirections = $.map(aPrediction.directions, function(aDirection) {
+					for (var i=0; i < theStop.directions().length; i++) {
+						if (theStop.directions()[i].title() == aDirection.title) {
+							var theDirection = theStop.directions()[i];
+							theDirection.updateDestinations(aDirection.destinations);
+							return theDirection;
+						}
+					}
 					return new direction(self.stops()[i].timeToStop, aDirection.title, aDirection.destinations);
 				});
-				self.stopWithId(aPrediction.id).directions(mappedDirections);
+				theStop.directions(mappedDirections);
 				adjustLayout();
 			});
 		}, 'json');
