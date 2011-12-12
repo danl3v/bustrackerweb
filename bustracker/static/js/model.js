@@ -236,19 +236,9 @@ var destination = function(stop, title, vehicles)
 					return theVehicle;
 				}
 			}
+			
 			return new vehicle(stop, aVehicle.minutes, aVehicle.lat, aVehicle.lon, aVehicle.number);
 		});
-		for (var i=0; i < self.vehicles().length; i++) {
-			var found = false;
-			for (var j=0; j < self.mappedVehicles.length; j++) {
-				if (self.mappedVehicles[j] == self.vehicles()[i]) {
-					found = true;
-				}
-				if (!found) {
-					self.vehicles()[i].removeMarker();
-				}
-			}
-		}
 		self.vehicles(mappedVehicles);
 	}
 	
@@ -265,9 +255,14 @@ var vehicle = function(stop, minutes, lat, lon, vehicleNumber)
 	this.lon = ko.observable(lon);
 	this.marker = null;
 	
+	this.minutes.subscribe(function(newValue) {
+		self.updateVehicleMarker();
+	});
+	
 	this.lat.subscribe(function(newValue) {
 		self.updateVehicleMarker();
 	});
+	
 	this.lon.subscribe(function(newValue) {
 		self.updateVehicleMarker();
 	});
@@ -281,6 +276,12 @@ var vehicle = function(stop, minutes, lat, lon, vehicleNumber)
 		}
 	}
 	
+	this.hideMarker = function() {
+		if (self.marker) {
+			self.marker.setMap(null);
+		}
+	}
+	
 	this.removeMarker = function() {
 		if (self.marker) {
 			self.marker.setMap(null);
@@ -290,21 +291,21 @@ var vehicle = function(stop, minutes, lat, lon, vehicleNumber)
 	
 	this.updateVehicleMarker = function() {
 		if (self.marker) {
-			//distance = google.maps.geometry.spherical.computeDistanceBetween(latLngA, latLngB);
+			marker.setMap(map);
 			self.moveToStep(self.marker, self.marker.position, 0, 20);
 		}
 		else if (self.lat() != 0 && self.lon() != 0) {
 			self.marker = new google.maps.Marker({
 				position: new google.maps.LatLng(self.lat(), self.lon()),
 				map: map,
-				icon: 'https://chart.googleapis.com/chart?chst=d_bubble_icon_text_small&chld=bus|bb|' + stop.title() + ' (' + self.minutes().toString() + 'm)|FFFFFF|000000'//google.maps.MarkerImage('https://chart.googleapis.com/chart?chst=d_bubble_icon_text_small&chld=bus|bb|51A (' + self.minutes().toString() + 'm)|FFFFFF|000000', null, new google.maps.Point(0, 42))
+				icon: '/images/bus.png'
 			});
 		}
 	}
 	this.updateVehicleMarker();
 	
 	this.timeToLeave = ko.dependentObservable(function() {
-		return minutes - stop.timeToStop();
+		return self.minutes() - stop.timeToStop();
 	}, this);
 
 	this.prettyMinutesToArrival = ko.dependentObservable(function() {
@@ -320,7 +321,10 @@ var vehicle = function(stop, minutes, lat, lon, vehicleNumber)
 	}, this);
 	
 	this.prettyMinutesToArrivalSuffix = ko.dependentObservable(function() {
-		if (self.minutes() > 0) {
+		if (self.minutes() == 1) {
+			return "minute";
+		}
+		else if (self.minutes() > 1) {
 			return "minutes";
 		}
 		else {
@@ -334,9 +338,6 @@ var vehicle = function(stop, minutes, lat, lon, vehicleNumber)
 		}
 		else if (self.timeToLeave() == 0) {
 			return "leave now";
-		}
-		else if (self.timeToLeave() == 1) {
-			return "leave in 1m";
 		}
 		else {
 			return "leave in " + self.timeToLeave().toString() + "m";
@@ -481,7 +482,7 @@ var viewModel = function() {
 						if (theStop.directions()[i].title() == aDirection.title) {
 							var theDirection = theStop.directions()[i];
 							theDirection.updateDestinations(aDirection.destinations);
-							return theDirection;
+							//return theDirection;
 						}
 					}
 					return new direction(theStop, aDirection.title, aDirection.destinations);
