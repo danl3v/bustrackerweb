@@ -11,7 +11,6 @@
 var timer;
 var newsFeedWidth;
 var bannerTimer;
-var previousPredictions;
 var previousPosts;
 var cursorTimeout;
 var pageX;
@@ -22,7 +21,6 @@ var isActive;
 
 var initLayout;
 var adjustLayout;
-var getPredictions;
 var showBanner;
 var hideBanner;
 var hardHideBanner;
@@ -47,25 +45,11 @@ function adjustLayout() {
 	$('#news-feed-background').css('width', 0);
 	documentHeight = $(document).height() - 1;
 	$('#divider').height(documentHeight);
+	$('#map').height(documentHeight);
 	$('#news-feed-background').css('width', newsFeedWidth + '%');
 	$('#news-feed-background').css('height', documentHeight);
 	clearTimeout(timer);
 	timer = setTimeout(showScrollBars, 1000);
-}
-
-/* Predictions */
-
-function getPredictions() {
-	$.get('/predictions', function(predictions) {
-		if (predictions !== previousPredictions) {
-			$('#stop-list').fadeOut('fast', function() {
-				$('#stop-list').html(predictions);
-				$('#stop-list').fadeIn('fast', function() { adjustLayout(); });			
-			});
-			previousPredictions = predictions;
-		}
-	});
-	setTimeout(getPredictions, 20000);
 }
 
 /* Posts */
@@ -130,7 +114,6 @@ vm.loadLines();
 
 $(document).ready(function() {
 	hideExtras();
-	//getPredictions();
 	adjustLayout();
 	initLayout();
 	isActive = true;

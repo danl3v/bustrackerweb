@@ -13,29 +13,47 @@ var aColorList = new colorList();
 var line = function(aLine) {
 
 	var self = this;
-	var color = aColorList.color();
-
-	for (var i=0; i < aLine.paths.length;i++) {
-		var coordinates = [];
-		for (var j=0; j < aLine.paths[i].length;j++) {
-			coordinates.push(new google.maps.LatLng(aLine.paths[i][j].lat, aLine.paths[i][j].lon));
+	this.agencyTag = aLine.agencyTag;
+	this.lineTag = aLine.lineTag;
+	this.color = aColorList.color();
+	this.polyLineList = [];
+	
+	this.undraw = function() {
+		for (var i=0; i < self.polyLineList.length;i++) {
+			self.polyLineList[i].setMap(null);
 		}
-		var polyLineCasing = new google.maps.Polyline({
-			path: coordinates,
-			strokeColor: "#000000",
-			strokeOpacity: 1.0,
-			strokeWeight: 10
-		});
-		polyLineCasing.setMap(map);
-		var polyLineInside = new google.maps.Polyline({
-			path: coordinates,
-			strokeColor: color,
-			strokeOpacity: 1.0,
-			strokeWeight: 5
-		});
-		
-		polyLineInside.setMap(map);
 	}
+
+	this.draw = function() {
+	
+		for (var i=0; i < aLine.paths.length;i++) {
+			var coordinates = [];
+			
+			for (var j=0; j < aLine.paths[i].length;j++) {
+				coordinates.push(new google.maps.LatLng(aLine.paths[i][j].lat, aLine.paths[i][j].lon));
+			}
+			
+			var polyLineCasing = new google.maps.Polyline({
+				path: coordinates,
+				strokeColor: "#000000",
+				strokeOpacity: 1.0,
+				strokeWeight: 10
+			});
+			polyLineCasing.setMap(map);
+			self.polyLineList.push(polyLineCasing);
+			
+			var polyLineInside = new google.maps.Polyline({
+				path: coordinates,
+				strokeColor: self.color,
+				strokeOpacity: 1.0,
+				strokeWeight: 5
+			});
+			polyLineInside.setMap(map);
+			self.polyLineList.push(polyLineInside);
+		}
+	}
+	
+	this.draw();
 }
 
 var userLocation = function() {
@@ -390,6 +408,7 @@ var viewModel = function() {
 					return new direction(self.stops()[i].timeToStop, aDirection.title, aDirection.destinations);
 				});
 				self.stopWithId(aPrediction.id).directions(mappedDirections);
+				adjustLayout();
 			});
 		}, 'json');
 	}
@@ -397,6 +416,10 @@ var viewModel = function() {
 	// loading the lines
 	this.loadLines = function() {
 		$.get("/lines", function(lines) {
+			for (var i=0; i < self.lines().length;i++) {
+				self.lines()[i].undraw();
+			}
+		
 			var mappedLines = $.map(lines, function(aLine, index) {
 				return new line(aLine);
 			});

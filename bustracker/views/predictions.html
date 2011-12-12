@@ -78,8 +78,8 @@
 			<td class="header1-right">
 				{{if i > 0}}<button data-bind="click: function() { vm.moveup(i) }">↑</button>{{/if}}
 				{{if i < vm.stops().length-1}}<button data-bind="click: function() { vm.movedown(i) }">↓</button>{{/if}}
-				<button data-bind="click: function() { vm.editStop(i) }">edit</button>
-				<button data-bind="click: function() { vm.delete(i) }">delete</button>
+				<button data-bind="click: function() { vm.editStop(i) }">↩</button>
+				<button data-bind="click: function() { vm.delete(i) }">✗</button>
 			</td>
 		</tr>
 		{{if directions().length == 0}}
