@@ -195,7 +195,7 @@ var stop = function(aStop)
 	}, this);
 }
 
-var direction = function(timeToStop, title, destinations)
+var direction = function(stop, title, destinations)
 {
 	var self = this;
 	this.title = ko.observable(title);
@@ -210,14 +210,14 @@ var direction = function(timeToStop, title, destinations)
 					return theDestination;
 				}
 			}
-			return new destination(timeToStop, aDestination.title, aDestination.vehicles);
+			return new destination(stop, aDestination.title, aDestination.vehicles);
 		});
 		self.destinations(mappedDestinations);
 	}
 	this.updateDestinations(destinations);
 }
 
-var destination = function(timeToStop, title, vehicles)
+var destination = function(stop, title, vehicles)
 {
 	var self = this;
 	
@@ -236,15 +236,26 @@ var destination = function(timeToStop, title, vehicles)
 					return theVehicle;
 				}
 			}
-			return new vehicle(timeToStop, aVehicle.minutes, aVehicle.lat, aVehicle.lon, aVehicle.number);
+			return new vehicle(stop, aVehicle.minutes, aVehicle.lat, aVehicle.lon, aVehicle.number);
 		});
+		for (var i=0; i < self.vehicles().length; i++) {
+			var found = false;
+			for (var j=0; j < self.mappedVehicles.length; j++) {
+				if (self.mappedVehicles[j] == self.vehicles()[i]) {
+					found = true;
+				}
+				if (!found) {
+					self.vehicles()[i].removeMarker();
+				}
+			}
+		}
 		self.vehicles(mappedVehicles);
 	}
 	
 	this.updateVehicles(vehicles);
 }
 
-var vehicle = function(timeToStop, minutes, lat, lon, vehicleNumber)
+var vehicle = function(stop, minutes, lat, lon, vehicleNumber)
 {
 	var self = this;
 	
@@ -261,22 +272,39 @@ var vehicle = function(timeToStop, minutes, lat, lon, vehicleNumber)
 		self.updateVehicleMarker();
 	});
 	
+	this.moveToStep = function(marker, startPoint, stepCurrent, stepsTotal) {
+		if (stepCurrent < stepsTotal) {
+			marker.setPosition(new google.maps.LatLng(parseFloat(startPoint.lat() + stepCurrent*((self.lat() - startPoint.lat()) / stepsTotal)), parseFloat(startPoint.lng() + stepCurrent*((self.lon() - startPoint.lng())/ stepsTotal))));
+			window.setTimeout(function() {
+				self.moveToStep(marker, startPoint, stepCurrent+1, stepsTotal);
+			}, 100);
+		}
+	}
+	
+	this.removeMarker = function() {
+		if (self.marker) {
+			self.marker.setMap(null);
+			self.marker = null;
+		}
+	}
+	
 	this.updateVehicleMarker = function() {
 		if (self.marker) {
-			self.marker.setMap(null); // eventually do some animation in here
+			//distance = google.maps.geometry.spherical.computeDistanceBetween(latLngA, latLngB);
+			self.moveToStep(self.marker, self.marker.position, 0, 20);
 		}
-		if (self.lat() != 0 && self.lon() != 0) {
+		else if (self.lat() != 0 && self.lon() != 0) {
 			self.marker = new google.maps.Marker({
 				position: new google.maps.LatLng(self.lat(), self.lon()),
 				map: map,
-				icon: '/images/bus.png'
+				icon: 'https://chart.googleapis.com/chart?chst=d_bubble_icon_text_small&chld=bus|bb|' + stop.title() + ' (' + self.minutes().toString() + 'm)|FFFFFF|000000'//google.maps.MarkerImage('https://chart.googleapis.com/chart?chst=d_bubble_icon_text_small&chld=bus|bb|51A (' + self.minutes().toString() + 'm)|FFFFFF|000000', null, new google.maps.Point(0, 42))
 			});
 		}
 	}
 	this.updateVehicleMarker();
 	
 	this.timeToLeave = ko.dependentObservable(function() {
-		return minutes - timeToStop();
+		return minutes - stop.timeToStop();
 	}, this);
 
 	this.prettyMinutesToArrival = ko.dependentObservable(function() {
@@ -456,7 +484,7 @@ var viewModel = function() {
 							return theDirection;
 						}
 					}
-					return new direction(self.stops()[i].timeToStop, aDirection.title, aDirection.destinations);
+					return new direction(theStop, aDirection.title, aDirection.destinations);
 				});
 				theStop.directions(mappedDirections);
 				adjustLayout();
