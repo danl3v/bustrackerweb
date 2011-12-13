@@ -3,7 +3,6 @@ ko.protectedObservable = function(initialValue) {
 	var _tempValue = initialValue;
 	
 	var result = ko.dependentObservable({
-		//always return the actual value
 		read: function() {
 		   return _actualValue(); 
 		},
@@ -22,7 +21,7 @@ ko.protectedObservable = function(initialValue) {
 	
 	result.reset = function() {
 		_actualValue.valueHasMutated();
-		_tempValue = _actualValue();   //reset temp value 
+		_tempValue = _actualValue();
 	};
  
 	return result;
@@ -47,6 +46,7 @@ var line = function(aLine) {
 	this.lineTag = aLine.lineTag;
 	this.color = aColorList.color();
 	this.polyLineList = [];
+	this.vehicles = ko.observableArray([]);
 	
 	this.undraw = function() {
 		for (var i=0; i < self.polyLineList.length;i++) {
@@ -81,6 +81,16 @@ var line = function(aLine) {
 			polyLineInside.setMap(map);
 			self.polyLineList.push(polyLineInside);
 		}
+	}
+	
+	this.vehicleFromId = function(id) {
+		var theVehicle = null;
+		self.vehicles().forEach(function(aVehicle, i) {
+			if (aVehicle.id == id) {
+				theVehicle = aVehicle;
+			}
+		});
+		return theVehicle;
 	}
 	
 	this.draw();
@@ -255,84 +265,34 @@ var destination = function(stop, title, vehicles)
 	this.title = ko.observable(title);
 	this.vehicles = ko.observableArray([]);
 	
-	this.updateVehicles = function(vehicles) {
+	this.updatePredictions = function(vehicles) {
 		var mappedVehicles = $.map(vehicles, function(aVehicle) {
 			for (var i=0; i < self.vehicles().length; i++) {
 				if (self.vehicles()[i].vehicleNumber == aVehicle.number) { // convert this to a dependant observable?
 					var theVehicle = self.vehicles()[i];
 					theVehicle.minutes(aVehicle.minutes);
-					theVehicle.lat(aVehicle.lat);
-					theVehicle.lon(aVehicle.lon);
 					return theVehicle;
 				}
 			}
 			
-			return new vehicle(stop, aVehicle.minutes, aVehicle.lat, aVehicle.lon, aVehicle.number);
+			return new prediction(stop, aVehicle.minutes, aVehicle.number);
 		});
 		self.vehicles(mappedVehicles);
 	}
 	
-	this.updateVehicles(vehicles);
+	this.updatePredictions(vehicles);
 }
 
-var vehicle = function(stop, minutes, lat, lon, vehicleNumber)
+var prediction = function(stop, minutes, vehicleNumber)
 {
 	var self = this;
 	
 	this.vehicleNumber = vehicleNumber;
 	this.minutes = ko.observable(minutes);
-	this.lat = ko.observable(lat);
-	this.lon = ko.observable(lon);
-	this.marker = null;
 	
 	this.minutes.subscribe(function(newValue) {
 		self.updateVehicleMarker();
 	});
-	
-	this.lat.subscribe(function(newValue) {
-		self.updateVehicleMarker();
-	});
-	
-	this.lon.subscribe(function(newValue) {
-		self.updateVehicleMarker();
-	});
-	
-	this.moveToStep = function(marker, startPoint, stepCurrent, stepsTotal) {
-		if (stepCurrent < stepsTotal) {
-			marker.setPosition(new google.maps.LatLng(parseFloat(startPoint.lat() + stepCurrent*((self.lat() - startPoint.lat()) / stepsTotal)), parseFloat(startPoint.lng() + stepCurrent*((self.lon() - startPoint.lng())/ stepsTotal))));
-			window.setTimeout(function() {
-				self.moveToStep(marker, startPoint, stepCurrent+1, stepsTotal);
-			}, 100);
-		}
-	}
-	
-	this.hideMarker = function() {
-		if (self.marker) {
-			self.marker.setMap(null);
-		}
-	}
-	
-	this.removeMarker = function() {
-		if (self.marker) {
-			self.marker.setMap(null);
-			self.marker = null;
-		}
-	}
-	
-	this.updateVehicleMarker = function() {
-		if (self.marker) {
-			marker.setMap(map);
-			self.moveToStep(self.marker, self.marker.position, 0, 20);
-		}
-		else if (self.lat() != 0 && self.lon() != 0) {
-			self.marker = new google.maps.Marker({
-				position: new google.maps.LatLng(self.lat(), self.lon()),
-				map: map,
-				icon: '/images/bus.png'
-			});
-		}
-	}
-	this.updateVehicleMarker();
 	
 	this.timeToLeave = ko.dependentObservable(function() {
 		return self.minutes() - stop.timeToStop();
@@ -374,6 +334,46 @@ var vehicle = function(stop, minutes, lat, lon, vehicleNumber)
 		}
 		
 	}, this);
+}
+
+var vehicle = function(aVehicle) {
+	var self = this;
+
+	this.id = aVehicle.id;
+	this.lat = ko.observable(aVehicle.lat);
+	this.lon = ko.observable(aVehicle.lon);
+	this.marker = null;
+
+	this.lat.subscribe(function(newValue) {
+		self.updateVehicleMarker();
+	});
+	
+	this.lon.subscribe(function(newValue) {
+		self.updateVehicleMarker();
+	});
+	
+	this.moveToStep = function(marker, startPoint, stepCurrent, stepsTotal) {
+		if (stepCurrent < stepsTotal) {
+			marker.setPosition(new google.maps.LatLng(parseFloat(startPoint.lat() + stepCurrent*((self.lat() - startPoint.lat()) / stepsTotal)), parseFloat(startPoint.lng() + stepCurrent*((self.lon() - startPoint.lng())/ stepsTotal))));
+			window.setTimeout(function() {
+				self.moveToStep(marker, startPoint, stepCurrent+1, stepsTotal);
+			}, 100);
+		}
+	}
+	
+	this.updateVehicleMarker = function() {
+		if (self.marker) {
+			self.moveToStep(self.marker, self.marker.position, 0, 20);
+		}
+		else if (self.lat() != 0 && self.lon() != 0) {
+			self.marker = new google.maps.Marker({
+				position: new google.maps.LatLng(self.lat(), self.lon()),
+				map: map,
+				icon: '/images/bus.png'
+			});
+		}
+	}
+	this.updateVehicleMarker();
 }
 
 var selectionChoice = function(title, tag) {
@@ -455,7 +455,7 @@ var viewModel = function() {
 			$.post("/stop/save", { "id" : stop.id(), "title" : stop.title(), "agencyTag" : stop.agencyChoice().tag,	"lineTag" : stop.lineChoice().tag, "directionTag" : stop.directionChoice().tag,	"stopTag" : stop.stopChoice().tag, "timeToStop" : stop.timeToStop() }, function(data) {
 				if (data) {
 					stop.id(parseInt(data.id));
-					self.refresh();
+					self.loadPredictions();
 					self.loadLines();
 				}
 				else {
@@ -503,7 +503,7 @@ var viewModel = function() {
 	this.cancelEditingSettings = function() {
 		self.maxArrivals.reset();
 		self.showMissed.reset();
-		self.editingSettings(false); // make sure to revert back to old settings
+		self.editingSettings(false);
 	}
 	
 	this.doneEditingSettings = function() {
@@ -515,7 +515,7 @@ var viewModel = function() {
 					self.editingSettings(true);
 				}
 				else {
-					self.refresh();
+					self.loadPredictions();
 				}
 			}, 'json');
 		self.editingSettings(false);
@@ -548,11 +548,12 @@ var viewModel = function() {
 	this.isLoadingPredictions = ko.observable(true); // use this in the ui
 	
 	this.refreshTimer = function() {
-		self.refresh();
+		self.loadPredictions();
+		self.loadVehicles();
 		setTimeout(self.refreshTimer, 20000);
 	}
 	
-	this.refresh = function() {
+	this.loadPredictions = function() {
 		self.isLoadingPredictions(true);
 		$.get("/predictions", function(predictions) {
 			$.map(predictions, function(aPrediction, i) {
@@ -574,13 +575,41 @@ var viewModel = function() {
 		}, 'json');
 	}
 	
+	// loading the vehicles
+	this.lineFromTags = function(agencyTag, lineTag) {
+		var lineToReturn = null;
+		self.lines().forEach(function(aLine, i) {
+			if (aLine.agencyTag == agencyTag && aLine.lineTag == lineTag) {
+				lineToReturn = aLine;
+			}
+		});
+		return lineToReturn;
+	};
+	
+	this.loadVehicles = function() {
+		$.get("/vehicles", function(lines) {
+			lines.forEach(function(aLine, i) {
+				var theLine = self.lineFromTags(aLine.agencyTag, aLine.lineTag);
+				var mappedVehicles = $.map(aLine.vehicles, function(aVehicle, index) {
+					var theVehicle = theLine.vehicleFromId(aVehicle.id);
+					if (theVehicle) {
+						theVehicle.lat(aVehicle.lat);
+						theVehicle.lon(aVehicle.lon);
+						return theVehicle;
+					}
+					return new vehicle(aVehicle);
+				});
+				theLine.vehicles(mappedVehicles);
+			});
+		}, 'json');
+	}
+	
 	// loading the lines
 	this.loadLines = function() {
 		$.get("/lines", function(lines) {
 			for (var i=0; i < self.lines().length;i++) {
 				self.lines()[i].undraw();
 			}
-		
 			var mappedLines = $.map(lines, function(aLine, index) {
 				return new line(aLine);
 			});
