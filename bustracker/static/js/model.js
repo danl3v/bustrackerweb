@@ -450,7 +450,6 @@ var viewModel = function() {
 			if (self.isNewStop) {
 				self.stops.push(stop);
 			}
-			adjustLayout();
 			$.post("/stop/save", { "id" : stop.id(), "title" : stop.title(), "agencyTag" : stop.agencyChoice().tag,	"lineTag" : stop.lineChoice().tag, "directionTag" : stop.directionChoice().tag,	"stopTag" : stop.stopChoice().tag, "timeToStop" : stop.timeToStop() }, function(data) {
 				if (data) {
 					stop.id(parseInt(data.id));
@@ -479,7 +478,6 @@ var viewModel = function() {
 				self.loadLines();
 			}, 'json');
 			self.stops.splice(i, 1);
-			adjustLayout();
 		}
 	}
 	
@@ -539,7 +537,6 @@ var viewModel = function() {
 			self.stops(mappedStops);
 			self.isLoadingStops(false);
 			self.refreshTimer();
-			adjustLayout();
 		}, 'json');
 	}
 	
@@ -569,7 +566,6 @@ var viewModel = function() {
 				});
 				theStop.directions(mappedDirections);
 				self.isLoadingPredictions(false);
-				adjustLayout();
 			});
 		}, 'json');
 	}
