@@ -41,13 +41,13 @@ function initLayout() {
 function adjustLayout() {
 	var documentHeight;
 	document.documentElement.style.overflow = 'hidden';
-	$('#divider').height(0);
-	$('#news-feed-background').css('width', 0);
+//	$('#divider').height(0);
+//	$('#news-feed-background').css('width', 0);
 	documentHeight = $(document).height() - 1;
-	$('#divider').height(documentHeight);
-	$('#map').height(documentHeight);
-	$('#news-feed-background').css('width', newsFeedWidth + '%');
-	$('#news-feed-background').css('height', documentHeight);
+//	$('#wrapper').height(documentHeight);
+//	$('#map').height(documentHeight);
+//	$('#news-feed-background').css('width', newsFeedWidth + '%');
+//	$('#news-feed-background').css('height', documentHeight);
 	clearTimeout(timer);
 	timer = setTimeout(showScrollBars, 1000);
 }

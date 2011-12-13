@@ -523,7 +523,7 @@ var viewModel = function() {
 	this.loadSettings = function() {
 		self.loadingSettings(true);
 		$.get("/settings", function(settings) {
-			self.maxArrivals(settings.maxArrivals);
+			self.maxArrivals(settings.maxArrivals); // this is broken -- settings do not load
 			self.showMissed(settings.showMissed);
 			self.loadingSettings(false);
 		}, 'json');
@@ -616,3 +616,9 @@ var viewModel = function() {
 		}, 'json');	
 	}
 };
+
+var vm = new viewModel();
+ko.applyBindings(vm);
+vm.loadStops();
+vm.loadLines();
+vm.loadSettings();
