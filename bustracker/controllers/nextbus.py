@@ -50,7 +50,6 @@ def get_line_data(stop):
         for point in points:
             point_list.append({ 'lat' : point['lat'], 'lon' : point['lon'] })
         path_list.append(point_list)
-    
     return { 'title' : stop.title, 'agencyTag' : stop.agency_tag, 'lineTag': stop.line_tag, 'paths' : path_list }
     
 def get_vehicle_data(stop):
@@ -70,20 +69,13 @@ def get_stop_data(stop):
 
 def get_directions(stop, max_arrivals, show_missed):
     '''Return a parsed prediction.'''
-    t = "0"
-    vehicleSoup = BeautifulStoneSoup(functions.get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=vehicleLocations&a=' + stop.agency_tag + '&r=' + stop.line_tag + '&t=' + t), selfClosingTags=['vehicle', 'lasttime'])
-    vehicles = vehicleSoup.findAll('vehicle')
-    vehicles_dict = {}
-    for vehicle in vehicles:
-        vehicles_dict[vehicle['id']] = { 'lat' : vehicle['lat'], 'lon' : vehicle['lon'] }    
-    
-    predictionSoup = BeautifulStoneSoup(functions.get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=' + stop.agency_tag + '&r=' + stop.line_tag + '&d=' + stop.direction_tag + '&s=' + stop.stop_tag), selfClosingTags=['prediction'])
-    destinations = predictionSoup.findAll('direction')
+    soup = BeautifulStoneSoup(functions.get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=' + stop.agency_tag + '&r=' + stop.line_tag + '&d=' + stop.direction_tag + '&s=' + stop.stop_tag), selfClosingTags=['prediction'])
+    destinations = soup.findAll('direction')
     destinations_list = []
     for destination in destinations:
         predictions = destination.findAll('prediction')
         if not show_missed:
             predictions = filter(lambda prediction: True if functions.get_leave_at(stop.time_to_stop, prediction['minutes']) != -1 else False, predictions)
         predictions = sorted(predictions, key=lambda prediction: int(prediction['minutes']))[:max_arrivals]
-        destinations_list.append({"title": destination['title'], "vehicles": [{"number" : prediction['vehicle'], "minutes" : prediction['minutes'], 'lat' : float(vehicles_dict[prediction['vehicle']]['lat'] if prediction['vehicle'] in vehicles_dict else 0), 'lon' : float(vehicles_dict[prediction['vehicle']]['lon'] if prediction['vehicle'] in vehicles_dict else 0)} for prediction in predictions]})
+        destinations_list.append({"title": destination['title'], "vehicles": [{"id" : prediction['vehicle'], "minutes" : prediction['minutes']} for prediction in predictions]})
     return [{"title": "", "destinations": destinations_list}]
