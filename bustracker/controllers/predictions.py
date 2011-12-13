@@ -38,7 +38,6 @@ class Stops(webapp.RequestHandler):
         else:
             self.response.out.write(json.dumps(nextbus.stops(agency, line, direction)))
 
-
 class UserLines(webapp.RequestHandler):
     def get(self):
         '''Write out data for the user's saved lines.'''
@@ -101,6 +100,22 @@ class UserPredictions(webapp.RequestHandler):
                                     "directions": get_directions(stop),
                                 } for stop in stops]))
 
+class UserMap(webapp.RequestHandler):
+    def get(self):
+        current_user = users.get_current_user()
+        user = models.User.all().filter('user =', current_user).get()
+        self.response.out.write(json.dumps({ 'zoom' : user.zoom_level, 'lat' : user.latitude, 'lon' : user.longitude }))
+    
+    def post(self):
+        current_user = users.get_current_user()
+        user = models.User.all().filter('user =', current_user).get()
+        if user:
+            user.zoom_level = int(self.request.get("zoom"))
+            user.latitude = float(self.request.get("lat"))
+            user.longitude = float(self.request.get("lon"))
+            user.put()
+        self.response.out.write(json.dumps({ 'saved' : True }))
+        
 def get_directions(stop):
     '''Return JSON predictions for given stop.'''
     if stop.agency_tag == "bart":

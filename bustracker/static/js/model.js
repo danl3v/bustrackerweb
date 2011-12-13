@@ -96,21 +96,6 @@ var line = function(aLine) {
 	this.draw();
 }
 
-var userLocation = function() {
-
-    this.locationCircle = new google.maps.Circle({
-		strokeColor: "#FFAD29",
-		strokeOpacity: 0.8,
-		strokeWeight: 2,
-		fillColor: "#000000",
-		fillOpacity: 0.2,
-		map: map,
-		center: new google.maps.LatLng(self.lat(), self.lon()),
-		radius: 200
-    });
-
-}
-
 var stop = function(aStop)
 {
 	var self = this;
@@ -335,7 +320,7 @@ var prediction = function(stop, minutes, vehicleNumber)
 	}, this);
 }
 
-var vehicle = function(aVehicle) {
+var vehicle = function(aVehicle, aLine) {
 	var self = this;
 
 	this.id = aVehicle.id;
@@ -368,7 +353,7 @@ var vehicle = function(aVehicle) {
 			self.marker = new google.maps.Marker({
 				position: new google.maps.LatLng(self.lat(), self.lon()),
 				map: map,
-				icon: '/images/bus.png'
+				icon: 'https://chart.googleapis.com/chart?chst=d_map_spin&chld=1|0|FFFFFF|11|b|' + aLine.lineTag
 			});
 		}
 	}
@@ -592,7 +577,7 @@ var viewModel = function() {
 						theVehicle.lon(aVehicle.lon);
 						return theVehicle;
 					}
-					return new vehicle(aVehicle);
+					return new vehicle(aVehicle, theLine);
 				});
 				theLine.vehicles(mappedVehicles);
 			});

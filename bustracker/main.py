@@ -15,6 +15,8 @@ def main():
            ('/predictions', predictions.UserPredictions),
            ('/vehicles', predictions.UserVehicles),
            
+           ('/map', predictions.UserMap),
+           
            # stop management
 		   ('/stop/save', stops.SaveStop),
            ('/stop/moveup', stops.MoveUp),
