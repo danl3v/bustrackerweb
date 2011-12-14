@@ -326,6 +326,7 @@ var vehicle = function(aVehicle, aLine) {
 	this.id = aVehicle.id;
 	this.lat = ko.observable(aVehicle.lat);
 	this.lon = ko.observable(aVehicle.lon);
+	this.heading = ko.observable(aVehicle.heading);
 	this.marker = null;
 
 	this.lat.subscribe(function(newValue) {
@@ -336,10 +337,13 @@ var vehicle = function(aVehicle, aLine) {
 		self.updateVehicleMarker();
 	});
 	
+	this.heading.subscribe(function(newValue) {
+		self.marker.setIcon('https://chart.googleapis.com/chart?chst=d_map_spin&chld=1|' + (180.0 - self.heading()).toString() + '|FFFFFF|11|b|' + aLine.lineTag);
+	});
+	
 	this.undraw = function() {
 		self.marker.setMap(null);
 		self.marker = null;
-		alert("undrawing");
 	}
 	
 	this.moveToStep = function(marker, startPoint, stepCurrent, stepsTotal) {
@@ -347,19 +351,20 @@ var vehicle = function(aVehicle, aLine) {
 			marker.setPosition(new google.maps.LatLng(parseFloat(startPoint.lat() + stepCurrent*((self.lat() - startPoint.lat()) / stepsTotal)), parseFloat(startPoint.lng() + stepCurrent*((self.lon() - startPoint.lng())/ stepsTotal))));
 			window.setTimeout(function() {
 				self.moveToStep(marker, startPoint, stepCurrent+1, stepsTotal);
-			}, 100);
+			}, 200);
 		}
 	}
 	
 	this.updateVehicleMarker = function() {
 		if (self.marker) {
-			self.moveToStep(self.marker, self.marker.position, 0, 20);
+			//self.heading(90 + 180/3.1415926535 * (Math.atan2((self.lon() - self.marker.position.lng()), (self.lat() - self.marker.position.lat()))));
+			self.moveToStep(self.marker, self.marker.position, 0, 80);
 		}
 		else if (self.lat() != 0 && self.lon() != 0) {
 			self.marker = new google.maps.Marker({
 				position: new google.maps.LatLng(self.lat(), self.lon()),
 				map: map,
-				icon: 'https://chart.googleapis.com/chart?chst=d_map_spin&chld=1|0|FFFFFF|11|b|' + aLine.lineTag
+				icon: 'https://chart.googleapis.com/chart?chst=d_map_spin&chld=1|' + (180.0 - self.heading()).toString() + '|FFFFFF|11|b|' + aLine.lineTag
 			});
 		}
 	}
@@ -581,6 +586,7 @@ var viewModel = function() {
 					if (theVehicle) {
 						theVehicle.lat(aVehicle.lat);
 						theVehicle.lon(aVehicle.lon);
+						theVehicle.heading(aVehicle.heading);
 						return theVehicle;
 					}
 					return new vehicle(aVehicle, theLine);
