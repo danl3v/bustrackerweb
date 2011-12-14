@@ -328,6 +328,7 @@ var vehicle = function(aVehicle, aLine) {
 	this.lon = ko.observable(aVehicle.lon);
 	this.heading = ko.observable(aVehicle.heading);
 	this.marker = null;
+	this.isAnimating = false;
 
 	this.lat.subscribe(function(newValue) {
 		self.updateVehicleMarker();
@@ -353,12 +354,21 @@ var vehicle = function(aVehicle, aLine) {
 				self.moveToStep(marker, startPoint, stepCurrent+1, stepsTotal);
 			}, 200);
 		}
+		else {
+			self.isAnimating = false;
+		}
 	}
 	
 	this.updateVehicleMarker = function() {
 		if (self.marker) {
 			//self.heading(90 + 180/3.1415926535 * (Math.atan2((self.lon() - self.marker.position.lng()), (self.lat() - self.marker.position.lat()))));
-			self.moveToStep(self.marker, self.marker.position, 0, 80);
+			if (self.isAnimating) {
+				window.setTimeout(self.updateVehicleMarker, 5000);
+			}
+			else {
+				self.isAnimating = true;
+				self.moveToStep(self.marker, self.marker.position, 0, 80);
+			}
 		}
 		else if (self.lat() != 0 && self.lon() != 0) {
 			self.marker = new google.maps.Marker({
