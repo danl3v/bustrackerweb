@@ -3,9 +3,9 @@ from google.appengine.ext import db
 class User(db.Model):
     user = db.UserProperty()
     
-    latitude = db.FloatProperty(default=0.0)
-    longitude = db.FloatProperty(default=0.0)
-    zoom_level = db.IntegerProperty(default=16)
+    latitude = db.FloatProperty(default=37.80198255)
+    longitude = db.FloatProperty(default=-122.27268)
+    zoom_level = db.IntegerProperty(default=14)
     
     max_arrivals = db.IntegerProperty(default=3)
     show_missed = db.BooleanProperty(default=False)

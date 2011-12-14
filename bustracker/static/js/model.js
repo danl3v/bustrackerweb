@@ -336,6 +336,12 @@ var vehicle = function(aVehicle, aLine) {
 		self.updateVehicleMarker();
 	});
 	
+	this.undraw = function() {
+		self.marker.setMap(null);
+		self.marker = null;
+		alert("undrawing");
+	}
+	
 	this.moveToStep = function(marker, startPoint, stepCurrent, stepsTotal) {
 		if (stepCurrent < stepsTotal) {
 			marker.setPosition(new google.maps.LatLng(parseFloat(startPoint.lat() + stepCurrent*((self.lat() - startPoint.lat()) / stepsTotal)), parseFloat(startPoint.lng() + stepCurrent*((self.lon() - startPoint.lng())/ stepsTotal))));
@@ -579,6 +585,18 @@ var viewModel = function() {
 					}
 					return new vehicle(aVehicle, theLine);
 				});
+				for (var i=0; i < theLine.vehicles().length; i++) {
+					var found = false;
+					for (var j=0; j < aLine.vehicles.length; j++) {
+						if (theLine.vehicles()[i].id == aLine.vehicles[j].id) {
+							found = true;
+							break;
+						}
+					}
+					if (!found) {
+						theLine.vehicles()[i].undraw();
+					}
+				}
 				theLine.vehicles(mappedVehicles);
 			});
 		}, 'json');
