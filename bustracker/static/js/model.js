@@ -498,6 +498,8 @@ var viewModel = function() {
 			$.post("/stop/save", { "id" : stop.id(), "title" : stop.title(), "agencyTag" : stop.agencyChoice().tag,	"lineTag" : stop.lineChoice().tag, "directionTag" : stop.directionChoice().tag,	"stopTag" : stop.stopChoice().tag, "timeToStop" : stop.timeToStop() }, function(data) {
 				if (data) {
 					stop.id(parseInt(data.id));
+					stop.lat(parseFloat(data.lat));
+					stop.lon(parseFloat(data.lon));
 					self.loadPredictions();
 					self.loadLines();
 				}
