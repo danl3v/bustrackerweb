@@ -610,7 +610,7 @@ var viewModel = function() {
 	};
 	
 	this.loadVehicles = function() {
-		$.get("/vehicles", function(lines) {
+		$.get("/vehicles/0", function(lines) {
 			lines.forEach(function(aLine, i) {
 				var theLine = self.lineFromTags(aLine.agencyTag, aLine.lineTag);
 				var mappedVehicles = $.map(aLine.vehicles, function(aVehicle, index) {

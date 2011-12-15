@@ -78,7 +78,7 @@ class UserStops(webapp.RequestHandler):
         self.response.out.write(json.dumps(stopList))
 
 class UserVehicles(webapp.RequestHandler):
-    def get(self):
+    def get(self, t):
         '''Write out vehicles.'''
         current_user = users.get_current_user()
         stops = models.User.all().filter('user =', current_user).get().stops.order('position')
@@ -87,7 +87,7 @@ class UserVehicles(webapp.RequestHandler):
             if (stop.agency_tag + " " + stop.line_tag) in lineDict.keys():
                 continue
             else:
-                lineDict[(stop.agency_tag + " " + stop.line_tag)] = nextbus.get_vehicle_data(stop)
+                lineDict[(stop.agency_tag + " " + stop.line_tag)] = nextbus.get_vehicle_data(stop, t)
         self.response.out.write(json.dumps(lineDict.values()))
 
 class UserPredictions(webapp.RequestHandler):

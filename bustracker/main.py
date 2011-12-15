@@ -13,7 +13,7 @@ def main():
            ('/stops', predictions.UserStops),
            ('/lines', predictions.UserLines),
            ('/predictions', predictions.UserPredictions),
-           ('/vehicles', predictions.UserVehicles),
+           ('/vehicles/(.*)', predictions.UserVehicles),
            
            ('/map', predictions.UserMap),
            
