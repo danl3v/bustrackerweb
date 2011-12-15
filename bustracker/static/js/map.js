@@ -4,6 +4,7 @@
  */
 
 var map;
+var saveMapDefaultsTimer;
 
 function initialize() {
 	var myOptions = {
@@ -19,15 +20,21 @@ function initialize() {
 		map.setCenter(new google.maps.LatLng(data.lat, data.lon));
 		
 		google.maps.event.addListener(map, 'center_changed', function() {
-			$.post("/map", { "zoom": map.getZoom(), "lat": map.getCenter().lat(), "lon": map.getCenter().lng() });
+			clearTimeout(saveMapDefaultsTimer);
+			saveMapDefaultsTimer = window.setTimeout(saveMapDefaults, 2000);
 		});
 		
 		google.maps.event.addListener(map, 'zoom_changed', function() {
-			$.post("/map", { "zoom": map.getZoom(), "lat": map.getCenter().lat(), "lon": map.getCenter().lng() });
+			clearTimeout(saveMapDefaultsTimer);
+			saveMapDefaultsTimer = window.setTimeout(saveMapDefaults, 2000);
 		});
 		
 		
 	}, 'json');
+}
+
+function saveMapDefaults() {
+	$.post("/map", { "zoom": map.getZoom(), "lat": map.getCenter().lat(), "lon": map.getCenter().lng() });
 }
 
 function plotUserLocation() {
