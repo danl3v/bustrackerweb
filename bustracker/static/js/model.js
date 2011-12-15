@@ -105,17 +105,17 @@ var stop = function(aStop) {
 
 	if (aStop != null) {
 		this.id = ko.observable(aStop.id);
-		this.title = ko.observable(aStop.title);
+		this.title = ko.protectedObservable(aStop.title);
 		this.lat = ko.observable(aStop.lat);
 		this.lon = ko.observable(aStop.lon);
-		this.timeToStop = ko.observable(aStop.timeToStop);
+		this.timeToStop = ko.protectedObservable(aStop.timeToStop);
 	}
 	else {
 		this.id = ko.observable();
-		this.title = ko.observable("untitled stop");
+		this.title = ko.protectedObservable("untitled stop");
 		this.lat = ko.observable(0);
 		this.lon = ko.observable(0);
-		this.timeToStop = ko.observable(0);
+		this.timeToStop = ko.protectedObservable(0);
 	}
 
 	this.title.subscribe(function(newValue) {
@@ -129,6 +129,16 @@ var stop = function(aStop) {
 	this.lon.subscribe(function(newValue) {
 		self.updateMarker();
 	});
+	
+	this.commitAll = function() {
+		self.title.commit();
+		self.timeToStop.commit();
+	};
+	
+	this.resetAll = function() {
+		self.title.reset();
+		self.timeToStop.reset();
+	};
 	
 	this.updateMarker = function() {
 	
@@ -474,6 +484,7 @@ var viewModel = function() {
 	};
 	
 	this.cancelEditingStop = function() {
+		self.editingStop().resetAll();
 		self.editingStop(false);
 	};
 	
@@ -483,6 +494,7 @@ var viewModel = function() {
 			if (self.isNewStop) {
 				self.stops.push(stop);
 			}
+			stop.commitAll();
 			$.post("/stop/save", { "id" : stop.id(), "title" : stop.title(), "agencyTag" : stop.agencyChoice().tag,	"lineTag" : stop.lineChoice().tag, "directionTag" : stop.directionChoice().tag,	"stopTag" : stop.stopChoice().tag, "timeToStop" : stop.timeToStop() }, function(data) {
 				if (data) {
 					stop.id(parseInt(data.id));
@@ -713,8 +725,11 @@ var viewModel = function() {
 		if (!self.isLoadingStops() && !self.isLoadingLines()) {
 			self.loadPredictions();
 			self.loadVehicles();
+			setTimeout(self.refreshTimer, 20000);
 		}
-		setTimeout(self.refreshTimer, 20000);
+		else {
+			setTimeout(self.refreshTimer, 1000);
+		}
 	};
 };
 
