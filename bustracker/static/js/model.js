@@ -408,7 +408,7 @@ var viewModel = function() {
 		return stopToReturn;
 	};
 	
-	// stop actions
+	// move stop up or down
 	this.moveup = function(i) {
 		if (i > 0) {
 			$.post("/stop/moveup", { "id" : self.stops()[i].id() }, function(data) {
@@ -530,6 +530,32 @@ var viewModel = function() {
 			self.maxArrivals(settings.maxArrivals); // this is broken -- settings do not load
 			self.showMissed(settings.showMissed);
 			self.loadingSettings(false);
+		}, 'json');
+	}
+	
+	// feedback form
+	
+	this.editingFeedback = ko.observable(false);
+	this.feedbackText = ko.observable("");
+	
+	this.showFeedbackForm = function() {
+		self.editingFeedback(true);
+	}
+	
+	this.cancelEditingFeedback = function() {
+		self.editingFeedback(false);
+	}
+	
+	this.submitFeedback = function() {
+		$.post("/feedback", { "feedback": self.feedbackText() }, function(data) {
+			if (!data || !data.sent) {
+				alert("Problem sending your feedback. Please submit again.");
+			}
+			else {
+				alert("Feedback sent! Thank you!");
+				self.feedbackText("");
+				self.editingFeedback(false);
+			}
 		}, 'json');
 	}
 	

@@ -24,9 +24,6 @@ class MainPage(webapp.RequestHandler):
             view.renderTemplate(self, 'index.html', {})
 
 class Feedback(webapp.RequestHandler):
-    def get(self):
-        '''Render the home page.'''
-        view.renderTemplate(self, 'feedback.html', {})
     def post(self):
         current_user = users.get_current_user()
         mail.send_mail(
@@ -35,7 +32,7 @@ class Feedback(webapp.RequestHandler):
               subject="trackmyb.us feedback",
               body=self.request.get("feedback")
         )
-        view.renderTemplate(self, 'feedback_success.html', {})
+        self.response.out.write(json.dumps({ 'sent' : True }))
 
 class Settings(webapp.RequestHandler):
     def get(self):

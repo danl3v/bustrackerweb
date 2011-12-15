@@ -13,7 +13,7 @@
 
 <div id="map"></div>
 
-<div class="new-stop-form" style="position: absolute; top: 20%; left: 30%; z-index: 9999;" data-bind="visible: editingStop()">
+<div class="new-stop-form" style="position: absolute; top: 20%; left: 30%; z-index: 9999;" data-bind="visible: editingStop">
 	<form>
 		<h1 data-bind="text: editingStop().title"></h1>
 		<p>edit stop</p>
@@ -46,15 +46,15 @@
 		<input type="text" name="time-to-stop" id="time-to-stop" placeholder="e.g. 12" data-bind="value: editingStop().timeToStop">
 
 		<div id="buttons">
-		<button id="cancelButton" data-bind="click: function() { vm.cancelEditingStop() }">Cancel</button>
-		<button id="doneButton" data-bind="click: function() { vm.doneEditingStop() }">Done</button>
+		<button id="cancelButton" data-bind="click: vm.cancelEditingStop">Cancel</button>
+		<button id="doneButton" data-bind="click: vm.doneEditingStop">Done</button>
 		</div>
 	</form>
 </div>
 
-<div class="fade" data-bind="visible: editingStop, click: function() { vm.cancelEditingStop() }"></div>
+<div class="fade" data-bind="visible: editingStop, click: vm.cancelEditingStop"></div>
 
-<div class="new-stop-form" style="position: absolute; top: 20%; left: 30%; z-index: 9999;" data-bind="visible: editingSettings()">
+<div class="new-stop-form" style="position: absolute; top: 20%; left: 30%; z-index: 9999;" data-bind="visible: editingSettings">
 	<form>
 	
 		<h1>Settings</h1>
@@ -84,13 +84,25 @@
 		</div>
 		
 		<div id="buttons">
-		<button id="cancelButton" data-bind="click: function() { vm.cancelEditingSettings() }">Cancel</button>
-		<button id="doneButtonButton" data-bind="click: function() { vm.doneEditingSettings() }">Done</button>
+		<button id="cancelButton" data-bind="click: vm.cancelEditingSettings">Cancel</button>
+		<button id="doneButtonButton" data-bind="click: vm.doneEditingSettings">Done</button>
 		</div>
 	</form>
 </div>
 
-<div class="fade" data-bind="visible: editingSettings, click: function() { vm.cancelEditingSettings() }"></div>
+<div class="fade" data-bind="visible: editingSettings, click: vm.cancelEditingSettings"></div>
+
+<div class="new-stop-form" style="position: absolute; top: 20%; left: 30%; z-index: 9999;" data-bind="visible: editingFeedback">
+	<form>
+		<table class="list">
+			<tr class="header1"><td class="header1-left" colspan="2">Feedback</td></tr>
+			<tr class="header4"><td class="header4-subtitle" colspan="2">Leave some feedback below and hit submit.</td></tr>
+			<tr class="header4"><td class="header4-left" colspan="2"><textarea style="width: 40em; height: 20em; margin-left:0;" data-bind="value: vm.feedbackText"></textarea><br><button data-bind="click: vm.submitFeedback">Submit</button></td></tr>
+		</table>
+	</form>
+</div>
+
+<div class="fade" data-bind="visible: editingFeedback, click: vm.cancelEditingFeedback"></div>
 
 {% endblock %}
 
