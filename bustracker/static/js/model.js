@@ -34,8 +34,8 @@ var colorList = function() {
 	this.color = function() {
 		self.i++;
 		return self.colors[self.i % self.colors.length];
-	}
-}
+	};
+};
 
 var aColorList = new colorList();
 
@@ -52,7 +52,7 @@ var line = function(aLine) {
 		for (var i=0; i < self.polyLineList.length;i++) {
 			self.polyLineList[i].setMap(null);
 		}
-	}
+	};
 
 	this.draw = function() {
 	
@@ -81,7 +81,7 @@ var line = function(aLine) {
 			polyLineInside.setMap(map);
 			self.polyLineList.push(polyLineInside);
 		}
-	}
+	};
 	
 	this.vehicleFromId = function(id) {
 		var theVehicle = null;
@@ -91,13 +91,12 @@ var line = function(aLine) {
 			}
 		});
 		return theVehicle;
-	}
+	};
 	
 	this.draw();
-}
+};
 
-var stop = function(aStop)
-{
+var stop = function(aStop) {
 	var self = this;
 
 	if (aStop != null) {
@@ -218,10 +217,9 @@ var stop = function(aStop)
 		}
 		return "";
 	}, this);
-}
+};
 
-var direction = function(stop, title, destinations)
-{
+var direction = function(stop, title, destinations) {
 	var self = this;
 	this.title = ko.observable(title);
 	this.destinations = ko.observableArray([]);
@@ -238,12 +236,11 @@ var direction = function(stop, title, destinations)
 			return new destination(stop, aDestination.title, aDestination.vehicles);
 		});
 		self.destinations(mappedDestinations);
-	}
+	};
 	this.updateDestinations(destinations);
-}
+};
 
-var destination = function(stop, title, vehicles)
-{
+var destination = function(stop, title, vehicles) {
 	var self = this;
 	
 	this.direction = ko.observable(direction);
@@ -262,13 +259,12 @@ var destination = function(stop, title, vehicles)
 			return new prediction(stop, aVehicle.minutes, aVehicle.number);
 		});
 		self.vehicles(mappedVehicles);
-	}
+	};
 	
 	this.updatePredictions(vehicles);
-}
+};
 
-var prediction = function(stop, minutes, vehicleNumber)
-{
+var prediction = function(stop, minutes, vehicleNumber) {
 	var self = this;
 	
 	this.vehicleNumber = vehicleNumber;
@@ -318,7 +314,7 @@ var prediction = function(stop, minutes, vehicleNumber)
 		}
 		
 	}, this);
-}
+};
 
 var vehicle = function(aVehicle, aLine) {
 	var self = this;
@@ -345,7 +341,7 @@ var vehicle = function(aVehicle, aLine) {
 	this.undraw = function() {
 		self.marker.setMap(null);
 		self.marker = null;
-	}
+	};
 	
 	this.moveToStep = function(marker, startPoint, stepCurrent, stepsTotal) {
 		if (stepCurrent < stepsTotal) {
@@ -357,7 +353,7 @@ var vehicle = function(aVehicle, aLine) {
 		else {
 			self.isAnimating = false;
 		}
-	}
+	};
 	
 	this.updateVehicleMarker = function() {
 		if (self.marker) {
@@ -377,14 +373,14 @@ var vehicle = function(aVehicle, aLine) {
 				icon: 'https://chart.googleapis.com/chart?chst=d_map_spin&chld=1|' + (180.0 - self.heading()).toString() + '|FFFFFF|11|b|' + aLine.lineTag
 			});
 		}
-	}
+	};
 	this.updateVehicleMarker();
-}
+};
 
 var selectionChoice = function(title, tag) {
 	this.title = title;
 	this.tag = tag;
-}
+};
 
 /* View Model */
 
@@ -439,16 +435,16 @@ var viewModel = function() {
 	this.newStop = function() {
 		self.isNewStop = true;
 		self.editingStop(new stop(null));
-	}
+	};
 	
 	this.editStop = function(i) {
 		self.isNewStop = false;
 		self.editingStop(self.stops()[i]);
-	}
+	};
 	
 	this.cancelEditingStop = function() {
 		self.editingStop(false);
-	}
+	};
 	
 	this.doneEditingStop = function() {
 		stop = self.editingStop();
@@ -473,7 +469,7 @@ var viewModel = function() {
 		else {
 			alert("Please select an agency, line, direction, and stop.");
 		}
-	}
+	};
 	
 	this.delete = function(i) {
 		if (confirm("Do you really want to delete this stop?")) {
@@ -485,7 +481,7 @@ var viewModel = function() {
 			}, 'json');
 			self.stops.splice(i, 1);
 		}
-	}
+	};
 	
 	// settings
 	this.loadingSettings = ko.observable(true);
@@ -501,13 +497,13 @@ var viewModel = function() {
 		else {
 			self.editingSettings(true);
 		}
-	}
+	};
 	
 	this.cancelEditingSettings = function() {
 		self.maxArrivals.reset();
 		self.showMissed.reset();
 		self.editingSettings(false);
-	}
+	};
 	
 	this.doneEditingSettings = function() {
 		self.maxArrivals.commit();
@@ -522,7 +518,7 @@ var viewModel = function() {
 				}
 			}, 'json');
 		self.editingSettings(false);
-	}
+	};
 	
 	this.loadSettings = function() {
 		self.loadingSettings(true);
@@ -531,7 +527,7 @@ var viewModel = function() {
 			self.showMissed(settings.showMissed);
 			self.loadingSettings(false);
 		}, 'json');
-	}
+	};
 	
 	// feedback form
 	
@@ -540,11 +536,11 @@ var viewModel = function() {
 	
 	this.showFeedbackForm = function() {
 		self.editingFeedback(true);
-	}
+	};
 	
 	this.cancelEditingFeedback = function() {
 		self.editingFeedback(false);
-	}
+	};
 	
 	this.submitFeedback = function() {
 		$.post("/feedback", { "feedback": self.feedbackText() }, function(data) {
@@ -557,7 +553,7 @@ var viewModel = function() {
 				self.editingFeedback(false);
 			}
 		}, 'json');
-	}
+	};
 	
 	// loading the stops
 	this.loadStops = function() {
@@ -570,7 +566,7 @@ var viewModel = function() {
 			self.isLoadingStops(false);
 			self.refreshTimer();
 		}, 'json');
-	}
+	};
 	
 	// loading the predictions
 	this.isLoadingPredictions = ko.observable(true); // use this in the ui
@@ -579,7 +575,7 @@ var viewModel = function() {
 		self.loadPredictions();
 		self.loadVehicles();
 		setTimeout(self.refreshTimer, 20000);
-	}
+	};
 	
 	this.loadPredictions = function() {
 		self.isLoadingPredictions(true);
@@ -600,7 +596,7 @@ var viewModel = function() {
 				self.isLoadingPredictions(false);
 			});
 		}, 'json');
-	}
+	};
 	
 	// loading the vehicles
 	this.lineFromTags = function(agencyTag, lineTag) {
@@ -642,7 +638,7 @@ var viewModel = function() {
 				theLine.vehicles(mappedVehicles);
 			});
 		}, 'json');
-	}
+	};
 	
 	// loading the lines
 	this.loadLines = function() {
@@ -655,7 +651,7 @@ var viewModel = function() {
 			});
 			self.lines(mappedLines);
 		}, 'json');	
-	}
+	};
 };
 
 var vm = new viewModel();
