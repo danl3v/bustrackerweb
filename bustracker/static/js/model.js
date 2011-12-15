@@ -566,8 +566,10 @@ var viewModel = function() {
 	this.loadSettings = function() {
 		self.loadingSettings(true);
 		$.get("/settings", function(settings) {
-			self.maxArrivals(settings.maxArrivals); // this is broken -- settings do not load
+			self.maxArrivals(settings.maxArrivals);
 			self.showMissed(settings.showMissed);
+			self.maxArrivals.commit();
+			self.showMissed.commit();
 			self.loadingSettings(false);
 		}, 'json');
 	};
