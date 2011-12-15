@@ -52,6 +52,9 @@ var line = function(aLine) {
 		for (var i=0; i < self.polyLineList.length;i++) {
 			self.polyLineList[i].setMap(null);
 		}
+		for (var i=0; i < self.vehicles().length;i++) {
+			self.vehicles()[i].undraw();
+		}
 	};
 
 	this.draw = function() {
@@ -387,7 +390,6 @@ var selectionChoice = function(title, tag) {
 var viewModel = function() {
 	var self = this;
 	
-	this.isLoadingStops = ko.observable(false);
 	this.stops = ko.observableArray([]);
 	this.lines = ko.observableArray([]);
 	
@@ -556,6 +558,9 @@ var viewModel = function() {
 	};
 	
 	// loading the stops
+	
+	this.isLoadingStops = ko.observable(true);
+	
 	this.loadStops = function() {
 		self.isLoadingStops(true);
 		$.get("/stops", function(stops) {
@@ -568,14 +573,42 @@ var viewModel = function() {
 		}, 'json');
 	};
 	
+	// loading the lines
+	
+	this.isLoadingLines = ko.observable(true);
+	
+	this.loadLines = function() {
+		self.isLoadingLines(true);
+		$.get("/lines", function(lines) {
+			var mappedLines = $.map(lines, function(aLine, index) {
+				var theLine = self.lineFromTags(aLine.agencyTag, aLine.lineTag);
+				if (theLine) {
+					return theLine;
+				}
+				return new line(aLine);
+			});
+			for (var i=0; i < self.lines().length;i++) {
+				var found = false;
+				var theLine = self.lines()[i];
+				for (var j=0; j < mappedLines.length;j++) {
+					var aLine = mappedLines[j];
+					if (theLine.agencyTag == aLine.agencyTag && theLine.lineTag == aLine.lineTag) {
+						found = true;
+						break;
+					}
+				}
+				if (!found) {
+					theLine.undraw();
+				}
+			}
+			self.lines(mappedLines);
+			self.isLoadingLines(false);
+			self.loadVehicles();
+		}, 'json');	
+	};
+	
 	// loading the predictions
 	this.isLoadingPredictions = ko.observable(true); // use this in the ui
-	
-	this.refreshTimer = function() {
-		self.loadPredictions();
-		self.loadVehicles();
-		setTimeout(self.refreshTimer, 20000);
-	};
 	
 	this.loadPredictions = function() {
 		self.isLoadingPredictions(true);
@@ -599,6 +632,9 @@ var viewModel = function() {
 	};
 	
 	// loading the vehicles
+	
+	this.isLoadingVehicles = ko.observable(true);
+	
 	this.lineFromTags = function(agencyTag, lineTag) {
 		var lineToReturn = null;
 		self.lines().forEach(function(aLine, i) {
@@ -610,6 +646,7 @@ var viewModel = function() {
 	};
 	
 	this.loadVehicles = function() {
+		self.isLoadingVehicles(true);
 		$.get("/vehicles/0", function(lines) {
 			lines.forEach(function(aLine, i) {
 				var theLine = self.lineFromTags(aLine.agencyTag, aLine.lineTag);
@@ -636,21 +673,19 @@ var viewModel = function() {
 					}
 				}
 				theLine.vehicles(mappedVehicles);
+				self.isLoadingVehicles(false);
 			});
 		}, 'json');
 	};
 	
-	// loading the lines
-	this.loadLines = function() {
-		$.get("/lines", function(lines) {
-			for (var i=0; i < self.lines().length;i++) {
-				self.lines()[i].undraw();
-			}
-			var mappedLines = $.map(lines, function(aLine, index) {
-				return new line(aLine);
-			});
-			self.lines(mappedLines);
-		}, 'json');	
+	// refresh timer
+	
+	this.refreshTimer = function() {
+		if (!self.isLoadingStops() && !self.isLoadingLines()) {
+			self.loadPredictions();
+			self.loadVehicles();
+		}
+		setTimeout(self.refreshTimer, 20000);
 	};
 };
 
