@@ -101,6 +101,7 @@ var line = function(aLine) {
 
 var stop = function(aStop) {
 	var self = this;
+	this.marker = null;
 
 	if (aStop != null) {
 		this.id = ko.observable(aStop.id);
@@ -116,12 +117,40 @@ var stop = function(aStop) {
 		this.lon = ko.observable(0);
 		this.timeToStop = ko.observable(0);
 	}
-	
-	this.marker = new google.maps.Marker({
-		position: new google.maps.LatLng(self.lat(), self.lon()),
-		map: map,
-		icon: '/images/stop.png'
+
+	this.title.subscribe(function(newValue) {
+		self.updateMarker();
 	});
+	
+	this.lat.subscribe(function(newValue) {
+		self.updateMarker();
+	});
+	
+	this.lon.subscribe(function(newValue) {
+		self.updateMarker();
+	});
+	
+	this.updateMarker = function() {
+	
+		if (self.marker) {
+			self.marker.setMap(null);
+			self.marker = null;
+		}
+		
+		var image = new google.maps.MarkerImage('https://chart.googleapis.com/chart?chst=d_bubble_texts_big&chld=bb|000000|FFFFFF|' + self.title(),
+				null, // size
+				new google.maps.Point(0,0), // origin
+				new google.maps.Point(0, 59) // anchor
+			);
+	
+		self.marker = new google.maps.Marker({
+			position: new google.maps.LatLng(self.lat(), self.lon()),
+			map: map,
+			icon: image
+		});
+	};
+	
+	this.updateMarker();
 	
 	this.agencyChoices = ko.observableArray([]);
 	this.lineChoices = ko.observableArray([]);
