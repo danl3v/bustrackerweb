@@ -142,24 +142,32 @@ var stop = function(aStop) {
 		self.timeToStop.reset();
 	};
 	
-	this.updateMarker = function() {
-	
+	this.undraw = function() {
 		if (self.marker) {
 			self.marker.setMap(null);
 			self.marker = null;
 		}
-		
+	};
+	
+	this.updateMarker = function() {
+
 		var image = new google.maps.MarkerImage('https://chart.googleapis.com/chart?chst=d_bubble_texts_big&chld=bb|000000|FFFFFF|' + self.title(),
 				null, // size
 				new google.maps.Point(0,0), // origin
 				new google.maps.Point(0, 59) // anchor
 			);
-	
-		self.marker = new google.maps.Marker({
-			position: new google.maps.LatLng(self.lat(), self.lon()),
-			map: map,
-			icon: image
-		});
+		
+		if (self.marker) {
+			self.marker.setPosition(new google.maps.LatLng(self.lat(), self.lon()));
+			self.marker.setIcon(image);
+		}
+		else {
+			self.marker = new google.maps.Marker({
+				position: new google.maps.LatLng(self.lat(), self.lon()),
+				map: map,
+				icon: image
+			});
+		}
 	};
 	
 	this.updateMarker();
@@ -537,6 +545,7 @@ var viewModel = function() {
 				}
 				self.loadLines();
 			}, 'json');
+			self.stops()[i].undraw();
 			self.stops.splice(i, 1);
 		}
 	};
@@ -691,6 +700,7 @@ var viewModel = function() {
 				});
 				theStop.directions(mappedDirections);
 				self.isLoadingPredictions(false);
+				layoutFooter();
 			});
 		}, 'json');
 	};
