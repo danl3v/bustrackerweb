@@ -58,7 +58,11 @@ def get_vehicle_data(stop, t):
     vehicles = soup.findAll('vehicle')
     vehicles_list = []
     for vehicle in vehicles:
-        vehicles_list.append({ 'id' : vehicle['id'], 'lat' : vehicle['lat'], 'lon' : vehicle['lon'], 'heading' :  vehicle['heading'] })
+        if vehicle.has_key('dirtag'):
+            directionTag = vehicle['dirtag']
+        else:
+            directionTag = None
+        vehicles_list.append({ 'id' : vehicle['id'], 'lat' : vehicle['lat'], 'lon' : vehicle['lon'], 'heading' :  vehicle['heading'], 'directionTag' : directionTag })
     return { 'agencyTag' : stop.agency_tag, 'lineTag' : stop.line_tag, 't' : last_time, 'vehicles' : vehicles_list }
 
 def get_stop_data(stop):

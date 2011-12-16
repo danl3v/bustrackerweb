@@ -365,8 +365,13 @@ var vehicle = function(aVehicle, aLine) {
 	this.lat = ko.observable(aVehicle.lat);
 	this.lon = ko.observable(aVehicle.lon);
 	this.heading = ko.observable(aVehicle.heading);
+	this.directionTag = ko.observable(aVehicle.directionTag);
 	this.marker = null;
 	this.isAnimating = false;
+
+	this.directionTag.subscribe(function(newValue) {
+		self.updateVehicleMarker();
+	});
 
 	this.lat.subscribe(function(newValue) {
 		self.updateVehicleMarker();
@@ -381,8 +386,10 @@ var vehicle = function(aVehicle, aLine) {
 	});
 	
 	this.undraw = function() {
-		self.marker.setMap(null);
-		self.marker = null;
+		if (self.marker) {
+			self.marker.setMap(null);
+			self.marker = null;
+		}
 	};
 	
 	this.moveToStep = function(marker, startPoint, stepCurrent, stepsTotal) {
@@ -408,12 +415,16 @@ var vehicle = function(aVehicle, aLine) {
 				self.moveToStep(self.marker, self.marker.position, 0, 80);
 			}
 		}
-		else if (self.lat() != 0 && self.lon() != 0) {
+		else if (self.directionTag() && self.lat() != 0 && self.lon() != 0) {
+			self.undraw();
 			self.marker = new google.maps.Marker({
 				position: new google.maps.LatLng(self.lat(), self.lon()),
 				map: map,
 				icon: 'https://chart.googleapis.com/chart?chst=d_map_spin&chld=1|' + (180.0 - self.heading()).toString() + '|FFFFFF|11|b|' + aLine.lineTag
 			});
+		}
+		else if (!self.directionTag()) {
+			self.undraw();
 		}
 	};
 	this.updateVehicleMarker();
@@ -701,6 +712,7 @@ var viewModel = function() {
 						theVehicle.lat(aVehicle.lat);
 						theVehicle.lon(aVehicle.lon);
 						theVehicle.heading(aVehicle.heading);
+						theVehicle.directionTag(aVehicle.directionTag);
 						return theVehicle;
 					}
 					return new vehicle(aVehicle, theLine);
