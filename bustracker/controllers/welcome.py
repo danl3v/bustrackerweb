@@ -15,19 +15,17 @@ class MainPage(webapp.RequestHandler):
                 user = models.User()
                 user.user = current_user
                 user.put()
-            view.renderTemplate(self, 'predictions.html', {
-                'show_news_feed' : user.show_news_feed,
-                'news_feed_width' : user.news_feed_width,
-                'show_banner': user.show_banner
-            })
-        else:
-            view.renderTemplate(self, 'index.html', {})
+        view.renderTemplate(self, 'predictions.html', { })
 
 class Feedback(webapp.RequestHandler):
     def post(self):
         current_user = users.get_current_user()
+        if current_user:
+            sender_email = current_user.email()
+        else:
+            sender_email = "dlouislevy@gmail.com"
         mail.send_mail(
-              sender=current_user.email(),
+              sender=sender_email,
               to="dlouislevy@gmail.com",
               subject="trackmyb.us feedback",
               body=self.request.get("feedback")

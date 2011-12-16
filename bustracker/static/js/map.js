@@ -42,7 +42,7 @@ function setMapType(mapType) {
 }
 
 function saveMapDefaults() {
-	$.post("/map", { "zoom": map.getZoom(), "lat": map.getCenter().lat(), "lon": map.getCenter().lng(), "type" : getMapTypeId().string });
+	$.post("/map", { "zoom": map.getZoom(), "lat": map.getCenter().lat(), "lon": map.getCenter().lng() });
 }
 
 function plotUserLocation() {

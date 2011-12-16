@@ -109,6 +109,7 @@ var stop = function(aStop) {
 		this.lat = ko.observable(aStop.lat);
 		this.lon = ko.observable(aStop.lon);
 		this.timeToStop = ko.protectedObservable(aStop.timeToStop);
+		this.isEditable = ko.observable(aStop.isEditable);
 	}
 	else {
 		this.id = ko.observable();
@@ -116,6 +117,7 @@ var stop = function(aStop) {
 		this.lat = ko.observable(0);
 		this.lon = ko.observable(0);
 		this.timeToStop = ko.protectedObservable(0);
+		this.isEditable = ko.observable(true);
 	}
 
 	this.title.subscribe(function(newValue) {

@@ -13,7 +13,7 @@
 {% block extrahtml %}{% endblock %}
 <div id="wrapper">
 {% block content %}{% endblock %}
-<div id="footer"><div id="footer-content">{% if current_user %}{{ current_user.email }} <span class="separator">|</span> <a href="#" onclick="vm.newStop()">new stop</a> <span class="separator">|</span> <a href="#" onclick="vm.editSettings()">settings</a> <span class="separator">|</span> <a href="#" onclick="vm.showFeedbackForm()">feedback</a> <span class="separator">|</span> <a href="{{ login_url }}">{{ login_url_linktext }}</a>{% endif %}</div></div>
+<div id="footer"><div id="footer-content">{% if current_user %}{{ current_user.email }} <span class="separator">|</span> <a href="#" onclick="vm.newStop()">new stop</a> <span class="separator">|</span> <a href="#" onclick="vm.editSettings()">settings</a> <span class="separator">|</span> {% endif %}<a href="#" onclick="vm.showFeedbackForm()">feedback</a> <span class="separator">|</span> <a href="{{ login_url }}">{{ login_url_linktext }}</a></div></div>
 </div>
 </body>
 </html>

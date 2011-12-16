@@ -34,6 +34,8 @@ class SaveStop(webapp.RequestHandler):
             key = stop.put()
             stop_data = nextbus.get_stop_data(stop)
             self.response.out.write('{"id": ' + str(key.id()) + ', "lat": ' + str(stop_data['lat']) + ', "lon": ' + str(stop_data['lon']) + '}')
+        else:
+        	self.response.out.write('{"id": 0, "lat": 0, "lon": 0}')
         
 class DeleteStop(webapp.RequestHandler):
     def post(self):

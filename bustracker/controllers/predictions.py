@@ -42,7 +42,10 @@ class UserLines(webapp.RequestHandler):
     def get(self):
         '''Write out data for the user's saved lines.'''
         current_user = users.get_current_user()
-        stops = models.User.all().filter('user =', current_user).get().stops.order('position')
+        if current_user:
+            stops = models.User.all().filter('user =', current_user).get().stops.order('position')
+        else:
+            stops = default_stops()
         lineDict = {}
         for stop in stops:
             if (stop.agency_tag + " " + stop.line_tag) in lineDict.keys():
@@ -55,11 +58,14 @@ class UserStops(webapp.RequestHandler):
     def get(self):
         '''Write out the JSON for the user's saved stops.'''
         current_user = users.get_current_user()
-        stops = models.User.all().filter('user =', current_user).get().stops.order('position')
+        if current_user:
+            stops = models.User.all().filter('user =', current_user).get().stops.order('position')
+        else:
+            stops = default_stops()
         stopList = []
-        for stop in stops:
+        for index, stop in enumerate(stops):
             stop_data = nextbus.get_stop_data(stop)
-            stopList.append({"id": stop.key().id(),
+            stopList.append({"id": stop.key().id() if stop.is_saved() else index,
                              "title": stop.title,
                              
                              "lat" : float(stop_data['lat']),
@@ -73,15 +79,18 @@ class UserStops(webapp.RequestHandler):
                             
                              "timeToStop": stop.time_to_stop,
                              "position": stop.position,
+                             "isEditable": True if stop.is_saved() else False,
             })
-        
         self.response.out.write(json.dumps(stopList))
 
 class UserVehicles(webapp.RequestHandler):
     def get(self, t):
         '''Write out vehicles.'''
         current_user = users.get_current_user()
-        stops = models.User.all().filter('user =', current_user).get().stops.order('position')
+        if current_user:
+            stops = models.User.all().filter('user =', current_user).get().stops.order('position')
+        else:
+            stops = default_stops()
         lineDict = {}
         for stop in stops:
             if (stop.agency_tag + " " + stop.line_tag) in lineDict.keys():
@@ -94,16 +103,22 @@ class UserPredictions(webapp.RequestHandler):
     def get(self):
         '''Write out the JSON predictions for the user's stops.'''
         current_user = users.get_current_user()
-        stops = models.User.all().filter('user =', current_user).get().stops.order('position')
-        self.response.out.write(json.dumps([
-                                {   "id": stop.key().id(),
-                                    "directions": get_directions(stop),
-                                } for stop in stops]))
+        if current_user:
+            stops = models.User.all().filter('user =', current_user).get().stops.order('position')
+        else:
+            stops = default_stops()
+        predictionList = []
+        for index, stop in enumerate(stops):
+            predictionList.append({ "id": stop.key().id() if stop.is_saved() else index, "directions": get_directions(stop) })
+        self.response.out.write(json.dumps(predictionList))
 
 class UserMap(webapp.RequestHandler):
     def get(self):
         current_user = users.get_current_user()
-        user = models.User.all().filter('user =', current_user).get()
+        if current_user:
+            user = models.User.all().filter('user =', current_user).get()
+        else:
+            user = default_user()
         self.response.out.write(json.dumps({ 'zoom' : user.zoom_level, 'lat' : user.latitude, 'lon' : user.longitude, 'mapType' : user.map_type }))
     
     def post(self):
@@ -118,7 +133,44 @@ class UserMap(webapp.RequestHandler):
         
 def get_directions(stop):
     '''Return JSON predictions for given stop.'''
-    if stop.agency_tag == "bart":
-        return bart.get_directions(stop.stop_tag, stop.direction_tag, stop.time_to_stop, stop.user.max_arrivals, stop.user.show_missed)
+    if stop.user:
+        user = stop.user
     else:
-        return nextbus.get_directions(stop, stop.user.max_arrivals, stop.user.show_missed)
+        user = default_user()
+    if stop.agency_tag == "bart":
+        return bart.get_directions(stop.stop_tag, stop.direction_tag, stop.time_to_stop, user.max_arrivals, user.show_missed)
+    else:
+        return nextbus.get_directions(stop, user.max_arrivals, user.show_missed)
+
+def default_stops():
+    the24 = models.Stop()
+    the24.title = "the 24"
+    the24.agency_tag = "sf-muni"
+    the24.line_tag = "24"
+    the24.direction_tag = "24_IB1"
+    the24.stop_tag = "4326"
+    the24.time_to_stop = 6
+    the24.position = 1
+    
+    jChurch = models.Stop()
+    jChurch.title = "j church at happy donut"
+    jChurch.agency_tag = "sf-muni"
+    jChurch.line_tag = "J"
+    jChurch.direction_tag = "J__IBMTK6"
+    jChurch.stop_tag = "3996"
+    jChurch.time_to_stop = 12
+    jChurch.position = 2
+    
+    return [the24, jChurch]
+    
+def default_user():
+    user = models.User()
+    user.latitude = 37.75081571576865
+    user.longitude = -122.43543644302366
+    user.zoom_level = 15
+    user.map_type = "roadmap"
+    
+    user.max_arrivals = 4
+    user.show_missed = True
+    
+    return user
