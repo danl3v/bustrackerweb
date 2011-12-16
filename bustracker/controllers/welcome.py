@@ -15,7 +15,7 @@ class MainPage(webapp.RequestHandler):
                 user = models.User()
                 user.user = current_user
                 user.put()
-        view.renderTemplate(self, 'predictions.html', { })
+        view.renderTemplate(self, 'index.html', { })
 
 class Feedback(webapp.RequestHandler):
     def post(self):
