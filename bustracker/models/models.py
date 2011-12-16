@@ -6,9 +6,10 @@ class User(db.Model):
     latitude = db.FloatProperty(default=37.80198255)
     longitude = db.FloatProperty(default=-122.27268)
     zoom_level = db.IntegerProperty(default=14)
+    map_type = db.StringProperty(default="roadmap")
     
     max_arrivals = db.IntegerProperty(default=3)
-    show_missed = db.BooleanProperty(default=False)
+    show_missed = db.BooleanProperty(default=True)
     show_news_feed = db.StringProperty(default="no")
     news_feed_width = db.IntegerProperty(default=0)
     show_banner = db.StringProperty(default="");

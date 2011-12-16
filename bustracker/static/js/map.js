@@ -8,7 +8,6 @@ var saveMapDefaultsTimer;
 
 function initialize() {
 	var myOptions = {
-		mapTypeId: google.maps.MapTypeId.ROADMAP,
 		disableDefaultUI: true,
 	};
 	map = new google.maps.Map(document.getElementById('map'), myOptions);
@@ -16,6 +15,7 @@ function initialize() {
 	$.get("/map", function(data) {
 		map.setZoom(data.zoom);
 		map.setCenter(new google.maps.LatLng(data.lat, data.lon));
+		setMapType(data.mapType);
 		
 		google.maps.event.addListener(map, 'center_changed', function() {
 			clearTimeout(saveMapDefaultsTimer);
@@ -32,8 +32,17 @@ function initialize() {
 	}, 'json');
 }
 
+function setMapType(mapType) {
+	if (mapType == "roadmap") {
+		map.setMapTypeId(google.maps.MapTypeId.ROADMAP);
+	}
+	else {
+		map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
+	}
+}
+
 function saveMapDefaults() {
-	$.post("/map", { "zoom": map.getZoom(), "lat": map.getCenter().lat(), "lon": map.getCenter().lng() });
+	$.post("/map", { "zoom": map.getZoom(), "lat": map.getCenter().lat(), "lon": map.getCenter().lng(), "type" : getMapTypeId().string });
 }
 
 function plotUserLocation() {

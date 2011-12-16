@@ -542,7 +542,8 @@ var viewModel = function() {
 	// settings
 	this.loadingSettings = ko.observable(true);
 	this.maxArrivals = ko.protectedObservable(3);
-	this.showMissed = ko.protectedObservable(false);
+	this.showMissed = ko.protectedObservable(true);
+	this.mapType = ko.protectedObservable("roadmap");
 	
 	this.editingSettings = ko.observable(false);
 	
@@ -558,13 +559,15 @@ var viewModel = function() {
 	this.cancelEditingSettings = function() {
 		self.maxArrivals.reset();
 		self.showMissed.reset();
+		self.mapType.reset();
 		self.editingSettings(false);
 	};
 	
 	this.doneEditingSettings = function() {
 		self.maxArrivals.commit();
 		self.showMissed.commit();
-		$.post("/settings", { "maxArrivals": self.maxArrivals(), "showMissed": self.showMissed() }, function(data) {
+		self.mapType.commit();
+		$.post("/settings", { "maxArrivals": self.maxArrivals(), "showMissed": self.showMissed(), 'mapType' : self.mapType() }, function(data) {
 				if (!data || !data.saved) {
 					alert("Problem updating data on server. Please submit again.");
 					self.editingSettings(true);
@@ -573,6 +576,7 @@ var viewModel = function() {
 					self.loadPredictions();
 				}
 			}, 'json');
+		setMapType(self.mapType());
 		self.editingSettings(false);
 	};
 	
@@ -581,8 +585,10 @@ var viewModel = function() {
 		$.get("/settings", function(settings) {
 			self.maxArrivals(settings.maxArrivals);
 			self.showMissed(settings.showMissed);
+			self.mapType(settings.mapType);
 			self.maxArrivals.commit();
 			self.showMissed.commit();
+			self.mapType.commit();
 			self.loadingSettings(false);
 		}, 'json');
 	};
