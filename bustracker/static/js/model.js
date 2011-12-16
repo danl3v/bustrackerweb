@@ -430,6 +430,7 @@ var vehicle = function(aVehicle, aLine) {
 			self.marker = new google.maps.Marker({
 				position: new google.maps.LatLng(self.lat(), self.lon()),
 				map: map,
+				title: self.directionTag(),
 				icon: 'https://chart.googleapis.com/chart?chst=d_map_spin&chld=1|' + (180.0 - self.heading()).toString() + '|FFFFFF|11|b|' + aLine.lineTag
 			});
 		}
