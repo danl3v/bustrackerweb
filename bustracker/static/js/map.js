@@ -7,6 +7,9 @@ var map;
 var saveMapDefaultsTimer;
 
 function initialize() {
+
+	window.onresize = layoutFooter;
+
 	var myOptions = {
 		disableDefaultUI: true,
 	};
@@ -28,8 +31,21 @@ function initialize() {
 		});
 		
 		plotUserLocation();
+		layoutFooter();
 		
 	}, 'json');
+}
+
+function layoutFooter() {
+	var windowHeight = $(window).height();
+	var wrapperHeight = document.getElementById("wrapper").scrollHeight;
+	if (wrapperHeight == windowHeight) {
+		$("#footer").css("position", "absolute");
+		$("#footer").css("bottom", "0");
+	}
+	else if (wrapperHeight > windowHeight) {
+		$("#footer").css("position", "relative");
+	}
 }
 
 function setMapType(mapType) {

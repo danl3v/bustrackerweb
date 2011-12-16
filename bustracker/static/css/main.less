@@ -40,7 +40,8 @@ div#wrapper
 {
 	background-color: @background-color;
 	width: 25em;
-    min-height: 100%;
+    height: 100%;
+    overflow-y: scroll;
     position: relative;
     box-shadow: 9px 0px 16px #222;
 }
@@ -76,7 +77,7 @@ div#news-feed-list-container
 div#footer
 {
     position: absolute;
-    bottom: 0;
+	bottom: 0;
     width: 100%;
     height: @footer-height;
     opacity: 0;
@@ -479,4 +480,90 @@ div.new-stop-form button
 span.separator
 {
     color: @text-color;
+}
+
+/* iPad Specific CSS */
+
+@media only screen and (device-width: 768px) {
+	div#wrapper
+	{
+		width: 20em;
+	}
+	div#header
+	{
+		font-size: 1.5em;
+	}
+}
+
+@media only screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait) {
+  	div#wrapper
+	{
+		width: 20em;
+	}
+	div#header
+	{
+		font-size: 1.5em;
+	}
+}
+
+@media only screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape) {
+  	div#wrapper
+	{
+		width: 20em;
+	}
+	div#header
+	{
+		font-size: 1.5em;
+	}
+}
+
+@media only screen and (max-device-width: 480px) {
+  	div#wrapper
+	{
+		width: 100%;
+	}
+	
+	div#header
+	{
+		font-size: 5em;
+	}
+	
+	table.list tr.header1 td.header1-left
+	{
+		font-size: 5em;
+		font-weight: bold;
+		width: 60%;
+	}
+	
+	table.list tr.header2 td.header2-left
+	{
+		text-align: left;
+		font-size: 4em;
+		font-weight: bold;
+		width: 70%;
+		vertical-align: middle;
+	}
+	
+	table.list tr.header3 td.header3-left
+	{
+		font-size: 4em;
+		font-weight: bold;
+		width: 70%;
+	}
+	
+	table.list tr.header4 td.header4-left
+	{
+		width: 50%;
+		font-size: 2.5em;
+	}
+	table.list tr td span.big
+	{
+		font-size: 1.5em;
+	}
+	
+	table.list tr.header4 td.header4-right
+	{
+		font-size: 3em;
+	}
+	
 }
