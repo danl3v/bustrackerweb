@@ -55,15 +55,16 @@ function plotUserLocation() {
 				radius: 300
 			});
 			
-			var locationPoint = new google.maps.Circle({
-				strokeColor: "#FFFFFF",
-				strokeOpacity: 1,
-				strokeWeight: 2,
-				fillColor: "#5CE1FF",
-				fillOpacity: 1,
+			var image = new google.maps.MarkerImage('/images/user-location.png',
+				null, // size
+				new google.maps.Point(0,0), // origin
+				new google.maps.Point(15, 23) // anchor
+			);
+			
+			var locationPoint = new google.maps.Marker({
+				position: new google.maps.LatLng(lat, lng),
 				map: map,
-				center: new google.maps.LatLng(lat, lng),
-				radius: 15
+				icon: image
 			});
 		});
 	}
