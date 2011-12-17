@@ -5,6 +5,7 @@
 
 var map;
 var saveMapDefaultsTimer;
+var vm;
 
 function initialize() {
 
@@ -32,6 +33,12 @@ function initialize() {
 		
 		plotUserLocation();
 		layoutFooter();
+		
+		vm = new viewModel();
+		ko.applyBindings(vm);
+		vm.loadStops();
+		vm.loadLines();
+		vm.loadSettings();
 		
 	}, 'json');
 }
