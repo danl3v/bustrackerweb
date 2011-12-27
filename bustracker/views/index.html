@@ -27,7 +27,7 @@
 
 <div id="map"></div>
 
-<div class="new-stop-form" style="position: absolute; top: 20%; left: 30%; z-index: 9999;" data-bind="visible: editingStop">
+<div class="dialog" style="display: none;" data-bind="visible: editingStop">
 	<form>
 		<h1 data-bind="text: editingStop().title"></h1>
 		<p>edit stop</p>
@@ -57,7 +57,7 @@
 		<label>Time to Get to Stop:
 		<span class="small">this is your estimation in minutes</span>
 		</label>
-		<input type="text" name="time-to-stop" id="time-to-stop" placeholder="e.g. 12" data-bind="value: editingStop().timeToStop">
+		<input type="text" name="time-to-stop" id="time-to-stop" placeholder="e.g. 12" pattern="[0-9]*" data-bind="value: editingStop().timeToStop">
 
 		<div id="buttons">
 		<button id="cancelButton" data-bind="click: vm.cancelEditingStop">Cancel</button>
@@ -66,9 +66,9 @@
 	</form>
 </div>
 
-<div class="fade" data-bind="visible: editingStop, click: vm.cancelEditingStop"></div>
+<div class="fade" style="display: none;" data-bind="visible: editingStop, click: vm.cancelEditingStop"></div>
 
-<div class="new-stop-form" style="position: absolute; top: 20%; left: 30%; z-index: 9999;" data-bind="visible: editingSettings">
+<div class="dialog" style="display: none;" data-bind="visible: editingSettings">
 	<form>
 	
 		<h1>Settings</h1>
@@ -114,9 +114,9 @@
 	</form>
 </div>
 
-<div class="fade" data-bind="visible: editingSettings, click: vm.cancelEditingSettings"></div>
+<div class="fade" style="display: none;"  data-bind="visible: editingSettings, click: vm.cancelEditingSettings"></div>
 
-<div class="new-stop-form" style="position: absolute; top: 20%; left: 30%; z-index: 9999;" data-bind="visible: editingFeedback">
+<div class="dialog" style="display: none;" data-bind="visible: editingFeedback">
 	<form>
 		<table class="list">
 			<tr class="header1"><td class="header1-left" colspan="2">Feedback</td></tr>
@@ -126,7 +126,7 @@
 	</form>
 </div>
 
-<div class="fade" data-bind="visible: editingFeedback, click: vm.cancelEditingFeedback"></div>
+<div class="fade" style="display: none;"  data-bind="visible: editingFeedback, click: vm.cancelEditingFeedback"></div>
 
 <div id="wrapper">
 

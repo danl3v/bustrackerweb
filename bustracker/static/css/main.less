@@ -359,8 +359,11 @@ table#news-feed-list tr.header1
 
 /* STOP MANAGEMENT */
 
-div.new-stop-form
+div.dialog
 {
+    position: absolute;
+    top: 20%;
+    left: 30%;
     margin: 0 auto;
     width: 600px;
     padding: 14px;
@@ -368,9 +371,10 @@ div.new-stop-form
     border: solid 2px @border-color;
     vertical-align: top;
     background: @popup-background-color;
+    z-index: 9999;
 }
 
-div.new-stop-form h1
+div.dialog h1
 {
     font-weight: bold;
     font-size: 1.5em;
@@ -378,7 +382,7 @@ div.new-stop-form h1
     text-align: center;
 }
 
-div.new-stop-form h2
+div.dialog h2
 {
     display: block;
     width: 100%;
@@ -388,7 +392,7 @@ div.new-stop-form h2
     border-bottom: solid 1px #FFFFFF;
 }
 
-div.new-stop-form p
+div.dialog p
 {
     color: #FFFFFF;
     text-align: center;
@@ -397,7 +401,7 @@ div.new-stop-form p
     padding-bottom: 10px;
 }
 
-div.new-stop-form label
+div.dialog label
 {
     display: block;
     font-weight: bold;
@@ -406,7 +410,7 @@ div.new-stop-form label
     float: left;
 }
 
-div.new-stop-form .small
+div.dialog .small
 {
     color: #FFFFFF;
     display: block;
@@ -416,7 +420,7 @@ div.new-stop-form .small
     width: 220px;
 }
 
-div.new-stop-form input, div.new-stop-form textarea
+div.dialog input, div.dialog textarea
 {
     float: left;
     font-size: 12px;
@@ -426,12 +430,12 @@ div.new-stop-form input, div.new-stop-form textarea
     margin: 2px 0 20px 10px;
 }
 
-div.new-stop-form textarea
+div.dialog textarea
 {
     height: 5em;
 }
 
-div.new-stop-form div.select-set
+div.dialog div.select-set
 {
     float: left;
     font-size: 12px;
@@ -439,7 +443,7 @@ div.new-stop-form div.select-set
     margin: 2px 0 20px 10px;
 }
 
-div.new-stop-form div.select-set select
+div.dialog div.select-set select
 {
     display: block;
 }
@@ -455,13 +459,13 @@ button
     font-weight: bold;
 }
 
-div.new-stop-form div#buttons
+div.dialog div#buttons
 {
     clear: both;
     text-align: center;
 }
 
-div.new-stop-form button
+div.dialog button
 {
     padding: 0;
     border: 0;
@@ -484,31 +488,62 @@ span.separator
 
 /* iPad Specific CSS */
 
-@media only screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait) {
+@media only screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait)
+{
     div#wrapper
     {
         width: 20em;
     }
+    
     div#header
     {
         font-size: 1.5em;
     }
 }
 
-@media only screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape) {
+@media only screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape)
+{
     div#wrapper
     {
         width: 20em;
     }
+    
     div#header
     {
         font-size: 1.5em;
     }
 }
 
-@media only screen and (max-device-width: 480px) {
+/* iPhone Specific CSS */
+
+@media only screen and (max-device-width: 480px)
+{
     div#wrapper
     {
         width: 100%;
-    }   
+    }
+
+	div.dialog
+	{
+		left: 0;
+		top: 0;
+		width: 100%;
+		border: 0;
+		margin: 0;
+	}
+	
+	div.dialog label, div.dialog .small
+	{
+		text-align: left;
+		display: inline;
+		width: 90%;
+		float: none;
+	}
+	
+	div.dialog input, div.dialog textarea, div.dialog div.select-set
+	{
+		float: none;
+		width: 90%;
+		margin: .5em 0 1.5em 0;
+	}
 }

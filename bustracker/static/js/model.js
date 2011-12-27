@@ -643,6 +643,7 @@ var viewModel = function() {
 			});
 			self.stops(mappedStops);
 			self.isLoadingStops(false);
+			layoutFooter();
 			self.refreshTimer();
 		}, 'json');
 	};
