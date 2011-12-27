@@ -451,6 +451,21 @@ var selectionChoice = function(title, tag) {
 var viewModel = function() {
 	var self = this;
 	
+	// wrapper
+	this.showSidebar = ko.observable(true);
+	
+	this.toggleSidebar = function() {
+		self.showSidebar(!self.showSidebar());
+	};
+	
+	this.toggleSidebarButtonText = ko.dependentObservable(function() {
+		if (self.showSidebar()) {
+			return 'x';
+		}
+		return 'o';
+	
+	}, this);
+	
 	this.stops = ko.observableArray([]);
 	this.lines = ko.observableArray([]);
 	

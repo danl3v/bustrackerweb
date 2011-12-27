@@ -6,6 +6,7 @@
 var map;
 var saveMapDefaultsTimer;
 var vm;
+var isMobile;
 
 function initialize() {
 
@@ -98,6 +99,13 @@ function plotUserLocation() {
 			});
 		});
 	}
+}
+
+if ((navigator.userAgent.match(/iPhone/i)) || (navigator.userAgent.match(/iPod/i))) {
+    isMobile = true;
+}
+else {
+    isMobile = false;
 }
 
 google.maps.event.addDomListener(window, 'load', initialize);

@@ -128,7 +128,15 @@
 
 <div class="fade" style="display: none;"  data-bind="visible: editingFeedback, click: vm.cancelEditingFeedback"></div>
 
-<div id="wrapper">
+<div style="position: absolute; left: 0; top: 0; z-index: 9999; display: none;" data-bind="visible: isMobile">
+	<button data-bind="click: vm.toggleSidebar, text: toggleSidebarButtonText"></button>
+</div>
+
+<div style="position: absolute; right: 0; top: 0; z-index: 9999; display: none;" data-bind="visible: isMobile">
+	<button data-bind="click: function() { vm.loadPredictions(); vm.loadVehicles(); }">refresh</button>
+</div>
+
+<div id="wrapper" data-bind="visible: vm.showSidebar">
 
 <div id="header">
 	<p>Transit Arrival Times</p>
