@@ -46,12 +46,12 @@ function initialize() {
 function layoutFooter() {
 	var windowHeight = $(window).height();
 	var wrapperHeight = document.getElementById("wrapper").scrollHeight;
-	if (wrapperHeight == windowHeight) {
-		//$("#footer").css("position", "absolute");
-		//$("#footer").css("bottom", "0");
+	if (wrapperHeight <= windowHeight) {
+		$("#footer").css("position", "absolute");
+		$("#footer").css("bottom", "0");
 	}
 	else if (wrapperHeight > windowHeight) {
-		//$("#footer").css("position", "relative");
+		$("#footer").css("position", "relative");
 	}
 }
 
