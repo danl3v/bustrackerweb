@@ -403,7 +403,7 @@ var vehicle = function(aVehicle, aLine) {
 	};
 	
 	this.moveToStep = function(marker, startPoint, stepCurrent, stepsTotal) {
-		if (stepCurrent < stepsTotal) {
+		if (self.marker && stepCurrent < stepsTotal) {
 			marker.setPosition(new google.maps.LatLng(parseFloat(startPoint.lat() + stepCurrent*((self.lat() - startPoint.lat()) / stepsTotal)), parseFloat(startPoint.lng() + stepCurrent*((self.lon() - startPoint.lng())/ stepsTotal))));
 			window.setTimeout(function() {
 				self.moveToStep(marker, startPoint, stepCurrent+1, stepsTotal);
