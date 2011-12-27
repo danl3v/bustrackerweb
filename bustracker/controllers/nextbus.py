@@ -42,6 +42,7 @@ def stops(agency, line, direction):
 
 def get_line_data(stop):
     soup = BeautifulStoneSoup(functions.get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=' + stop.agency_tag + '&r=' + stop.line_tag), selfClosingTags=['stop', 'point'])
+    route = soup.find('route')
     paths = soup.findAll('path')
     path_list = []
     for path in paths:
@@ -50,7 +51,7 @@ def get_line_data(stop):
         for point in points:
             point_list.append({ 'lat' : point['lat'], 'lon' : point['lon'] })
         path_list.append(point_list)
-    return { 'title' : stop.title, 'agencyTag' : stop.agency_tag, 'lineTag': stop.line_tag, 'paths' : path_list }
+    return { 'title' : stop.title, 'agencyTag' : stop.agency_tag, 'lineTag': stop.line_tag, 'color' : "#" + route['color'], 'paths' : path_list }
     
 def get_vehicle_data(stop, t):
     soup = BeautifulStoneSoup(functions.get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=vehicleLocations&a=' + stop.agency_tag + '&r=' + stop.line_tag + '&t=' + t), selfClosingTags=['vehicle', 'lasttime'])
