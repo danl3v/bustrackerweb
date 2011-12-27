@@ -73,8 +73,6 @@ function plotUserLocation() {
 		navigator.geolocation.getCurrentPosition(function(position) {
 			var lat = position.coords.latitude;
 			var lng = position.coords.longitude;
-			lat = 37.750695935238916;
-			lng = -122.4302528878357;
 			
 			var locationCircle = new google.maps.Circle({
 				strokeColor: "#FFAD29",
