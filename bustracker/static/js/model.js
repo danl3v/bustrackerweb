@@ -773,13 +773,24 @@ var viewModel = function() {
 	// refresh timer
 	
 	this.refreshTimer = function() {
-		if (!self.isLoadingStops() && !self.isLoadingLines()) {
-			self.loadPredictions();
-			self.loadVehicles();
-			setTimeout(self.refreshTimer, 20000);
+		if (navigator.onLine) {
+			self.showOfflineWarning(false);
+			if (!self.isLoadingStops() && !self.isLoadingLines()) {
+				self.loadPredictions();
+				self.loadVehicles();
+				setTimeout(self.refreshTimer, 20000);
+			}
+			else {
+				setTimeout(self.refreshTimer, 1000);
+			}
 		}
 		else {
-			setTimeout(self.refreshTimer, 1000);
+			self.showOfflineWarning(true);
+			setTimeout(self.refreshTimer, 10000);
 		}
 	};
+	
+	// offline dialog
+	
+	this.showOfflineWarning = ko.observable(false);
 };

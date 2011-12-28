@@ -128,6 +128,13 @@
 
 <div class="fade" style="display: none;"  data-bind="visible: editingFeedback, click: vm.cancelEditingFeedback"></div>
 
+<div class="dialog" style="display: none;" data-bind="visible: showOfflineWarning">
+	<h1>Offline</h1>
+</div>
+
+<div class="fade" style="display: none;"  data-bind="visible: showOfflineWarning"></div>
+
+
 <div style="position: absolute; left: 0; top: 0; z-index: 9999; display: none;" data-bind="visible: isMobile">
 	<button data-bind="click: vm.toggleSidebar, text: toggleSidebarButtonText"></button>
 </div>
