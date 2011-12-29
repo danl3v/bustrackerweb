@@ -41,12 +41,12 @@
 		<span class="small">use the menus</span>
 		</label>
 		<div class="select-set">
-		<select name="agency-select" id="agency-select" data-bind="options: editingStop().agencyChoices, optionsText: 'title', value: editingStop().agencyChoice, optionsCaption: 'Select a transit agency...'"></select>
+		<select data-bind="options: editingStop().agencyChoices, optionsText: 'title', value: editingStop().agencyChoice, optionsCaption: 'Select a transit agency...'"></select>
 		
-		<div id="nextbus-menus" data-bind="visible: editingStop().agencyTag != 'bart'">
-		<select name="nextbus-line-select" id="nextbus-line-select" data-bind="options: editingStop().lineChoices, optionsText: 'title', value: editingStop().lineChoice, optionsCaption: 'Select a line...', enable: editingStop().agencyChoice"></select>
-		<select name="nextbus-direction-select" id="nextbus-direction-select" data-bind="options: editingStop().directionChoices, optionsText: 'title', value: editingStop().directionChoice, optionsCaption: 'Select a direction...', enable: editingStop().lineChoice"></select>
-		<select name="nextbus-stop-select" id="nextbus-stop-select" data-bind="options: editingStop().stopChoices, optionsText: 'title', value: editingStop().stopChoice, optionsCaption: 'Select a stop...', enable: editingStop().directionChoice"></select>
+		<div data-bind="visible: editingStop().agencyTag != 'bart'">
+		<select data-bind="options: editingStop().lineChoices, optionsText: 'title', value: editingStop().lineChoice, optionsCaption: 'Select a line...', enable: editingStop().agencyChoice"></select>
+		<select data-bind="options: editingStop().directionChoices, optionsText: 'title', value: editingStop().directionChoice, optionsCaption: 'Select a direction...', enable: editingStop().lineChoice"></select>
+		<select data-bind="options: editingStop().stopChoices, optionsText: 'title', value: editingStop().stopChoice, optionsCaption: 'Select a stop...', enable: editingStop().directionChoice"></select>
 		</div>
 		<!--<div id="bart-menus" data-bind="visible: editingStop().agencyTag == 'bart'">
 		<select name="bart-station-select" id="bart-station-select"></select>
@@ -57,7 +57,7 @@
 		<label>Time to Get to Stop:
 		<span class="small">this is your estimation in minutes</span>
 		</label>
-		<input type="text" name="time-to-stop" id="time-to-stop" placeholder="e.g. 12" pattern="[0-9]*" data-bind="value: editingStop().timeToStop">
+		<input type="text" placeholder="e.g. 12" pattern="[0-9]*" data-bind="value: editingStop().timeToStop">
 
 		<div id="buttons">
 		<button id="cancelButton" data-bind="click: vm.cancelEditingStop">Cancel</button>
@@ -118,11 +118,15 @@
 
 <div class="dialog" style="display: none;" data-bind="visible: editingFeedback">
 	<form>
-		<table class="list">
-			<tr class="header1"><td class="header1-left" colspan="2">Feedback</td></tr>
-			<tr class="header4"><td class="header4-subtitle" colspan="2">Leave some feedback below and hit submit.</td></tr>
-			<tr class="header4"><td class="header4-left" colspan="2"><textarea style="width: 40em; height: 20em; margin-left:0;" data-bind="value: vm.feedbackText"></textarea><br><button data-bind="click: vm.submitFeedback">Submit</button></td></tr>
-		</table>
+		<h1>Feedback</h1>
+		<p>what do ya think?</p>
+
+		<textarea data-bind="value: vm.feedbackText"></textarea>
+		
+		<div id="buttons">
+			<button id="cancelButton" data-bind="click: vm.cancelEditingFeedback">Cancel</button>
+			<button id="doneButton" data-bind="click: vm.submitFeedback">Submit</button>
+		</div>
 	</form>
 </div>
 
