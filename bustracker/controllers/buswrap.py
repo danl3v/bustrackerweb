@@ -5,6 +5,12 @@ from models import models
 
 import nextbus, bart
 
+def apiwrapperfor(agency):
+    if agency == "bart":
+        return bart
+    else:
+        return nextbus
+
 class Agencies(webapp.RequestHandler):
     def get(self):
         '''Return the agencies.'''
@@ -17,26 +23,17 @@ class Agencies(webapp.RequestHandler):
 class Lines(webapp.RequestHandler):
     def get(self, agency):
         '''Return the lines.'''
-        if agency == 'bart':
-            self.response.out.write(json.dumps(bart.lines(agency)))
-        else:
-            self.response.out.write(json.dumps(nextbus.lines(agency)))
+        self.response.out.write(json.dumps(apiwrapperfor(agency).lines(agency)))
     
 class Directions(webapp.RequestHandler):
     def get(self, agency, line):
         '''Return the directions.'''
-        if agency == 'bart':
-            self.response.out.write(json.dumps(bart.directions(agency, line)))
-        else:
-            self.response.out.write(json.dumps(nextbus.directions(agency, line)))
+        self.response.out.write(json.dumps(apiwrapperfor(agency).directions(agency, line)))
             
 class Stops(webapp.RequestHandler):
     def get(self, agency, line, direction):
         '''Return the stops.'''
-        if agency == 'bart':
-            self.response.out.write(json.dumps(bart.stops(agency, line, direction)))
-        else:
-            self.response.out.write(json.dumps(nextbus.stops(agency, line, direction)))
+        self.response.out.write(json.dumps(apiwrapperfor(agency).stops(agency, line, direction)))
 
 class UserLines(webapp.RequestHandler):
     def get(self):
@@ -51,7 +48,7 @@ class UserLines(webapp.RequestHandler):
             if (stop.agency_tag + " " + stop.line_tag) in lineDict.keys():
                 continue
             else:
-                lineDict[(stop.agency_tag + " " + stop.line_tag)] = nextbus.get_line_data(stop)
+                lineDict[(stop.agency_tag + " " + stop.line_tag)] = apiwrapperfor(stop.agency_tag).get_line_data(stop)
         self.response.out.write(json.dumps(lineDict.values()))
 
 class UserStops(webapp.RequestHandler):
@@ -64,7 +61,7 @@ class UserStops(webapp.RequestHandler):
             stops = default_stops()
         stopList = []
         for index, stop in enumerate(stops):
-            stop_data = nextbus.get_stop_data(stop)
+            stop_data = apiwrapperfor(stop.agency_tag).get_stop_data(stop)
             stopList.append({"id": stop.key().id() if stop.is_saved() else index,
                              "title": stop.title,
                              
@@ -96,7 +93,7 @@ class UserVehicles(webapp.RequestHandler):
             if (stop.agency_tag + " " + stop.line_tag) in lineDict.keys():
                 continue
             else:
-                lineDict[(stop.agency_tag + " " + stop.line_tag)] = nextbus.get_vehicle_data(stop, t)
+                lineDict[(stop.agency_tag + " " + stop.line_tag)] = apiwrapperfor(stop.agency_tag).get_vehicle_data(stop, t)
         self.response.out.write(json.dumps(lineDict.values()))
 
 class UserPredictions(webapp.RequestHandler):
@@ -104,12 +101,14 @@ class UserPredictions(webapp.RequestHandler):
         '''Write out the JSON predictions for the user's stops.'''
         current_user = users.get_current_user()
         if current_user:
-            stops = models.User.all().filter('user =', current_user).get().stops.order('position')
+            user = models.User.all().filter('user =', current_user).get()
+            stops = user.stops.order('position')
         else:
+            user = default_user()
             stops = default_stops()
         predictionList = []
         for index, stop in enumerate(stops):
-            predictionList.append({ "id": stop.key().id() if stop.is_saved() else index, "directions": get_directions(stop) })
+            predictionList.append({ "id": stop.key().id() if stop.is_saved() else index, "directions": apiwrapperfor(stop.agency_tag).get_directions(stop, user.max_arrivals, user.show_missed) })
         self.response.out.write(json.dumps(predictionList))
 
 class UserMap(webapp.RequestHandler):
@@ -130,17 +129,6 @@ class UserMap(webapp.RequestHandler):
             user.longitude = float(self.request.get("lon"))
             user.put()
         self.response.out.write(json.dumps({ 'saved' : True }))
-        
-def get_directions(stop):
-    '''Return JSON predictions for given stop.'''
-    if stop.user:
-        user = stop.user
-    else:
-        user = default_user()
-    if stop.agency_tag == "bart":
-        return bart.get_directions(stop.stop_tag, stop.direction_tag, stop.time_to_stop, user.max_arrivals, user.show_missed)
-    else:
-        return nextbus.get_directions(stop, user.max_arrivals, user.show_missed)
 
 def default_stops():
     the24 = models.Stop()
