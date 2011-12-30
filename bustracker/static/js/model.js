@@ -420,7 +420,14 @@ var vehicle = function(aVehicle, aLine) {
 	});
 	
 	this.heading.subscribe(function(newValue) {
-		self.marker.setIcon('https://chart.googleapis.com/chart?chst=d_map_spin&chld=1|' + (180.0 - self.heading()).toString() + '|FFFFFF|11|b|' + aLine.lineTag);
+		var roundedHeading = (Math.floor((180.0 - self.heading()) / 45.0) * 45);
+		var image = new google.maps.MarkerImage('https://chart.googleapis.com/chart?chst=d_map_spin&chld=1|' + roundedHeading.toString() + '|FFFFFF|11|b|' + aLine.lineTag,
+			null, // size
+			new google.maps.Point(0,0), // origin
+			getAnchor(roundedHeading) // anchor
+		);
+	
+		self.marker.setIcon(image);
 	});
 	
 	this.undraw = function() {
@@ -455,11 +462,19 @@ var vehicle = function(aVehicle, aLine) {
 		}
 		else if (self.directionTag() && self.lat() != 0 && self.lon() != 0) {
 			self.undraw();
+			var roundedHeading = (Math.floor((180.0 - self.heading()) / 45.0) * 45);
+				
+			var image = new google.maps.MarkerImage('https://chart.googleapis.com/chart?chst=d_map_spin&chld=1|' + roundedHeading.toString() + '|FFFFFF|11|b|' + aLine.lineTag,
+				null, // size
+				new google.maps.Point(0,0), // origin
+				getAnchor(roundedHeading) // anchor
+			);
+		
 			self.marker = new google.maps.Marker({
 				position: new google.maps.LatLng(self.lat(), self.lon()),
 				map: map,
-				title: self.directionTag(),
-				icon: 'https://chart.googleapis.com/chart?chst=d_map_spin&chld=1|' + (180.0 - self.heading()).toString() + '|FFFFFF|11|b|' + aLine.lineTag
+				title: roundedHeading.toString(),
+				icon: image
 			});
 		}
 		else if (!self.directionTag()) {
@@ -468,6 +483,35 @@ var vehicle = function(aVehicle, aLine) {
 	};
 	this.updateVehicleMarker();
 };
+
+function getAnchor(angle) {
+	switch (angle) {
+		case 0:
+			return new google.maps.Point(18, 18)
+			break;
+		case 45:
+			return new google.maps.Point(26, 27)
+			break;
+		case 90:
+			return new google.maps.Point(18, 18)
+			break;
+		case 135:
+			return new google.maps.Point(27, 48)
+			break;
+		case 180:
+			return new google.maps.Point(18, 49)
+			break;
+		case -135:
+			return new google.maps.Point(48, 48)
+			break;
+		case -90:
+			return new google.maps.Point(49, 18)
+			break;
+		case -45:
+			return new google.maps.Point(48, 27)
+			break;
+	}
+}
 
 var selectionChoice = function(title, tag) {
 	this.title = title;
