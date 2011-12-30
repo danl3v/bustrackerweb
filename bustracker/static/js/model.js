@@ -635,6 +635,7 @@ var viewModel = function() {
 			}, 'json');
 			self.stops()[i].undraw();
 			self.stops.splice(i, 1);
+			layoutFooter();
 		}
 	};
 	
