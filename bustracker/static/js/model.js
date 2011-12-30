@@ -135,11 +135,29 @@ var stop = function(aStop) {
 	this.commitAll = function() {
 		self.title.commit();
 		self.timeToStop.commit();
+		
+		self.agencyTag = self.agencyChoice().tag;
+		self.lineTag = self.lineChoice().tag;
+		self.directionTag = self.directionChoice().tag;
+		self.stopTag = self.stopChoice().tag;
 	};
 	
 	this.resetAll = function() {
 		self.title.reset();
 		self.timeToStop.reset();
+		
+		this.agencyChoices([]);
+		this.lineChoices([]);
+		this.directionChoices([]);
+		this.stopChoices([]);
+		
+		this.agencyChoice(null);
+		this.lineChoice(null);
+		this.directionChoice(null);
+		this.stopChoice(null);
+		
+		self.canUpdateChoices(true);
+		self.trigger(!self.trigger());
 	};
 	
 	this.undraw = function() {
@@ -182,6 +200,11 @@ var stop = function(aStop) {
 	this.directionChoice = ko.observable(null);
 	this.stopChoice = ko.observable(null);
 	
+	this.agencyTag = aStop.agencyTag;
+	this.lineTag = aStop.lineTag;
+	this.directionTag = aStop.directionTag;
+	this.stopTag = aStop.stopTag;
+	
 	this.directions = ko.observableArray([]);
 	
 	// choiceFromTag
@@ -195,6 +218,9 @@ var stop = function(aStop) {
 		return theChoice;
 	};
 	
+	this.canUpdateChoices = ko.observable(true);
+	this.trigger = ko.observable(true);
+	
 	// choice updating functions
 	this.updateAgencyChoices = ko.dependentObservable(function() {
 		$.get("/agencies", function(agencies) {
@@ -202,12 +228,11 @@ var stop = function(aStop) {
 				return new selectionChoice(anAgency.title, anAgency.tag);
 			});
 			self.agencyChoices(mappedAgencyChoices);
-			if (aStop.agencyTag) {
-				self.agencyChoice(self.choiceFromTag(aStop.agencyTag, mappedAgencyChoices));
-				aStop.agencyTag = null;
+			if (self.agencyTag && self.canUpdateChoices()) {
+				self.agencyChoice(self.choiceFromTag(self.agencyTag, mappedAgencyChoices));
 			}
 		}, 'json');
-		return "";
+		return self.trigger();
 	}, this);
 	
 	this.updateLineChoices = ko.dependentObservable(function() {
@@ -217,9 +242,8 @@ var stop = function(aStop) {
 					return new selectionChoice(aLineChoice.title, aLineChoice.tag);
 				});
 				self.lineChoices(mappedLineChoices);
-				if (aStop.lineTag) {
-					self.lineChoice(self.choiceFromTag(aStop.lineTag, mappedLineChoices));
-					aStop.lineTag = null;
+				if (self.lineTag && self.canUpdateChoices()) {
+					self.lineChoice(self.choiceFromTag(self.lineTag, mappedLineChoices));
 				}
 			}, 'json');
 		}
@@ -237,9 +261,8 @@ var stop = function(aStop) {
 					return new selectionChoice(aDirectionChoice.title, aDirectionChoice.tag);
 				});
 				self.directionChoices(mappedDirectionChoices);
-				if (aStop.directionTag) {
-					self.directionChoice(self.choiceFromTag(aStop.directionTag, mappedDirectionChoices));
-					aStop.direcitonTag = null;
+				if (self.directionTag && self.canUpdateChoices()) {
+					self.directionChoice(self.choiceFromTag(self.directionTag, mappedDirectionChoices));
 				}
 			}, 'json');
 		}
@@ -251,15 +274,15 @@ var stop = function(aStop) {
 	}, this);
 	
 	this.updateStopChoices = ko.dependentObservable(function() {
-		if (self.agencyChoice() && self.lineChoice()  && self.directionChoice()) {
+		if (self.agencyChoice() && self.lineChoice() && self.directionChoice()) {
 			$.get("/" + self.agencyChoice().tag + "/" + self.lineChoice().tag + "/" + self.directionChoice().tag + "/stops", function(stopChoices) {
 				var mappedStopChoices = $.map(stopChoices, function(aStopChoice, index) {
 					return new selectionChoice(aStopChoice.title, aStopChoice.tag);
 				});
 				self.stopChoices(mappedStopChoices);
-				if (aStop.stopTag) {
-					self.stopChoice(self.choiceFromTag(aStop.stopTag, mappedStopChoices));
-					aStop.stopTag = null;
+				if (self.stopTag && self.canUpdateChoices()) {
+					self.stopChoice(self.choiceFromTag(self.stopTag, mappedStopChoices));
+					self.canUpdateChoices = ko.observable(false);
 				}
 			}, 'json');
 		}
