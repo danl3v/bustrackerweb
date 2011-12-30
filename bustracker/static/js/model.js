@@ -643,6 +643,7 @@ var viewModel = function() {
 	this.maxArrivals = ko.protectedObservable(3);
 	this.showMissed = ko.protectedObservable(true);
 	this.mapType = ko.protectedObservable("roadmap");
+	this.showControls = ko.protectedObservable("yes");
 	
 	this.editingSettings = ko.observable(false);
 	
@@ -659,6 +660,7 @@ var viewModel = function() {
 		self.maxArrivals.reset();
 		self.showMissed.reset();
 		self.mapType.reset();
+		self.showControls.reset();
 		self.editingSettings(false);
 	};
 	
@@ -666,7 +668,8 @@ var viewModel = function() {
 		self.maxArrivals.commit();
 		self.showMissed.commit();
 		self.mapType.commit();
-		$.post("/settings", { "maxArrivals": self.maxArrivals(), "showMissed": self.showMissed(), 'mapType' : self.mapType() }, function(data) {
+		self.showControls.commit();
+		$.post("/settings", { "maxArrivals": self.maxArrivals(), "showMissed": self.showMissed(), 'mapType' : self.mapType(), 'showControls' : self.showControls() }, function(data) {
 				if (!data || !data.saved) {
 					alert("Problem updating data on server. Please submit again.");
 					self.editingSettings(true);
@@ -676,6 +679,7 @@ var viewModel = function() {
 				}
 			}, 'json');
 		setMapType(self.mapType());
+		setShowControls(self.showControls());
 		self.editingSettings(false);
 	};
 	
@@ -685,9 +689,11 @@ var viewModel = function() {
 			self.maxArrivals(settings.maxArrivals);
 			self.showMissed(settings.showMissed);
 			self.mapType(settings.mapType);
+			self.showControls(settings.showControls);
 			self.maxArrivals.commit();
 			self.showMissed.commit();
 			self.mapType.commit();
+			self.showControls.commit();
 			self.loadingSettings(false);
 		}, 'json');
 	};

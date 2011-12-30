@@ -118,7 +118,7 @@ class UserMap(webapp.RequestHandler):
             user = models.User.all().filter('user =', current_user).get()
         else:
             user = default_user()
-        self.response.out.write(json.dumps({ 'zoom' : user.zoom_level, 'lat' : user.latitude, 'lon' : user.longitude, 'mapType' : user.map_type }))
+        self.response.out.write(json.dumps({ 'zoom' : user.zoom_level, 'lat' : user.latitude, 'lon' : user.longitude, 'mapType' : user.map_type, 'showControls' : user.show_controls }))
     
     def post(self):
         current_user = users.get_current_user()

@@ -37,7 +37,7 @@ class Settings(webapp.RequestHandler):
         '''Render the settings page.'''
         current_user = users.get_current_user()
         user = models.User.all().filter('user =', current_user).get()
-        self.response.out.write(json.dumps({ 'maxArrivals' : user.max_arrivals, 'showMissed' : "yes" if user.show_missed else "no", 'mapType' : user.map_type }))
+        self.response.out.write(json.dumps({ 'maxArrivals' : user.max_arrivals, 'showMissed' : "yes" if user.show_missed else "no", 'mapType' : user.map_type, 'showControls' : user.show_controls }))
         
     def post(self):
         current_user = users.get_current_user()
@@ -46,5 +46,6 @@ class Settings(webapp.RequestHandler):
             user.max_arrivals = int(self.request.get("maxArrivals"))
             user.show_missed = True if self.request.get("showMissed") == "yes" else False
             user.map_type = self.request.get("mapType")
+            user.show_controls = self.request.get("showControls")
             user.put()
         self.response.out.write(json.dumps({ 'saved' : True }))

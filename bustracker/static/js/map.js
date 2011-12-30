@@ -21,7 +21,8 @@ function initialize() {
 		map.setZoom(data.zoom);
 		map.setCenter(new google.maps.LatLng(data.lat, data.lon));
 		setMapType(data.mapType);
-		
+		setShowControls(data.showControls);
+				
 		google.maps.event.addListener(map, 'center_changed', function() {
 			clearTimeout(saveMapDefaultsTimer);
 			saveMapDefaultsTimer = window.setTimeout(saveMapDefaults, 2000);
@@ -54,6 +55,33 @@ function layoutFooter() {
 	else if (wrapperHeight > windowHeight) {
 		$("#footer").css("position", "relative");
 	}
+}
+
+function setShowControls(showControls) {
+	if (showControls == "yes") {
+		var myOptions = {
+			disableDefaultUI: true,
+			
+			panControl: true,
+			panControlOptions: {
+				position: google.maps.ControlPosition.TOP_RIGHT
+			},
+			
+			zoomControl: true,
+			zoomControlOptions: {
+				style: google.maps.ZoomControlStyle.LARGE,
+				position: google.maps.ControlPosition.TOP_RIGHT
+			},
+		};
+	}
+	else {
+		var myOptions = {
+			disableDefaultUI: true,
+			panControl: false,
+			zoomControl: false,
+		};
+	}
+	map.setOptions(myOptions);
 }
 
 function setMapType(mapType) {

@@ -7,6 +7,7 @@ class User(db.Model):
     longitude = db.FloatProperty(default=-122.27268)
     zoom_level = db.IntegerProperty(default=14)
     map_type = db.StringProperty(default="roadmap")
+    show_controls = db.StringProperty(default="yes")
     
     max_arrivals = db.IntegerProperty(default=3)
     show_missed = db.BooleanProperty(default=True)

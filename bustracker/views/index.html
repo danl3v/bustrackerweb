@@ -97,6 +97,8 @@
 		</select>
 		</div>
 		
+		<h2></h2>
+		
 		<label>Map Type:
 		<span class="small">choose a map type</span>
 		</label>
@@ -107,9 +109,19 @@
 		</select>
 		</div>
 		
+		<label>Show Map Controls:
+		<span class="small">controls are at top right</span>
+		</label>
+		<div class="select-set">
+		<select data-bind="value: vm.showControls">
+			<option value="yes">Yes</option>
+			<option value="no">No</option>
+		</select>
+		</div>
+		
 		<div id="buttons">
-		<button id="cancelButton" data-bind="click: vm.cancelEditingSettings">Cancel</button>
-		<button id="doneButtonButton" data-bind="click: vm.doneEditingSettings">Done</button>
+			<button id="cancelButton" data-bind="click: vm.cancelEditingSettings">Cancel</button>
+			<button id="doneButtonButton" data-bind="click: vm.doneEditingSettings">Done</button>
 		</div>
 	</form>
 </div>
