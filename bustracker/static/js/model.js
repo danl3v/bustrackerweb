@@ -110,6 +110,11 @@ var stop = function(aStop) {
 		this.lon = ko.observable(aStop.lon);
 		this.timeToStop = ko.protectedObservable(aStop.timeToStop);
 		this.isEditable = ko.observable(aStop.isEditable);
+		
+		this.agencyTag = aStop.agencyTag;
+		this.lineTag = aStop.lineTag;
+		this.directionTag = aStop.directionTag;
+		this.stopTag = aStop.stopTag;
 	}
 	else {
 		this.id = ko.observable();
@@ -118,6 +123,11 @@ var stop = function(aStop) {
 		this.lon = ko.observable(0);
 		this.timeToStop = ko.protectedObservable(0);
 		this.isEditable = ko.observable(true);
+		
+		this.agencyTag = null;
+		this.lineTag = null;
+		this.directionTag = null;
+		this.stopTag = null;
 	}
 
 	this.title.subscribe(function(newValue) {
@@ -199,11 +209,6 @@ var stop = function(aStop) {
 	this.lineChoice = ko.observable(null);
 	this.directionChoice = ko.observable(null);
 	this.stopChoice = ko.observable(null);
-	
-	this.agencyTag = aStop.agencyTag;
-	this.lineTag = aStop.lineTag;
-	this.directionTag = aStop.directionTag;
-	this.stopTag = aStop.stopTag;
 	
 	this.directions = ko.observableArray([]);
 	
