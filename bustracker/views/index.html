@@ -44,9 +44,9 @@
 		<select data-bind="options: editingStop().agencyChoices, optionsText: 'title', value: editingStop().agencyChoice, optionsCaption: 'Select a transit agency...'"></select>
 		
 		<div data-bind="visible: editingStop().agencyTag != 'bart'">
-		<select data-bind="options: editingStop().lineChoices, optionsText: 'title', value: editingStop().lineChoice, optionsCaption: 'Select a line...', enable: editingStop().agencyChoice"></select>
-		<select data-bind="options: editingStop().directionChoices, optionsText: 'title', value: editingStop().directionChoice, optionsCaption: 'Select a direction...', enable: editingStop().lineChoice"></select>
-		<select data-bind="options: editingStop().stopChoices, optionsText: 'title', value: editingStop().stopChoice, optionsCaption: 'Select a stop...', enable: editingStop().directionChoice"></select>
+		<select data-bind="options: editingStop().lineChoices, optionsText: 'title', value: editingStop().lineChoice, optionsCaption: 'Select a line...', enable: (editingStop().agencyChoice && editingStop().lineChoices().length)"></select>
+		<select data-bind="options: editingStop().directionChoices, optionsText: 'title', value: editingStop().directionChoice, optionsCaption: 'Select a direction...', enable: (editingStop().lineChoice && editingStop().directionChoices().length)"></select>
+		<select data-bind="options: editingStop().stopChoices, optionsText: 'title', value: editingStop().stopChoice, optionsCaption: 'Select a stop...', enable: (editingStop().directionChoice && editingStop().stopChoices().length)"></select>
 		</div>
 		<!--<div id="bart-menus" data-bind="visible: editingStop().agencyTag == 'bart'">
 		<select name="bart-station-select" id="bart-station-select"></select>
