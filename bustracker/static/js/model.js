@@ -623,23 +623,23 @@ var viewModel = function() {
 	};
 	
 	this.doneEditingStop = function() {
-		stop = self.editingStop();
-		if (stop.agencyChoice() && stop.lineChoice() && stop.directionChoice() && stop.stopChoice()) {
+		theStop = self.editingStop();
+		if (theStop.agencyChoice() && theStop.lineChoice() && theStop.directionChoice() && theStop.stopChoice()) {
 			if (self.isNewStop) {
-				self.stops.push(stop);
+				self.stops.push(theStop);
 			}
-			stop.commitAll();
-			$.post("/stop/save", { "id" : stop.id(), "title" : stop.title(), "agencyTag" : stop.agencyChoice().tag,	"lineTag" : stop.lineChoice().tag, "directionTag" : stop.directionChoice().tag,	"stopTag" : stop.stopChoice().tag, "timeToStop" : stop.timeToStop() }, function(data) {
+			theStop.commitAll();
+			$.post("/stop/save", { "id" : theStop.id(), "title" : theStop.title(), "agencyTag" : theStop.agencyChoice().tag, "lineTag" : theStop.lineChoice().tag, "directionTag" : theStop.directionChoice().tag, "stopTag" : theStop.stopChoice().tag, "timeToStop" : theStop.timeToStop() }, function(data) {
 				if (data) {
-					stop.id(parseInt(data.id));
-					stop.lat(parseFloat(data.lat));
-					stop.lon(parseFloat(data.lon));
+					theStop.id(parseInt(data.id));
+					theStop.lat(parseFloat(data.lat));
+					theStop.lon(parseFloat(data.lon));
 					self.loadPredictions();
 					self.loadLines();
 				}
 				else {
 					alert("Problem updating data on server. Please submit again.");
-					self.editingStop(stop);
+					self.editingStop(theStop);
 				}
 			}, 'json');
 			self.editingStop().directions([]);
