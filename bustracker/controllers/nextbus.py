@@ -1,4 +1,5 @@
 from google.appengine.ext import webapp
+from google.appengine.runtime import DeadlineExceededError
 
 from BeautifulSoup import BeautifulStoneSoup
 import functions
@@ -7,7 +8,10 @@ def lines(agency):
     '''Return the lines for an agency.'''
     if not agency:
         return []
-    lines = functions.get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=routeList&a=' + agency)
+    try:
+        lines = functions.get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=routeList&a=' + agency)
+    except DeadlineExceededError:
+        return ["error"]
     soup = BeautifulStoneSoup(lines, selfClosingTags=['route'])
     lines = soup.findAll('route')
     list = []
@@ -19,7 +23,10 @@ def directions(agency, line):
     '''Return the directions for a line for an agency.'''
     if not agency or not line:
         return []
-    directions = functions.get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=' + agency + '&r=' + line)
+    try:
+        directions = functions.get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=' + agency + '&r=' + line)
+    except DeadlineExceededError:
+        return ["error"]
     soup = BeautifulStoneSoup(directions, selfClosingTags=['stop'])
     directions = soup.findAll('direction')
     list = []
@@ -31,7 +38,10 @@ def stops(agency, line, direction):
     '''Return the stops for a direction for a line for an agency.'''
     if not agency or not line or not direction:
         return []
-    directions = functions.get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=' + agency + '&r=' + line)
+    try:
+        directions = functions.get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=' + agency + '&r=' + line)
+    except DeadlineExceededError:
+        return ["error"]
     soup = BeautifulStoneSoup(directions, selfClosingTags=['stop'])
     stop_ids = soup.find('direction', tag=direction).findAll('stop')
     list = []
