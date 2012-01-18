@@ -10,7 +10,7 @@ class Agencies(webapp.RequestHandler):
         self.response.out.write(json.dumps([
             {"title": "AC Transit", "tag": "actransit"},
             {"title": "SF MUNI", "tag": "sf-muni"},
-            {"title": "Metro Transit", "tag": "metrotransit"},
+            #{"title": "Metro Transit", "tag": "metrotransit"},
             {"title": "Los Angles Bus System", "tag": "lametro"},
             {"title": "Boston Bus System", "tag": "mbta"},
             {"title": "Portland Streetcar", "tag": "portland-sc"},
@@ -56,7 +56,11 @@ class UserStops(webapp.RequestHandler):
         '''Write out the JSON for the user's saved stops.'''
         current_user = users.get_current_user()
         if current_user:
-            stops = models.User.all().filter('user =', current_user).get().stops.order('position')
+            user = models.User.all().filter('user =', current_user).get()
+            if user:
+                stops = user.stops.order('position')
+            else:
+                return
         else:
             stops = default_stops()
         stopList = []
@@ -102,7 +106,10 @@ class UserPredictions(webapp.RequestHandler):
         current_user = users.get_current_user()
         if current_user:
             user = models.User.all().filter('user =', current_user).get()
-            stops = user.stops.order('position')
+            if user:
+            	stops = user.stops.order('position')
+            else:
+            	return
         else:
             user = default_user()
             stops = default_stops()

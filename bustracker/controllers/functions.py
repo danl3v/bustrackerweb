@@ -1,5 +1,7 @@
+from google.appengine.api import urlfetch
+
 from datetime import timedelta, datetime
-import urllib2, timezone
+import timezone
 
 import nextbus, bart, metrotransit
 
@@ -7,19 +9,20 @@ def apiwrapperfor(agency):
     if agency == "bart":
         return bart
     elif agency == "metrotransit":
-    	return metrotransit
+        return metrotransit
     else:
         return nextbus
 
 def get_xml(url):
     '''Go to url and returns the xml data.'''
-    file = urllib2.urlopen(url)
-    xml = file.read()
-    file.close()
-    return xml
+    file = urlfetch.fetch(url)
+    if file.status_code == 200:
+    	return file.content
+    else:
+    	return None
 
 def local_time(time, specified_timezone):
-	return time.replace(tzinfo=timezone.tz("utc")).astimezone(timezone.tz(specified_timezone))
+    return time.replace(tzinfo=timezone.tz("utc")).astimezone(timezone.tz(specified_timezone))
 
 def pretty_time(time, specified_timezone):
     now = datetime.now()

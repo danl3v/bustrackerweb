@@ -10,7 +10,7 @@ def lines(agency):
         return []
     try:
         lines = functions.get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=routeList&a=' + agency)
-    except DeadlineExceededError:
+    except:
         return ["error"]
     soup = BeautifulStoneSoup(lines, selfClosingTags=['route'])
     lines = soup.findAll('route')
@@ -25,7 +25,7 @@ def directions(agency, line):
         return []
     try:
         directions = functions.get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=' + agency + '&r=' + line)
-    except DeadlineExceededError:
+    except:
         return ["error"]
     soup = BeautifulStoneSoup(directions, selfClosingTags=['stop'])
     directions = soup.findAll('direction')
@@ -40,7 +40,7 @@ def stops(agency, line, direction):
         return []
     try:
         directions = functions.get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=' + agency + '&r=' + line)
-    except DeadlineExceededError:
+    except:
         return ["error"]
     soup = BeautifulStoneSoup(directions, selfClosingTags=['stop'])
     stop_ids = soup.find('direction', tag=direction).findAll('stop')
