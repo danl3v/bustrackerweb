@@ -3,11 +3,13 @@ from google.appengine.ext import webapp
 from google.appengine.api import users
 from models import models
 
-import nextbus, bart
+import nextbus, bart, metrotransit
 
 def apiwrapperfor(agency):
     if agency == "bart":
         return bart
+    elif agency == "metrotransit":
+    	return metrotransit
     else:
         return nextbus
 
@@ -17,6 +19,13 @@ class Agencies(webapp.RequestHandler):
         self.response.out.write(json.dumps([
             {"title": "AC Transit", "tag": "actransit"},
             {"title": "SF MUNI", "tag": "sf-muni"},
+            {"title": "Metro Transit", "tag": "metrotransit"},
+            {"title": "Los Angles Bus System", "tag": "lametro"},
+            {"title": "Boston Bus System", "tag": "mbta"},
+            {"title": "Portland Streetcar", "tag": "portland-sc"},
+            {"title": "Seattle Streetcar", "tag": "seattle-sc"},
+            {"title": "Toronto Bus System", "tag": "ttc"},
+            {"title": "Unitrans / City of Davis", "tag": "unitrans"},
             #{"title": "BART", "tag": "bart"},
         ]))
         
@@ -65,8 +74,8 @@ class UserStops(webapp.RequestHandler):
             stopList.append({"id": stop.key().id() if stop.is_saved() else index,
                              "title": stop.title,
                              
-                             "lat" : float(stop_data['lat']),
-                             "lon" : float(stop_data['lon']),
+                             "lat" : float(stop_data['lat']) if stop_data['lat'] else None,
+                             "lon" : float(stop_data['lon']) if stop_data['lon'] else None,
                              
                              "agencyTag": stop.agency_tag,
                              "lineTag": stop.line_tag,

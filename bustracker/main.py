@@ -29,10 +29,6 @@ def main():
            ('/(.*)/(.*)/directions', buswrap.Directions),
            ('/(.*)/(.*)/(.*)/stops', buswrap.Stops),
            
-           # bart
-           ('/bart/stations', bart.Stations),
-           ('/bart/directions', bart.Directions),
-           
            # news feed
            ('/posts', posts.Posts),
            ('/post/new', posts.NewPost),

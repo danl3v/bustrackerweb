@@ -164,8 +164,8 @@ var stop = function(aStop) {
 	else {
 		this.id = ko.observable();
 		this.title = ko.protectedObservable("untitled stop");
-		this.lat = ko.observable(0);
-		this.lon = ko.observable(0);
+		this.lat = ko.observable(null);
+		this.lon = ko.observable(null);
 		this.timeToStop = ko.protectedObservable(0);
 		this.isEditable = ko.observable(true);
 		
@@ -224,22 +224,24 @@ var stop = function(aStop) {
 	
 	this.updateMarker = function() {
 
-		var image = new google.maps.MarkerImage('https://chart.googleapis.com/chart?chst=d_bubble_texts_big&chld=bb|000000|FFFFFF|' + self.title(),
-				null, // size
-				new google.maps.Point(0,0), // origin
-				new google.maps.Point(0, 59) // anchor
-			);
-		
-		if (self.marker) {
-			self.marker.setPosition(new google.maps.LatLng(self.lat(), self.lon()));
-			self.marker.setIcon(image);
-		}
-		else {
-			self.marker = new google.maps.Marker({
-				position: new google.maps.LatLng(self.lat(), self.lon()),
-				map: map,
-				icon: image
-			});
+		if (self.lat() && self.lon()) {
+			var image = new google.maps.MarkerImage('https://chart.googleapis.com/chart?chst=d_bubble_texts_big&chld=bb|000000|FFFFFF|' + self.title(),
+					null, // size
+					new google.maps.Point(0,0), // origin
+					new google.maps.Point(0, 59) // anchor
+				);
+			
+			if (self.marker) {
+				self.marker.setPosition(new google.maps.LatLng(self.lat(), self.lon()));
+				self.marker.setIcon(image);
+			}
+			else {
+				self.marker = new google.maps.Marker({
+					position: new google.maps.LatLng(self.lat(), self.lon()),
+					map: map,
+					icon: image
+				});
+			}
 		}
 	};
 	
@@ -844,32 +846,34 @@ var viewModel = function() {
 		self.isLoadingVehicles(true);
 		$.get("/vehicles/0", function(lines) {
 			lines.forEach(function(aLine, i) {
-				var theLine = self.lineFromTags(aLine.agencyTag, aLine.lineTag);
-				var mappedVehicles = $.map(aLine.vehicles, function(aVehicle, index) {
-					var theVehicle = theLine.vehicleFromId(aVehicle.id);
-					if (theVehicle) {
-						theVehicle.lat(aVehicle.lat);
-						theVehicle.lon(aVehicle.lon);
-						theVehicle.heading(aVehicle.heading);
-						theVehicle.directionTag(aVehicle.directionTag);
-						return theVehicle;
-					}
-					return new vehicle(aVehicle, theLine);
-				});
-				for (var i=0; i < theLine.vehicles().length; i++) {
-					var found = false;
-					for (var j=0; j < aLine.vehicles.length; j++) {
-						if (theLine.vehicles()[i].id == aLine.vehicles[j].id) {
-							found = true;
-							break;
+				if (aLine) {
+					var theLine = self.lineFromTags(aLine.agencyTag, aLine.lineTag);
+					var mappedVehicles = $.map(aLine.vehicles, function(aVehicle, index) {
+						var theVehicle = theLine.vehicleFromId(aVehicle.id);
+						if (theVehicle) {
+							theVehicle.lat(aVehicle.lat);
+							theVehicle.lon(aVehicle.lon);
+							theVehicle.heading(aVehicle.heading);
+							theVehicle.directionTag(aVehicle.directionTag);
+							return theVehicle;
+						}
+						return new vehicle(aVehicle, theLine);
+					});
+					for (var i=0; i < theLine.vehicles().length; i++) {
+						var found = false;
+						for (var j=0; j < aLine.vehicles.length; j++) {
+							if (theLine.vehicles()[i].id == aLine.vehicles[j].id) {
+								found = true;
+								break;
+							}
+						}
+						if (!found) {
+							theLine.vehicles()[i].undraw();
 						}
 					}
-					if (!found) {
-						theLine.vehicles()[i].undraw();
-					}
+					theLine.vehicles(mappedVehicles);
+					self.isLoadingVehicles(false);
 				}
-				theLine.vehicles(mappedVehicles);
-				self.isLoadingVehicles(false);
 			});
 		}, 'json');
 	};
