@@ -60,14 +60,20 @@ def get_directions(stop, max_arrivals, show_missed):
     '''Return a parsed prediction.'''
     
     import re
-    html = functions.get_xml('http://metrotransit.org/Mobile/Nextriptext.aspx?route=' + str(stop.line_tag) + '&direction=' + str(stop.direction_tag) + '&stop=' + str(stop.stop_tag))
+    try:
+    	html = functions.get_xml('http://metrotransit.org/Mobile/Nextriptext.aspx?route=' + str(stop.line_tag) + '&direction=' + str(stop.direction_tag) + '&stop=' + str(stop.stop_tag))
+    except DeadlineExceededError:
+        return ["error"]
     soup = BeautifulStoneSoup(html)
     current_time = soup.find('span', 'nextripCurrentTime').string[14:-3]
     (current_hours, current_minutes) = current_time.split(":")
     current_hours = int(current_hours)
     current_minutes = int(current_minutes)
     
-    predictions = json.loads(functions.get_xml('http://metrotransitapi.appspot.com/nextrip?route=' + str(stop.line_tag) + '&direction=' + str(stop.direction_tag) + '&stop=' + str(stop.stop_tag)))
+    try:
+    	predictions = json.loads(functions.get_xml('http://metrotransitapi.appspot.com/nextrip?route=' + str(stop.line_tag) + '&direction=' + str(stop.direction_tag) + '&stop=' + str(stop.stop_tag)))
+    except DeadlineExceededError:
+        return ["error"]
     direction = filter(lambda x: x["tag"] == stop.direction_tag, directions(stop.agency_tag, stop.line_tag))[0]
     destinations_list = []
     

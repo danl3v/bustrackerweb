@@ -2,16 +2,7 @@ from django.utils import simplejson as json
 from google.appengine.ext import webapp
 from google.appengine.api import users
 from models import models
-
-import nextbus, bart, metrotransit
-
-def apiwrapperfor(agency):
-    if agency == "bart":
-        return bart
-    elif agency == "metrotransit":
-    	return metrotransit
-    else:
-        return nextbus
+import functions
 
 class Agencies(webapp.RequestHandler):
     def get(self):
@@ -32,17 +23,17 @@ class Agencies(webapp.RequestHandler):
 class Lines(webapp.RequestHandler):
     def get(self, agency):
         '''Return the lines.'''
-        self.response.out.write(json.dumps(apiwrapperfor(agency).lines(agency)))
+        self.response.out.write(json.dumps(functions.apiwrapperfor(agency).lines(agency)))
     
 class Directions(webapp.RequestHandler):
     def get(self, agency, line):
         '''Return the directions.'''
-        self.response.out.write(json.dumps(apiwrapperfor(agency).directions(agency, line)))
+        self.response.out.write(json.dumps(functions.apiwrapperfor(agency).directions(agency, line)))
             
 class Stops(webapp.RequestHandler):
     def get(self, agency, line, direction):
         '''Return the stops.'''
-        self.response.out.write(json.dumps(apiwrapperfor(agency).stops(agency, line, direction)))
+        self.response.out.write(json.dumps(functions.apiwrapperfor(agency).stops(agency, line, direction)))
 
 class UserLines(webapp.RequestHandler):
     def get(self):
@@ -57,7 +48,7 @@ class UserLines(webapp.RequestHandler):
             if (stop.agency_tag + " " + stop.line_tag) in lineDict.keys():
                 continue
             else:
-                lineDict[(stop.agency_tag + " " + stop.line_tag)] = apiwrapperfor(stop.agency_tag).get_line_data(stop)
+                lineDict[(stop.agency_tag + " " + stop.line_tag)] = functions.apiwrapperfor(stop.agency_tag).get_line_data(stop)
         self.response.out.write(json.dumps(lineDict.values()))
 
 class UserStops(webapp.RequestHandler):
@@ -70,7 +61,7 @@ class UserStops(webapp.RequestHandler):
             stops = default_stops()
         stopList = []
         for index, stop in enumerate(stops):
-            stop_data = apiwrapperfor(stop.agency_tag).get_stop_data(stop)
+            stop_data = functions.apiwrapperfor(stop.agency_tag).get_stop_data(stop)
             stopList.append({"id": stop.key().id() if stop.is_saved() else index,
                              "title": stop.title,
                              
@@ -102,7 +93,7 @@ class UserVehicles(webapp.RequestHandler):
             if (stop.agency_tag + " " + stop.line_tag) in lineDict.keys():
                 continue
             else:
-                lineDict[(stop.agency_tag + " " + stop.line_tag)] = apiwrapperfor(stop.agency_tag).get_vehicle_data(stop, t)
+                lineDict[(stop.agency_tag + " " + stop.line_tag)] = functions.apiwrapperfor(stop.agency_tag).get_vehicle_data(stop, t)
         self.response.out.write(json.dumps(lineDict.values()))
 
 class UserPredictions(webapp.RequestHandler):
@@ -117,7 +108,7 @@ class UserPredictions(webapp.RequestHandler):
             stops = default_stops()
         predictionList = []
         for index, stop in enumerate(stops):
-            predictionList.append({ "id": stop.key().id() if stop.is_saved() else index, "directions": apiwrapperfor(stop.agency_tag).get_directions(stop, user.max_arrivals, user.show_missed) })
+            predictionList.append({ "id": stop.key().id() if stop.is_saved() else index, "directions": functions.apiwrapperfor(stop.agency_tag).get_directions(stop, user.max_arrivals, user.show_missed) })
         self.response.out.write(json.dumps(predictionList))
 
 class UserMap(webapp.RequestHandler):

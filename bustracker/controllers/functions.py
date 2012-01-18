@@ -1,6 +1,16 @@
 from datetime import timedelta, datetime
 import urllib2, timezone
 
+import nextbus, bart, metrotransit
+
+def apiwrapperfor(agency):
+    if agency == "bart":
+        return bart
+    elif agency == "metrotransit":
+    	return metrotransit
+    else:
+        return nextbus
+
 def get_xml(url):
     '''Go to url and returns the xml data.'''
     file = urllib2.urlopen(url)

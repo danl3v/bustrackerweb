@@ -1,8 +1,7 @@
 from google.appengine.ext import webapp
 from google.appengine.api import users
 from models import models
-import nextbus
-import view
+import view, functions
 
 class SaveStop(webapp.RequestHandler):
     def post(self):
@@ -32,7 +31,7 @@ class SaveStop(webapp.RequestHandler):
             else:
                 stop.position = 1
             key = stop.put()
-            stop_data = nextbus.get_stop_data(stop)
+            stop_data = functions.apiwrapperfor(stop.agency_tag).get_stop_data(stop)
             self.response.out.write('{"id": ' + str(key.id()) + ', "lat": ' + str(stop_data['lat']) + ', "lon": ' + str(stop_data['lon']) + '}')
         else:
         	self.response.out.write('{"id": 0, "lat": 0, "lon": 0}')
