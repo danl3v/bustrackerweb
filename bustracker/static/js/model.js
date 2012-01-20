@@ -392,7 +392,7 @@ var destination = function(stop, title, vehicles) {
 //					return theVehicle;
 //				}
 //			}
-			return new prediction(stop, aVehicle.minutes, aVehicle.number);
+			return new prediction(stop, aVehicle.minutes, aVehicle.id);
 		});
 		self.vehicles(mappedVehicles);
 	};

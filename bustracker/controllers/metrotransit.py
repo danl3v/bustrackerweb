@@ -1,5 +1,4 @@
 import logging
-
 from django.utils import simplejson as json
 from google.appengine.ext import webapp
 from google.appengine.runtime import DeadlineExceededError
@@ -53,7 +52,25 @@ def get_line_data(stop):
     return { 'agencyTag' : stop.agency_tag, 'lineTag' : stop.line_tag, 'paths' : [] }
     
 def get_vehicle_data(stop, t):
-    return None
+    try:
+        html = functions.get_xml('http://www.metrotransit.org/Mobile/NexTripText.aspx?route=' + str(stop.line_tag) + '&direction=' + str(stop.direction_tag) + '&stop=' + str(stop.stop_tag))
+    except:
+        return ['error']
+    soup = BeautifulSoup(html)
+    stop_id = soup.html.body.find('a', id='ctl00_mainContent_NexTripControl1_NexTripResults1_lnkStopNumber').string
+    
+    try:
+        xml = functions.get_xml('http://svc.metrotransit.org/NexTrip/' + stop_id)
+    except:
+        return ['error']
+        
+    soup = BeautifulStoneSoup(xml, selfClosingTags=[])
+    vehicles = soup.findAll('nextripdeparture')
+    vehicles_list = []
+    vehicles = filter(lambda x: "true" == x.find('actual').contents[0], vehicles)
+    for vehicle in vehicles:
+        vehicles_list.append({ 'id' : vehicle.find('blocknumber').contents[0], 'lat' : float(vehicle.find('vehiclelatitude').contents[0]), 'lon' : float(vehicle.find('vehiclelongitude').contents[0]), 'heading' : 0, 'directionTag' : stop.direction_tag })
+    return { 'agencyTag' : stop.agency_tag, 'lineTag' : stop.line_tag, 'vehicles' : vehicles_list }
 
 def get_stop_data(stop):
     return { 'agencyTag' : stop.agency_tag, 'lineTag' : stop.line_tag, 'lat' : None, 'lon' : None }
@@ -70,7 +87,7 @@ def get_directions(stop, max_arrivals, show_missed):
     current_hours = int(current_hours)
     current_minutes = int(current_minutes)
     
-    #direction = filter(lambda x: x["tag"] == stop.direction_tag, directions(stop.agency_tag, stop.line_tag))[0]
+    direction = filter(lambda x: x["tag"] == stop.direction_tag, directions(stop.agency_tag, stop.line_tag))[0]
     
     predictions = []
     departTable = soup.html.body.find('div','nextripDepartures')
@@ -81,7 +98,10 @@ def get_directions(stop, max_arrivals, show_missed):
         minutes = row.find(attrs={'class':re.compile(r'\bcol3\b')})
         actualTime = ('red' not in minutes['class'].split(' '))
         if actualTime:
-            minutes = int(minutes.string[:-4])
+            try:
+                minutes = int(minutes.string[:-4])
+            except:
+                logging.warning("STRANGE:" + str(row))
         else:
             (scheduled_hours, scheduled_minutes) = minutes.string.split(":")
             scheduled_hours = int(scheduled_hours)
@@ -93,4 +113,4 @@ def get_directions(stop, max_arrivals, show_missed):
         predictions = filter(lambda prediction: True if functions.get_leave_at(stop.time_to_stop, prediction['minutes']) != -1 else False, predictions)
 
     predictions = sorted(predictions, key=lambda x: int(x['minutes']))[:max_arrivals]
-    return [{"title": "", "destinations": {"title": "test", "vehicles": predictions}}]
+    return [{"title": "", "destinations": [{"title": direction["title"], "vehicles": predictions}]}]

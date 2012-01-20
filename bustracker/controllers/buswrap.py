@@ -10,7 +10,7 @@ class Agencies(webapp.RequestHandler):
         self.response.out.write(json.dumps([
             {"title": "AC Transit", "tag": "actransit"},
             {"title": "SF MUNI", "tag": "sf-muni"},
-            #{"title": "Metro Transit", "tag": "metrotransit"},
+            {"title": "Metro Transit", "tag": "metrotransit"},
             {"title": "Los Angles Bus System", "tag": "lametro"},
             {"title": "Boston Bus System", "tag": "mbta"},
             {"title": "Portland Streetcar", "tag": "portland-sc"},

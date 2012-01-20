@@ -17,9 +17,9 @@ def get_xml(url):
     '''Go to url and returns the xml data.'''
     file = urlfetch.fetch(url)
     if file.status_code == 200:
-    	return file.content
+        return file.content
     else:
-    	return None
+        return None
 
 def local_time(time, specified_timezone):
     return time.replace(tzinfo=timezone.tz("utc")).astimezone(timezone.tz(specified_timezone))
