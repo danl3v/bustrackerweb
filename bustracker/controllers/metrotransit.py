@@ -99,9 +99,12 @@ def get_directions(stop, max_arrivals, show_missed):
         actualTime = ('red' not in minutes['class'].split(' '))
         if actualTime:
             try:
-                minutes = int(minutes.string[:-4])
+                if minutes.string == "Due":
+                    minutes = 0
+                else:
+                    minutes = int(minutes.string[:-4])
             except:
-                logging.warning("STRANGE:" + str(row))
+                logging.warning("PARSING BUS PREDICTION: " + str(row))
         else:
             (scheduled_hours, scheduled_minutes) = minutes.string.split(":")
             scheduled_hours = int(scheduled_hours)
