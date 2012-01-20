@@ -16,7 +16,7 @@ def lines(agency):
         return ["error"]
     lines = json.loads(lines)
     list = []
-    for line in lines:
+    for line in lines[2:]:
         list.append({"tag" : line['number'], "title" : line['name']})
     return list
         
