@@ -107,9 +107,9 @@ class UserPredictions(webapp.RequestHandler):
         if current_user:
             user = models.User.all().filter('user =', current_user).get()
             if user:
-            	stops = user.stops.order('position')
+                stops = user.stops.order('position')
             else:
-            	return
+                return
         else:
             user = default_user()
             stops = default_stops()
@@ -123,9 +123,21 @@ class UserMap(webapp.RequestHandler):
         current_user = users.get_current_user()
         if current_user:
             user = models.User.all().filter('user =', current_user).get()
+            user_lat = None
+            user_lon = None
         else:
             user = default_user()
-        self.response.out.write(json.dumps({ 'zoom' : user.zoom_level, 'lat' : user.latitude, 'lon' : user.longitude, 'mapType' : user.map_type, 'showControls' : user.show_controls }))
+            user_lat = default_user_lat
+            user_lon = default_user_lon
+        self.response.out.write(json.dumps({
+                        'zoom' : user.zoom_level,
+                        'lat' : user.latitude,
+                        'lon' : user.longitude,
+                        'mapType' : user.map_type,
+                        'showControls' : user.show_controls,
+                        'user_lat' : user_lat,
+                        'user_lon' : user_lon,
+                        }))
     
     def post(self):
         current_user = users.get_current_user()
@@ -169,3 +181,6 @@ def default_user():
     user.show_missed = True
     
     return user
+
+default_user_lat = 37.750695935238916
+default_user_lon = -122.4302528878357

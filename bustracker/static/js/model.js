@@ -930,7 +930,15 @@ function initialize() {
 			saveMapDefaultsTimer = window.setTimeout(saveMapDefaults, 2000);
 		});
 		
-		plotUserLocation();
+		if (data.user_lat && data.user_lon) {
+			plotUserLocation(data.user_lat, data.user_lon);
+		}
+		else if (navigator.geolocation) { // check if browser support this feature or not 
+			navigator.geolocation.getCurrentPosition(function(position) {
+				plotUserLocation(position.coords.latitude, position.coords.longitude);
+			});
+		}
+		
 		layoutFooter();
 		
 		vm = new viewModel();
@@ -994,34 +1002,29 @@ function saveMapDefaults() {
 	$.post("/map", { "zoom": map.getZoom(), "lat": map.getCenter().lat(), "lon": map.getCenter().lng() });
 }
 
-function plotUserLocation() {
-	if (navigator.geolocation) { // check if browser support this feature or not 
-		navigator.geolocation.getCurrentPosition(function(position) {
-			var lat = position.coords.latitude;
-			var lng = position.coords.longitude;
-			
-			var locationCircle = new google.maps.Circle({
-				strokeColor: "#FFAD29",
-				strokeOpacity: 0.8,
-				strokeWeight: 2,
-				fillColor: "#000000",
-				fillOpacity: 0.2,
-				map: map,
-				center: new google.maps.LatLng(lat, lng),
-				radius: 300
-			});
-			
-			var image = new google.maps.MarkerImage('/images/user-location.png',
-				null, // size
-				new google.maps.Point(0,0), // origin
-				new google.maps.Point(15, 23) // anchor
-			);
-			
-			var locationPoint = new google.maps.Marker({
-				position: new google.maps.LatLng(lat, lng),
-				map: map,
-				icon: image
-			});
+function plotUserLocation(lat, lon) {
+	if (lat && lon) {
+		var locationCircle = new google.maps.Circle({
+			strokeColor: "#FFAD29",
+			strokeOpacity: 0.8,
+			strokeWeight: 2,
+			fillColor: "#000000",
+			fillOpacity: 0.2,
+			map: map,
+			center: new google.maps.LatLng(lat, lon),
+			radius: 300
+		});
+		
+		var image = new google.maps.MarkerImage('/images/user-location.png',
+			null, // size
+			new google.maps.Point(0,0), // origin
+			new google.maps.Point(15, 23) // anchor
+		);
+		
+		var locationPoint = new google.maps.Marker({
+			position: new google.maps.LatLng(lat, lon),
+			map: map,
+			icon: image
 		});
 	}
 }
