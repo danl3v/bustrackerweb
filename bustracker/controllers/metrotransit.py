@@ -232,7 +232,11 @@ def get_vehicle_data(stop, t):
     except:
         return ['error']
     soup = BeautifulSoup(html)
-    stop_id = soup.html.body.find('a', id='ctl00_mainContent_NexTripControl1_NexTripResults1_lnkStopNumber').string
+    
+    try:
+		stop_id = soup.html.body.find('a', id='ctl00_mainContent_NexTripControl1_NexTripResults1_lnkStopNumber').string
+    except:
+    	logging.debug("CANNOT FIND STOP_ID: " + str(soup.html.body.find('a', id='ctl00_mainContent_NexTripControl1_NexTripResults1_lnkStopNumber')))
     
     try:
         xml = functions.get_xml('http://svc.metrotransit.org/NexTrip/' + stop_id)

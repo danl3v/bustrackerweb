@@ -3,6 +3,7 @@ from google.appengine.ext import webapp
 from google.appengine.api import users
 from models import models
 import functions
+import default_user
 
 class Agencies(webapp.RequestHandler):
     def get(self):
@@ -42,13 +43,16 @@ class UserLines(webapp.RequestHandler):
         if current_user:
             stops = models.User.all().filter('user =', current_user).get().stops.order('position')
         else:
-            stops = default_stops()
+            stops = default_user.stops()
         lineDict = {}
         for stop in stops:
             if (stop.agency_tag + " " + stop.line_tag) in lineDict.keys():
                 continue
             else:
-                lineDict[(stop.agency_tag + " " + stop.line_tag)] = functions.apiwrapperfor(stop.agency_tag).get_line_data(stop)
+                try:
+                    lineDict[(stop.agency_tag + " " + stop.line_tag)] = functions.apiwrapperfor(stop.agency_tag).get_line_data(stop)
+                except:
+                    lineDict[(stop.agency_tag + " " + stop.line_tag)] = "error"
         self.response.out.write(json.dumps(lineDict.values()))
 
 class UserStops(webapp.RequestHandler):
@@ -62,26 +66,29 @@ class UserStops(webapp.RequestHandler):
             else:
                 return
         else:
-            stops = default_stops()
+            stops = default_user.stops()
         stopList = []
         for index, stop in enumerate(stops):
-            stop_data = functions.apiwrapperfor(stop.agency_tag).get_stop_data(stop)
-            stopList.append({"id": stop.key().id() if stop.is_saved() else index,
-                             "title": stop.title,
-                             
-                             "lat" : float(stop_data['lat']) if stop_data['lat'] else None,
-                             "lon" : float(stop_data['lon']) if stop_data['lon'] else None,
-                             
-                             "agencyTag": stop.agency_tag,
-                             "lineTag": stop.line_tag,
-                             "directionTag": stop.direction_tag,
-                             "stopTag": stop.stop_tag,
-                             "destinationTag": stop.destination_tag,
-                            
-                             "timeToStop": stop.time_to_stop,
-                             "position": stop.position,
-                             "isEditable": True if stop.is_saved() else False,
-            })
+            try:
+                stop_data = functions.apiwrapperfor(stop.agency_tag).get_stop_data(stop)
+                stopList.append({"id": stop.key().id() if stop.is_saved() else index,
+                                 "title": stop.title,
+                                 
+                                 "lat" : float(stop_data['lat']) if stop_data['lat'] else None,
+                                 "lon" : float(stop_data['lon']) if stop_data['lon'] else None,
+                                 
+                                 "agencyTag": stop.agency_tag,
+                                 "lineTag": stop.line_tag,
+                                 "directionTag": stop.direction_tag,
+                                 "stopTag": stop.stop_tag,
+                                 "destinationTag": stop.destination_tag,
+                                
+                                 "timeToStop": stop.time_to_stop,
+                                 "position": stop.position,
+                                 "isEditable": True if stop.is_saved() else False,
+                })
+            except:
+                stopList.append({"error" : True})
         self.response.out.write(json.dumps(stopList))
 
 class UserVehicles(webapp.RequestHandler):
@@ -91,7 +98,7 @@ class UserVehicles(webapp.RequestHandler):
         if current_user:
             stops = models.User.all().filter('user =', current_user).get().stops.order('position')
         else:
-            stops = default_stops()
+            stops = default_user.stops()
         lineDict = {}
         for stop in stops:
             if (stop.agency_tag + " " + stop.line_tag) in lineDict.keys():
@@ -111,8 +118,8 @@ class UserPredictions(webapp.RequestHandler):
             else:
                 return
         else:
-            user = default_user()
-            stops = default_stops()
+            user = default_user.user()
+            stops = default_user.stops()
         predictionList = []
         for index, stop in enumerate(stops):
             predictionList.append({ "id": stop.key().id() if stop.is_saved() else index, "directions": functions.apiwrapperfor(stop.agency_tag).get_directions(stop, user.max_arrivals, user.show_missed) })
@@ -126,9 +133,9 @@ class UserMap(webapp.RequestHandler):
             user_lat = None
             user_lon = None
         else:
-            user = default_user()
-            user_lat = default_user_lat
-            user_lon = default_user_lon
+            user = default_user.user()
+            user_lat = default_user.user_lat
+            user_lon = default_user.user_lon
         self.response.out.write(json.dumps({
                         'zoom' : user.zoom_level,
                         'lat' : user.latitude,
@@ -148,39 +155,4 @@ class UserMap(webapp.RequestHandler):
             user.longitude = float(self.request.get("lon"))
             user.put()
         self.response.out.write(json.dumps({ 'saved' : True }))
-
-def default_stops():
-    the24 = models.Stop()
-    the24.title = "the 24"
-    the24.agency_tag = "sf-muni"
-    the24.line_tag = "24"
-    the24.direction_tag = "24_IB1"
-    the24.stop_tag = "4326"
-    the24.time_to_stop = 6
-    the24.position = 1
-    
-    jChurch = models.Stop()
-    jChurch.title = "j church at happy donut"
-    jChurch.agency_tag = "sf-muni"
-    jChurch.line_tag = "J"
-    jChurch.direction_tag = "J__IBMTK6"
-    jChurch.stop_tag = "3996"
-    jChurch.time_to_stop = 12
-    jChurch.position = 2
-    
-    return [the24, jChurch]
-    
-def default_user():
-    user = models.User()
-    user.latitude = 37.75081571576865
-    user.longitude = -122.43543644302366
-    user.zoom_level = 15
-    user.map_type = "roadmap"
-    
-    user.max_arrivals = 4
-    user.show_missed = True
-    
-    return user
-
-default_user_lat = 37.750695935238916
-default_user_lon = -122.4302528878357
+        

@@ -3,6 +3,7 @@ from google.appengine.api import users
 from google.appengine.api import mail
 from models import models
 import view
+import default_user
 from django.utils import simplejson as json
 
 class MainPage(webapp.RequestHandler):
@@ -36,8 +37,11 @@ class Settings(webapp.RequestHandler):
     def get(self):
         '''Render the settings page.'''
         current_user = users.get_current_user()
-        user = models.User.all().filter('user =', current_user).get()
-        self.response.out.write(json.dumps({ 'maxArrivals' : user.max_arrivals, 'showMissed' : "yes" if user.show_missed else "no", 'mapType' : user.map_type, 'showControls' : user.show_controls }))
+        if current_user:
+            user = models.User.all().filter('user =', current_user).get()
+        else:
+            user = default_user.user()
+        self.response.out.write(json.dumps({ 'maxArrivals' : user.max_arrivals, 'showMissed' : "yes" if user.show_missed else "no", 'mapType' : user.map_type, 'showControls' : user.show_controls }))        
         
     def post(self):
         current_user = users.get_current_user()
