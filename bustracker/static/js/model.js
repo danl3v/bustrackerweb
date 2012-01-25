@@ -461,6 +461,7 @@ var vehicle = function(aVehicle, aLine) {
 	this.heading = ko.observable(aVehicle.heading);
 	this.directionTag = ko.observable(aVehicle.directionTag);
 	this.marker = null;
+	this.shouldAnimate = true;
 	this.isAnimating = false;
 
 	this.directionTag.subscribe(function(newValue) {
@@ -511,9 +512,12 @@ var vehicle = function(aVehicle, aLine) {
 			if (self.isAnimating) {
 				window.setTimeout(self.updateVehicleMarker, 5000);
 			}
-			else {
+			else if (self.shouldAnimate) {
 				self.isAnimating = true;
 				self.moveToStep(self.marker, self.marker.position, 0, 80);
+			}
+			else {
+				self.marker.setPosition(new google.maps.LatLng(self.lat(), self.lon()));
 			}
 		}
 		else if (self.directionTag() && self.lat() != 0 && self.lon() != 0) {
@@ -537,6 +541,7 @@ var vehicle = function(aVehicle, aLine) {
 			self.undraw();
 		}
 	};
+	
 	this.updateVehicleMarker();
 };
 
@@ -831,6 +836,7 @@ var viewModel = function() {
 	// loading the vehicles
 	
 	this.isLoadingVehicles = ko.observable(true);
+	this.lastVehicleUpdate = null;
 	
 	this.lineFromTags = function(agencyTag, lineTag) {
 		var lineToReturn = null;
@@ -847,10 +853,12 @@ var viewModel = function() {
 		$.get("/vehicles/0", function(lines) {
 			lines.forEach(function(aLine, i) {
 				if (aLine) {
+					var now = new Date();
 					var theLine = self.lineFromTags(aLine.agencyTag, aLine.lineTag);
 					var mappedVehicles = $.map(aLine.vehicles, function(aVehicle, index) {
 						var theVehicle = theLine.vehicleFromId(aVehicle.id);
 						if (theVehicle) {
+							theVehicle.shouldAnimate = (self.lastVehicleUpdate && ((now - self.lastVehicleUpdate) / 1000.0) > 60.0 ? false : true);
 							theVehicle.lat(aVehicle.lat);
 							theVehicle.lon(aVehicle.lon);
 							theVehicle.heading(aVehicle.heading);
@@ -873,6 +881,7 @@ var viewModel = function() {
 					}
 					theLine.vehicles(mappedVehicles);
 					self.isLoadingVehicles(false);
+					self.lastVehicleUpdate = now;
 				}
 			});
 		}, 'json');
