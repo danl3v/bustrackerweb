@@ -477,14 +477,16 @@ var vehicle = function(aVehicle, aLine) {
 	});
 	
 	this.heading.subscribe(function(newValue) {
-		var roundedHeading = (Math.floor((180.0 - self.heading()) / 45.0) * 45);
-		var image = new google.maps.MarkerImage('https://chart.googleapis.com/chart?chst=d_map_spin&chld=1|' + roundedHeading.toString() + '|FFFFFF|11|b|' + aLine.lineTag,
-			null, // size
-			new google.maps.Point(0,0), // origin
-			getAnchor(roundedHeading) // anchor
-		);
-	
-		self.marker.setIcon(image);
+		if (self.marker) {
+			var roundedHeading = (Math.floor((180.0 - self.heading()) / 45.0) * 45);
+			var image = new google.maps.MarkerImage('https://chart.googleapis.com/chart?chst=d_map_spin&chld=1|' + roundedHeading.toString() + '|FFFFFF|11|b|' + aLine.lineTag,
+				null, // size
+				new google.maps.Point(0,0), // origin
+				getAnchor(roundedHeading) // anchor
+			);
+		
+			self.marker.setIcon(image);
+		}
 	});
 	
 	this.undraw = function() {
