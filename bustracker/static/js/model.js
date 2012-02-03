@@ -929,7 +929,13 @@ function initialize() {
 		map.setZoom(data.zoom);
 		map.setCenter(new google.maps.LatLng(data.lat, data.lon));
 		setMapType(data.mapType);
-		setShowControls(data.showControls);
+		
+		if (isMobile) {
+			setShowControls("no");
+		}
+		else {
+			setShowControls(data.showControls);
+		}
 				
 		google.maps.event.addListener(map, 'center_changed', function() {
 			clearTimeout(saveMapDefaultsTimer);
