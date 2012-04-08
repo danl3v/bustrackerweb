@@ -459,13 +459,24 @@ span.separator
 
 /* iPhone Specific CSS */
 
-@media only screen and (max-device-width: 480px)
+@media only screen and (max-device-width: 480px) and (orientation:portrait)
 {
 	body, #map, #wrapper /* for hiding the safari nav bar */
 	{
 		min-height: 416px;
 	}
+}
 
+@media only screen and (max-device-width: 480px) and (orientation:landscape)
+{
+	body, #map, #wrapper /* for hiding the safari nav bar */
+	{
+		min-height: 268px;
+	}
+}
+
+@media only screen and (max-device-width: 480px)
+{
     div#wrapper
     {
         width: 100%;

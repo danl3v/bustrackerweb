@@ -1,6 +1,7 @@
 /**
  * ScrollFix v0.1
  * http://www.joelambert.co.uk
+ * Modified by Daniel Levy
  *
  * Copyright 2011, Joe Lambert.
  * Free to use under the MIT license.
@@ -27,5 +28,7 @@ var ScrollFix = function(elem) {
 
 		if(startTopScroll + elem.offsetHeight >= elem.scrollHeight)
 			elem.scrollTop = elem.scrollHeight - elem.offsetHeight - 1;
+			
+		 setTimeout(function() { window.scrollTo(0, 0); }, 0); /* remove nav bar */
 	}, false);
 };
