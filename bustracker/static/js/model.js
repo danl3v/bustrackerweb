@@ -566,9 +566,9 @@ var viewModel = function() {
 	
 	this.toggleSidebarButtonText = ko.dependentObservable(function() {
 		if (self.showSidebar()) {
-			return 'x';
+			return '∧∧';
 		}
-		return 'o';
+		return '∨∨';
 	
 	}, this);
 	
