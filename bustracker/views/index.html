@@ -226,7 +226,7 @@
 					<tr class="header3"><td class="header3-left" colspan="2">no vehicles predicted</td></tr>
 				{{/if}}
 				{{each(k, destination) destinations()}}
-					<tr class="header3"><td class="header3-left" colspan="2">${title}</td></tr>
+					{{if title}}<tr class="header3"><td class="header3-left" colspan="2">${title}</td></tr>{{/if}}
 					{{if vehicles().length == 0}}
 						<tr class="header4"><td class="header4-left">no vehicles predicted</td><td class="header4-right"></td></tr>
 					{{/if}}
