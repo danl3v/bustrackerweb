@@ -11,12 +11,6 @@
 
 @popup-background-color: rgb(41, 48, 40);
 
-/* NEWS-FEED-LIST-VARIABLES */
-@news-feed-list-background-color: #272E2C;
-@news-feed-list-text-color: #FFAD29;
-@news-feed-list-border-color: #647362;
-@news-feed-list-highlight-color: #3D4A46;
-
 /* LAYOUT */
 
 html, body
@@ -63,20 +57,6 @@ div#container
 div#stop-list-container
 {
     float: left;
-}
-
-div#news-feed-list-container
-{
-    float: right;
-}
-
-div#news-feed-background
-{
-    position: absolute;
-    right: 0;
-    top: 0;
-    background-color: @news-feed-list-background-color;
-    z-index: -10;
 }
 
 div#divider
@@ -306,25 +286,6 @@ table#stop-list tr td
 table#stop-list tr.header1
 {
     background-color: @header1-background-color;
-}
-
-/* NEWS-FEED-LIST STYLING */
-
-table#news-feed-list
-{
-    border-top: 1px solid @news-feed-list-border-color;
-    border-bottom: 1px solid @news-feed-list-border-color;
-}
-
-table#news-feed-list tr td
-{
-    border-top: 1px solid @news-feed-list-border-color;
-    border-bottom: 1px solid @news-feed-list-border-color;
-}
-
-table#news-feed-list tr.header1
-{
-    background: @news-feed-list-highlight-color;
 }
 
 /* STOP MANAGEMENT */
