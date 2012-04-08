@@ -174,10 +174,10 @@
 {% verbatim %}
 		{{if !vm.isEditing()}}
 {% endverbatim %}
-			<button onclick="vm.newStop()" title="new stop">+</button> <button onclick="vm.toggleEditing()" title="edit">✎</button> <button onclick="vm.editSettings()" title="settings">⚙</button> <button onclick="vm.showFeedbackForm()" title="feedback">✉</button> <button onclick="if (confirm('Are you sure you want to log out?')) { window.location='{{ login_url }}'}" title="logout">➔</button>
+			<button onclick="vm.newStop()" title="new stop">+</button> <button onclick="vm.isEditing(true)" title="edit">✎</button> <button onclick="vm.editSettings()" title="settings">⚙</button> <button onclick="vm.showFeedbackForm()" title="feedback">✉</button> <button onclick="if (confirm('Are you sure you want to log out?')) { window.location='{{ login_url }}'}" title="logout">➔</button>
 {% verbatim %}
 		{{else}}
-			<button onclick="vm.toggleEditing()" title="edit">done editing</button>
+			<button onclick="vm.isEditing(false)" title="edit">done editing</button>
 		{{/if}}
 {% endverbatim %}
 </script>

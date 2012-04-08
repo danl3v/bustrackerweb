@@ -579,10 +579,6 @@ var viewModel = function() {
 	
 	this.isEditing = ko.observable(false);
 	
-	this.toggleEditing = function() {
-		this.isEditing(!self.isEditing());
-	};
-	
 	// stops
 	
 	this.isNewStop;
