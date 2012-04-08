@@ -22,11 +22,11 @@ function updateClock() {
   currentMinutes = (currentMinutes < 10 ? "0" : "") + currentMinutes;
   currentSeconds = (currentSeconds < 10 ? "0" : "") + currentSeconds;
 
-  var currentTimeString = dayArray[currentDay] + ", " + monthArray[currentMonth] + " " + currentDate + ", " + currentYear + " " + currentHours + ":" + currentMinutes + ":" + currentSeconds;
+  var currentTimeString = dayArray[currentDay] + ", " + monthArray[currentMonth] + " " + currentDate + ", " + currentYear + "<br>" + currentHours + ":" + currentMinutes + ":" + currentSeconds;
 
   document.getElementById("clock").innerHTML = currentTimeString;
   
-  setTimeout("updateClock()", 1000);
+  setTimeout(updateClock, 1000);
 }
 
 $(document).ready(function() {
