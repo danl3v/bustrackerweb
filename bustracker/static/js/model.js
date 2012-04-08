@@ -1055,8 +1055,9 @@ function plotUserLocation(lat, lon) {
 
 /* MAIN */
 
-if ((navigator.userAgent.match(/iPhone/i)) || (navigator.userAgent.match(/iPod/i))  || ((navigator.userAgent.match(/Android/i)) && (navigator.userAgent.match(/mobile/i)))) {
+if ((navigator.userAgent.match(/iPhone/i)) || (navigator.userAgent.match(/iPod/i)) || ((navigator.userAgent.match(/Android/i)) && (navigator.userAgent.match(/mobile/i)))) {
     isMobile = true;
+    window.addEventListener("load",function() { setTimeout(function() { window.scrollTo(0, 0); }, 0); });
 }
 else {
     isMobile = false;
