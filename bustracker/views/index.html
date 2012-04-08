@@ -187,13 +187,12 @@
 	{% verbatim %}
 	
 	{{if stops().length == 0}}
-		{{if vm.isLoadingStops()}}<tr class="header1"><td class="header1-left">Loading stops...</td></tr>{{/if}}
-		{{if !vm.isLoadingStops()}}<tr class="header1"><td class="header1-left">No stops. <a href="#" onclick="vm.newStop()">Add one!</a>.</td></tr>{{/if}}
+		{{if vm.isLoadingStops()}}<tr class="header1"><td class="header1-main">Loading stops...</td></tr>{{/if}}
+		{{if !vm.isLoadingStops()}}<tr class="header1"><td class="header1-main">No stops. <a href="#" onclick="vm.newStop()">Add one!</a>.</td></tr>{{/if}}
 	{{/if}}
 	{{each(i, stop) stops()}}
 		<tr class="header1">
-			<td class="header1-left">${title}</td>
-			<td class="header1-right">
+			<td class="header1-main" colspan="2">${title}
 				{{if isEditable}}
 					{{if i > 0}}<button title="move up" data-bind="click: function() { vm.moveup(i) }">↑</button>{{/if}}
 					{{if i < vm.stops().length-1}}<button title="move down" data-bind="click: function() { vm.movedown(i) }">↓</button>{{/if}}
