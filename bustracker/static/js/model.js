@@ -968,6 +968,7 @@ function initialize() {
 }
 
 function layoutFooter() {
+	return;
 	var windowHeight = $(window).height();
 	var wrapperHeight = document.getElementById("wrapper").scrollHeight;
 	if (wrapperHeight <= windowHeight) {
