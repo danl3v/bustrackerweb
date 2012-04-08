@@ -153,12 +153,11 @@
 
 <div class="fade" style="display: none;"  data-bind="visible: showOfflineWarning"></div>
 
-
-<div style="position: absolute; left: 0; top: 0; z-index: 9999; display: none;" data-bind="visible: isMobile">
+<div style="position: absolute; left: 0; top: 0; z-index: 500; display: none;" data-bind="visible: isMobile">
 	<button data-bind="click: vm.toggleSidebar, text: toggleSidebarButtonText"></button>
 </div>
 
-<div style="position: absolute; right: 0; top: 0; z-index: 9999; display: none;" data-bind="visible: isMobile">
+<div style="position: absolute; right: 0; top: 0; z-index: 500; display: none;" data-bind="visible: isMobile">
 	<button data-bind="click: function() { vm.loadPredictions(); vm.loadVehicles(); }">refresh</button>
 </div>
 
@@ -167,18 +166,18 @@
 <div id="header">
 	<p>Transit Arrival Times</p>
 	<span id="clock">&nbsp;</span><br>
-	{% if current_user %}<div style="font-size:1.25em" data-bind="template:'headerTemplate'"></div>{% endif %}
+	{% if current_user %}<div data-bind="template:'headerButtonsTemplate'"></div>{% endif %}
 </div>
 
-<script type="text/x-jquery-tmpl" id="headerTemplate">
+<script type="text/x-jquery-tmpl" id="headerButtonsTemplate">
 {% verbatim %}
-		{{if !vm.isEditing()}}
+	{{if !vm.isEditing()}}
 {% endverbatim %}
-			<button onclick="vm.newStop()" title="new stop">+</button> <button onclick="vm.isEditing(true)" title="edit">✎</button> <button onclick="vm.editSettings()" title="settings">⚙</button> <button onclick="vm.showFeedbackForm()" title="feedback">✉</button> <button onclick="if (confirm('Are you sure you want to log out?')) { window.location='{{ login_url }}'}" title="logout">➔</button>
+		<button onclick="vm.newStop()" title="new stop">+</button> <button onclick="vm.isEditing(true)" title="edit">✎</button> <button onclick="vm.editSettings()" title="settings">⚙</button> <button onclick="vm.showFeedbackForm()" title="feedback">✉</button> <button onclick="if (confirm('Are you sure you want to log out?')) { window.location='{{ login_url }}'}" title="logout">➔</button>
 {% verbatim %}
-		{{else}}
-			<button onclick="vm.isEditing(false)" title="edit">done editing</button>
-		{{/if}}
+	{{else}}
+		<button onclick="vm.isEditing(false)" title="edit">done editing</button>
+	{{/if}}
 {% endverbatim %}
 </script>
 
