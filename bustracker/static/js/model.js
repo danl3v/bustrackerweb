@@ -575,6 +575,16 @@ var viewModel = function() {
 	this.stops = ko.observableArray([]);
 	this.lines = ko.observableArray([]);
 	
+	// stop list
+	
+	this.isEditing = ko.observable(false);
+	
+	this.toggleEditing = function() {
+		this.isEditing(!self.isEditing());
+	};
+	
+	// stops
+	
 	this.isNewStop;
 	this.editingStop = ko.observable(false);
 	
@@ -596,7 +606,7 @@ var viewModel = function() {
 					alert("Problem updating data on server.");
 				}
 			}, 'json');
-			stop = self.stops()[i];
+			var stop = self.stops()[i];
 			self.stops.splice(i, 1);
 			self.stops.splice(i-1, 0, stop);
 		}
@@ -609,7 +619,7 @@ var viewModel = function() {
 					alert("Problem updating data on server.");
 				}
 			}, 'json');
-			stop = self.stops()[i];
+			var stop = self.stops()[i];
 			self.stops.splice(i, 1);
 			self.stops.splice(i+1, 0, stop);
 		}
