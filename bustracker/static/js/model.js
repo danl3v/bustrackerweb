@@ -1057,7 +1057,16 @@ function plotUserLocation(lat, lon) {
 
 if ((navigator.userAgent.match(/iPhone/i)) || (navigator.userAgent.match(/iPod/i)) || ((navigator.userAgent.match(/Android/i)) && (navigator.userAgent.match(/mobile/i)))) {
     isMobile = true;
-    window.addEventListener("load",function() { setTimeout(function() { window.scrollTo(0, 0); }, 0); }); /* remove nav bar */
+    
+     /* remove nav bar on load and on rotation */
+    window.addEventListener("load",function() { setTimeout(function() { window.scrollTo(0, 0); }, 0); });
+    
+	var supportsOrientationChange = "onorientationchange" in window,
+		orientationEvent = supportsOrientationChange ? "orientationchange" : "resize";
+	
+	window.addEventListener(orientationEvent, function() {
+		setTimeout(function() { window.scrollTo(0, 0); }, 0);
+	}, false);
 }
 else {
     isMobile = false;
