@@ -675,7 +675,6 @@ var viewModel = function() {
 			}, 'json');
 			self.stops()[i].undraw();
 			self.stops.splice(i, 1);
-			layoutFooter();
 		}
 	};
 	
@@ -777,7 +776,6 @@ var viewModel = function() {
 			});
 			self.stops(mappedStops);
 			self.isLoadingStops(false);
-			layoutFooter();
 			self.refreshTimer();
 		}, 'json');
 	};
@@ -836,7 +834,6 @@ var viewModel = function() {
 				});
 				theStop.directions(mappedDirections);
 				self.isLoadingPredictions(false);
-				layoutFooter();
 			});
 		}, 'json');
 	};
@@ -923,9 +920,6 @@ var viewModel = function() {
 /* MAP / LAYOUT HELPERS */
 
 function initialize() {
-
-	window.onresize = layoutFooter;
-
 	var myOptions = {
 		disableDefaultUI: true,
 	};
@@ -962,8 +956,6 @@ function initialize() {
 			});
 		}
 		
-		layoutFooter();
-		
 		vm = new viewModel();
 		ko.applyBindings(vm);
 		vm.loadStops();
@@ -971,19 +963,6 @@ function initialize() {
 		vm.loadSettings();
 		
 	}, 'json');
-}
-
-function layoutFooter() {
-	return;
-	var windowHeight = $(window).height();
-	var wrapperHeight = document.getElementById("wrapper").scrollHeight;
-	if (wrapperHeight <= windowHeight) {
-		$("#footer").css("position", "absolute");
-		$("#footer").css("bottom", "0");
-	}
-	else if (wrapperHeight > windowHeight) {
-		$("#footer").css("position", "relative");
-	}
 }
 
 function setShowControls(showControls) {
