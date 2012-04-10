@@ -155,10 +155,12 @@
 
 <div class="fade" style="display: none;"  data-bind="visible: showOfflineWarning"></div>
 
-<div style="position: fixed; left: 0; top: 0; z-index: 500; display: none; width: 100%; background-color: black; height: 2em;" data-bind="visible: isMobile">
-	<div style="float: left; width: 70%;"><button style="width: 100%;" data-bind="click: vm.toggleSidebar, text: toggleSidebarButtonText"></button></div>
-	<div style="float: right; width: 29.5%;"><button style="width: 100%;" data-bind="click: function() { vm.loadPredictions(); vm.loadVehicles(); }">↺</button></div>
-</div>
+<table style="position: fixed; left: 0; top: 0; z-index: 500; display: none; width: 100%; height: 2em; border-bottom: 1px solid #000000;" data-bind="visible: isMobile">
+	<tr>
+		<td style="width:70%; border-right: 1px solid #000000;"><button style="width:100%;" data-bind="click: vm.toggleSidebar, text: toggleSidebarButtonText"></button></td>
+		<td style="width:30%;"><button style="width:100%;" data-bind="click: function() { vm.loadPredictions(); vm.loadVehicles(); }">↺</button></td>
+	</tr>
+</table>
 
 <div id="wrapper" data-bind="visible: vm.showSidebar, style: { marginTop: isMobile ? '2em' : '0' }">
 
