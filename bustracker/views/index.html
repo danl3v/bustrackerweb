@@ -32,7 +32,7 @@
 
 <div id="map"></div>
 
-<div class="dialog" style="display: none;" data-bind="visible: editingStop">
+<div id="editStopDialog" class="dialog" style="display: none;" data-bind="visible: editingStop">
 	<form>
 		<h1 data-bind="text: editingStop().title"></h1>
 		<p>edit stop</p>
@@ -73,7 +73,7 @@
 
 <div class="fade" style="display: none;" data-bind="visible: editingStop, click: vm.cancelEditingStop"></div>
 
-<div class="dialog" style="display: none;" data-bind="visible: editingSettings">
+<div id="settingsDialog" class="dialog" style="display: none;" data-bind="visible: editingSettings">
 	<form>
 	
 		<h1>Settings</h1>
@@ -133,7 +133,7 @@
 
 <div class="fade" style="display: none;" data-bind="visible: editingSettings, click: vm.cancelEditingSettings"></div>
 
-<div class="dialog" style="display: none;" data-bind="visible: editingFeedback">
+<div id="feedbackDialog" class="dialog" style="display: none;" data-bind="visible: editingFeedback">
 	<form>
 		<h1>Feedback</h1>
 		<p>what do ya think?</p>
@@ -242,8 +242,10 @@
 </script>
 
 <script type="text/javascript" charset="utf-8">
-	var scrollable = document.getElementById("wrapper");
-	new ScrollFix(scrollable);
+	new ScrollFix(document.getElementById("wrapper"));
+	new ScrollFix(document.getElementById("editStopDialog"));
+	new ScrollFix(document.getElementById("settingsDialog"));
+	new ScrollFix(document.getElementById("feedbackDialog"));
 </script>
 
 </div>
