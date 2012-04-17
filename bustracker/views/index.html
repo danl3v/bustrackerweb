@@ -131,7 +131,7 @@
 	</form>
 </div>
 
-<div class="fade" style="display: none;"  data-bind="visible: editingSettings, click: vm.cancelEditingSettings"></div>
+<div class="fade" style="display: none;" data-bind="visible: editingSettings, click: vm.cancelEditingSettings"></div>
 
 <div class="dialog" style="display: none;" data-bind="visible: editingFeedback">
 	<form>
@@ -147,15 +147,15 @@
 	</form>
 </div>
 
-<div class="fade" style="display: none;"  data-bind="visible: editingFeedback, click: vm.cancelEditingFeedback"></div>
+<div class="fade" style="display: none;" data-bind="visible: editingFeedback, click: vm.cancelEditingFeedback"></div>
 
 <div class="dialog" style="display: none;" data-bind="visible: showOfflineWarning">
 	<h1>Offline</h1>
 </div>
 
-<div class="fade" style="display: none;"  data-bind="visible: showOfflineWarning"></div>
+<div class="fade" style="display: none;" data-bind="visible: showOfflineWarning"></div>
 
-<table id="mobile-navigation-bar" data-bind="visible: isMobile">
+<table id="mobile-navigation-bar" style="display: none;" data-bind="visible: isMobile">
 	<tr>
 		<td id="list-toggle-cell"><button data-bind="click: vm.toggleSidebar, text: toggleSidebarButtonText"></button></td>
 		<td id="refresh-button-cell"><button data-bind="click: function() { vm.loadPredictions(); vm.loadVehicles(); }">↺</button></td>
