@@ -362,13 +362,13 @@ var direction = function(stop, title, destinations) {
 	
 	this.updateDestinations = function(destinations) {
 		var mappedDestinations = $.map(destinations, function(aDestination) {
-//			for (var i=0; i < self.destinations().length; i++) {
-//				if (self.destinations()[i].title() == aDestination.title) { // convert this to a dependant observable?
-//					var theDestination = self.destinations()[i];
-//					theDestination.updateVehicles(aDestination.vehicles);
-//					return theDestination;
-//				}
-//			}
+			for (var i=0; i < self.destinations().length; i++) {
+				if (self.destinations()[i].title() == aDestination.title) { // convert this to a dependant observable?
+					var theDestination = self.destinations()[i];
+					theDestination.updatePredictions(aDestination.vehicles);
+					return theDestination;
+				}
+			}
 			return new destination(stop, aDestination.title, aDestination.vehicles);
 		});
 		self.destinations(mappedDestinations);
@@ -385,13 +385,13 @@ var destination = function(stop, title, vehicles) {
 	
 	this.updatePredictions = function(vehicles) {
 		var mappedVehicles = $.map(vehicles, function(aVehicle) {
-//			for (var i=0; i < self.vehicles().length; i++) {
-//				if (self.vehicles()[i].vehicleNumber == aVehicle.number) { // convert this to a dependant observable?
-//					var theVehicle = self.vehicles()[i];
-//					theVehicle.minutes(aVehicle.minutes);
-//					return theVehicle;
-//				}
-//			}
+			for (var i=0; i < self.vehicles().length; i++) {
+				if (self.vehicles()[i].vehicleNumber == aVehicle.id) { // convert this to a dependant observable?
+					var theVehicle = self.vehicles()[i];
+					theVehicle.minutes(aVehicle.minutes);
+					return theVehicle;
+				}
+			}
 			return new prediction(stop, aVehicle.minutes, aVehicle.id);
 		});
 		self.vehicles(mappedVehicles);
@@ -405,6 +405,11 @@ var prediction = function(stop, minutes, vehicleNumber) {
 	
 	this.vehicleNumber = vehicleNumber;
 	this.minutes = ko.observable(minutes);
+	this.selected = ko.observable(false);
+	
+	this.toggleSelected = function() {
+		self.selected(!self.selected());
+	}
 	
 	this.minutes.subscribe(function(newValue) {
 		self.updateVehicleMarker();
@@ -578,6 +583,11 @@ var viewModel = function() {
 	// stop list
 	
 	this.isEditing = ko.observable(false);
+	this.showOnlyWatchedDepartures = ko.observable(false);
+	
+	this.toggleShowOnlyWatchedDepartures = function() {
+		self.showOnlyWatchedDepartures(!self.showOnlyWatchedDepartures());
+	};
 	
 	// stops
 	
@@ -823,13 +833,13 @@ var viewModel = function() {
 			$.map(predictions, function(aPrediction, i) {
 				var theStop = self.stopWithId(aPrediction.id);
 				var mappedDirections = $.map(aPrediction.directions, function(aDirection) {
-//					for (var i=0; i < theStop.directions().length; i++) {
-//						if (theStop.directions()[i].title() == aDirection.title) {
-//							var theDirection = theStop.directions()[i];
-//							theDirection.updateDestinations(aDirection.destinations);
-//							return theDirection;
-//						}
-//					}
+					for (var i=0; i < theStop.directions().length; i++) {
+						if (theStop.directions()[i].title() == aDirection.title) {
+							var theDirection = theStop.directions()[i];
+							theDirection.updateDestinations(aDirection.destinations);
+							return theDirection;
+						}
+					}
 					return new direction(theStop, aDirection.title, aDirection.destinations);
 				});
 				theStop.directions(mappedDirections);

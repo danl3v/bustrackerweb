@@ -174,7 +174,7 @@
 {% verbatim %}
 	{{if !vm.isEditing()}}
 {% endverbatim %}
-		<button onclick="vm.newStop()" title="new stop">+</button> <button onclick="vm.isEditing(true)" title="edit">✎</button> <button onclick="vm.editSettings()" title="settings">⚙</button> <button onclick="vm.showFeedbackForm()" title="feedback">✉</button> <button onclick="if (confirm('Are you sure you want to log out?')) { window.location='{{ login_url }}'}" title="logout">➔</button>
+		<button onclick="vm.newStop()" title="new stop">+</button> <button onclick="vm.isEditing(true)" title="edit">✎</button> <button onclick="vm.toggleShowOnlyWatchedDepartures()" title="toggle watched departures">⌚</button> <button onclick="vm.editSettings()" title="settings">⚙</button> <button onclick="vm.showFeedbackForm()" title="feedback">✉</button> <button onclick="if (confirm('Are you sure you want to log out?')) { window.location='{{ login_url }}'}" title="logout">➔</button>
 {% verbatim %}
 	{{else}}
 		<button onclick="vm.isEditing(false)" title="edit">done editing</button>
@@ -231,7 +231,9 @@
 						<tr class="header4"><td class="header4-left">no vehicles predicted</td><td class="header4-right"></td></tr>
 					{{/if}}
 					{{each(l, vehicle) vehicles()}}
-						<tr class="header4"><td class="header4-left"><span class="big">${prettyMinutesToArrival}</span> ${prettyMinutesToArrivalSuffix}</td><td class="header4-right">${prettyTimeToLeave}</td></tr>
+						{{if !vm.showOnlyWatchedDepartures() || (vm.showOnlyWatchedDepartures() && selected())}}
+							<tr class="header4" data-bind="click: toggleSelected, css: { 'selected': selected }"><td class="header4-left"><span class="big">${prettyMinutesToArrival}</span> ${prettyMinutesToArrivalSuffix}</td><td class="header4-right">${prettyTimeToLeave}</td></tr>
+						{{/if}}
 					{{/each}}
 				{{/each}}
 			{{/each}}
