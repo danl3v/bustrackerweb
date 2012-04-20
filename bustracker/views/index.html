@@ -198,11 +198,14 @@
 		{{if vm.isLoadingStops()}}<tr class="header1"><td class="header1-main">Loading stops...</td></tr>{{/if}}
 		{{if !vm.isLoadingStops()}}<tr class="header1"><td class="header1-main">No stops. <a href="#" onclick="vm.newStop()">Add one!</a>.</td></tr>{{/if}}
 	{{/if}}
-	{{if vm.showOnlyWatchedDepartures() && !hasWatchedPredictions()}}
-		<tr class="header3"><td class="header3-left" colspan="2">no watched predictions</td></tr>
+	{{if vm.showOnlyWatchedDepartures()}}
+		<tr class="header1"><td class="header1-main watching" colspan="2">Watched</td></tr>
+	{{/if}}
+	{{if vm.showOnlyWatchedDepartures() && !hasWatchedPredictions() && !hasWatchedStops()}}
+		<tr class="header3"><td class="header3-left" colspan="2">no watched predictions or stops</td></tr>
 	{{/if}}
 	{{each(i, stop) stops()}}
-		{{if !vm.showOnlyWatchedDepartures() || (vm.showOnlyWatchedDepartures() && hasWatchedPredictions())}}
+		{{if !vm.showOnlyWatchedDepartures() || (vm.showOnlyWatchedDepartures() && (hasWatchedPredictions() || watching()))}}
 			<tr class="header1">
 				{{if vm.isEditing()}}
 					<td class="header1-left">${title}</td>
@@ -217,7 +220,7 @@
 						{{/if}}
 					</td>
 				{{else}}
-					<td class="header1-main" colspan="2">${title}</td>
+					<td class="header1-main" colspan="2" data-bind="click: toggleWatching, css: { 'watching': watching }">${title}</td>
 				{{/if}}
 			</tr>
 			{{if !vm.isEditing() }}
@@ -235,7 +238,7 @@
 							<tr class="header4"><td class="header4-left">no vehicles predicted</td><td class="header4-right"></td></tr>
 						{{/if}}
 						{{each(l, vehicle) vehicles()}}
-							{{if !vm.showOnlyWatchedDepartures() || (vm.showOnlyWatchedDepartures() && watching())}}
+							{{if !vm.showOnlyWatchedDepartures() || (vm.showOnlyWatchedDepartures() && watching() || stop.watching())}}
 								<tr class="header4" data-bind="click: toggleWatching, css: { 'watching': watching }"><td class="header4-left"><span class="big">${prettyMinutesToArrival}</span> ${prettyMinutesToArrivalSuffix}</td><td class="header4-right">${prettyTimeToLeave}</td></tr>
 							{{/if}}
 						{{/each}}

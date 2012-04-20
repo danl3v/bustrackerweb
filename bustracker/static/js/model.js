@@ -259,14 +259,53 @@ var stop = function(aStop) {
 	
 	this.directions = ko.observableArray([]);
 	
+	// watching stops and predictions
+	
+	this.watching = ko.observable(false);
+	
+	this.toggleWatching = function() {
+		self.watching(!self.watching());
+	}
+	
 	this.hasWatchedPredictions = ko.dependentObservable(function() {
 		for (var i=0; i < self.directions().length; i++) {
-			if (self.directions()[i].hasWatchedPredictions()) { // convert this to a dependant observable?
+			if (self.directions()[i].hasWatchedPredictions()) {
 				return true;
 			}
 		}
 		return false;
 	}, this);
+	
+	this.hasUnwatchedPredictions = ko.dependentObservable(function() {
+		for (var i=0; i < self.directions().length; i++) {
+			if (!self.directions()[i].hasUnwatchedPredictions()) {
+				return true;
+			}
+		}
+		return false;
+	}, this);
+	
+	this.toggleWatchAllPredictions = function() {
+		if (self.hasUnwatchedPredictions()) {
+			self.watchAllPredictions();
+		}
+		else
+		{
+			self.unwatchAllPredictions();
+		}
+	};
+	
+	this.watchAllPredictions = function() {
+		for (var i=0; i < self.directions().length; i++) {
+			self.directions()[i].watchAllPredictions();
+		}
+	};
+	
+	this.unwatchAllPredictions = function() {
+		for (var i=0; i < self.directions().length; i++) {
+			self.directions()[i].unwatchAllPredictions();
+		}
+	};
 	
 	// choiceFromTag
 	this.choiceFromTag = function(tag, choices) {
@@ -371,17 +410,38 @@ var direction = function(stop, title, destinations) {
 	
 	this.hasWatchedPredictions = ko.dependentObservable(function() {
 		for (var i=0; i < self.destinations().length; i++) {
-			if (self.destinations()[i].hasWatchedPredictions()) { // convert this to a dependant observable?
+			if (self.destinations()[i].hasWatchedPredictions()) {
 				return true;
 			}
 		}
 		return false;
 	}, this);
 	
+	this.hasUnwatchedPredictions = ko.dependentObservable(function() {
+		for (var i=0; i < self.destinations().length; i++) {
+			if (!self.destinations()[i].hasUnwatchedPredictions()) {
+				return true;
+			}
+		}
+		return false;
+	}, this);
+	
+	this.watchAllPredictions = function() {
+		for (var i=0; i < self.destinations().length; i++) {
+			self.destinations()[i].watchAllPredictions();
+		}
+	};
+	
+	this.unwatchAllPredictions = function() {
+		for (var i=0; i < self.destinations().length; i++) {
+			self.destinations()[i].unwatchAllPredictions();
+		}
+	};
+	
 	this.updateDestinations = function(destinations) {
 		var mappedDestinations = $.map(destinations, function(aDestination) {
 			for (var i=0; i < self.destinations().length; i++) {
-				if (self.destinations()[i].title() == aDestination.title) { // convert this to a dependant observable?
+				if (self.destinations()[i].title() == aDestination.title) {
 					var theDestination = self.destinations()[i];
 					theDestination.updatePredictions(aDestination.vehicles);
 					return theDestination;
@@ -403,17 +463,38 @@ var destination = function(stop, title, vehicles) {
 	
 	this.hasWatchedPredictions = ko.dependentObservable(function() {
 		for (var i=0; i < self.vehicles().length; i++) {
-			if (self.vehicles()[i].watching()) { // convert this to a dependant observable?
+			if (self.vehicles()[i].watching()) {
 				return true;
 			}
 		}
 		return false;
 	}, this);
 	
+	this.hasUnwatchedPredictions = ko.dependentObservable(function() {
+		for (var i=0; i < self.vehicles().length; i++) {
+			if (!self.vehicles()[i].watching()) {
+				return true;
+			}
+		}
+		return false;
+	}, this);
+	
+	this.watchAllPredictions = function() {
+		for (var i=0; i < self.vehicles().length; i++) {
+			self.vehicles()[i].watching(true);
+		}
+	};
+	
+	this.unwatchAllPredictions = function() {
+		for (var i=0; i < self.vehicles().length; i++) {
+			self.vehicles()[i].watching(false);
+		}
+	};
+	
 	this.updatePredictions = function(vehicles) {
 		var mappedVehicles = $.map(vehicles, function(aVehicle) {
 			for (var i=0; i < self.vehicles().length; i++) {
-				if (self.vehicles()[i].vehicleNumber == aVehicle.id) { // convert this to a dependant observable?
+				if (self.vehicles()[i].vehicleNumber == aVehicle.id) {
 					var theVehicle = self.vehicles()[i];
 					theVehicle.minutes(aVehicle.minutes);
 					return theVehicle;
@@ -618,7 +699,16 @@ var viewModel = function() {
 	
 	this.hasWatchedPredictions = ko.dependentObservable(function() {
 		for (var i=0; i < self.stops().length; i++) {
-			if (self.stops()[i].hasWatchedPredictions()) { // convert this to a dependant observable?
+			if (self.stops()[i].hasWatchedPredictions()) {
+				return true;
+			}
+		}
+		return false;
+	}, this);
+	
+	this.hasWatchedStops = ko.dependentObservable(function() {
+		for (var i=0; i < self.stops().length; i++) {
+			if (self.stops()[i].watching()) {
 				return true;
 			}
 		}
