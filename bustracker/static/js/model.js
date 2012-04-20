@@ -259,6 +259,15 @@ var stop = function(aStop) {
 	
 	this.directions = ko.observableArray([]);
 	
+	this.hasWatchedPredictions = ko.dependentObservable(function() {
+		for (var i=0; i < self.directions().length; i++) {
+			if (self.directions()[i].hasWatchedPredictions()) { // convert this to a dependant observable?
+				return true;
+			}
+		}
+		return false;
+	}, this);
+	
 	// choiceFromTag
 	this.choiceFromTag = function(tag, choices) {
 		var theChoice = null;
@@ -360,6 +369,15 @@ var direction = function(stop, title, destinations) {
 	this.title = ko.observable(title);
 	this.destinations = ko.observableArray([]);
 	
+	this.hasWatchedPredictions = ko.dependentObservable(function() {
+		for (var i=0; i < self.destinations().length; i++) {
+			if (self.destinations()[i].hasWatchedPredictions()) { // convert this to a dependant observable?
+				return true;
+			}
+		}
+		return false;
+	}, this);
+	
 	this.updateDestinations = function(destinations) {
 		var mappedDestinations = $.map(destinations, function(aDestination) {
 			for (var i=0; i < self.destinations().length; i++) {
@@ -383,6 +401,15 @@ var destination = function(stop, title, vehicles) {
 	this.title = ko.observable(title);
 	this.vehicles = ko.observableArray([]);
 	
+	this.hasWatchedPredictions = ko.dependentObservable(function() {
+		for (var i=0; i < self.vehicles().length; i++) {
+			if (self.vehicles()[i].watching()) { // convert this to a dependant observable?
+				return true;
+			}
+		}
+		return false;
+	}, this);
+	
 	this.updatePredictions = function(vehicles) {
 		var mappedVehicles = $.map(vehicles, function(aVehicle) {
 			for (var i=0; i < self.vehicles().length; i++) {
@@ -405,10 +432,10 @@ var prediction = function(stop, minutes, vehicleNumber) {
 	
 	this.vehicleNumber = vehicleNumber;
 	this.minutes = ko.observable(minutes);
-	this.selected = ko.observable(false);
+	this.watching = ko.observable(false);
 	
-	this.toggleSelected = function() {
-		self.selected(!self.selected());
+	this.toggleWatching = function() {
+		self.watching(!self.watching());
 	}
 	
 	this.minutes.subscribe(function(newValue) {
@@ -588,6 +615,15 @@ var viewModel = function() {
 	this.toggleShowOnlyWatchedDepartures = function() {
 		self.showOnlyWatchedDepartures(!self.showOnlyWatchedDepartures());
 	};
+	
+	this.hasWatchedPredictions = ko.dependentObservable(function() {
+		for (var i=0; i < self.stops().length; i++) {
+			if (self.stops()[i].hasWatchedPredictions()) { // convert this to a dependant observable?
+				return true;
+			}
+		}
+		return false;
+	}, this);
 	
 	// stops
 	

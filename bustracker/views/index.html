@@ -198,45 +198,50 @@
 		{{if vm.isLoadingStops()}}<tr class="header1"><td class="header1-main">Loading stops...</td></tr>{{/if}}
 		{{if !vm.isLoadingStops()}}<tr class="header1"><td class="header1-main">No stops. <a href="#" onclick="vm.newStop()">Add one!</a>.</td></tr>{{/if}}
 	{{/if}}
+	{{if vm.showOnlyWatchedDepartures() && !hasWatchedPredictions()}}
+		<tr class="header3"><td class="header3-left" colspan="2">no watched predictions</td></tr>
+	{{/if}}
 	{{each(i, stop) stops()}}
-		<tr class="header1">
-			{{if vm.isEditing()}}
-				<td class="header1-left">${title}</td>
-				<td class="header1-right">
-					{{if isEditable}}
-						{{if i > 0}}<button title="move up" data-bind="click: function() { vm.moveup(i) }">↑</button>{{/if}}
-						{{if i < vm.stops().length-1}}<button title="move down" data-bind="click: function() { vm.movedown(i) }">↓</button>{{/if}}
-						<button title="edit" data-bind="click: function() { vm.editStop(i) }">✎</button>
-						<button title="delete" data-bind="click: function() { vm.deleteStop(i) }">✕</button>
-					{{else}}
-						not editable
-					{{/if}}
-				</td>
-			{{else}}
-				<td class="header1-main" colspan="2">${title}</td>
-			{{/if}}
-		</tr>
-		{{if !vm.isEditing() }}
-			{{if directions().length == 0}}
-				<tr class="header3"><td class="header3-left" colspan="2">loading predictions...</td></tr>
-			{{/if}}
-			{{each(j, direction) directions()}}
-				{{if title}}<tr class="header2"><td class="header2-left" colspan="2">${title}</td></tr>{{/if}}
-				{{if destinations().length == 0}}
-					<tr class="header3"><td class="header3-left" colspan="2">no vehicles predicted</td></tr>
-				{{/if}}
-				{{each(k, destination) destinations()}}
-					{{if title}}<tr class="header3"><td class="header3-left" colspan="2">${title}</td></tr>{{/if}}
-					{{if vehicles().length == 0}}
-						<tr class="header4"><td class="header4-left">no vehicles predicted</td><td class="header4-right"></td></tr>
-					{{/if}}
-					{{each(l, vehicle) vehicles()}}
-						{{if !vm.showOnlyWatchedDepartures() || (vm.showOnlyWatchedDepartures() && selected())}}
-							<tr class="header4" data-bind="click: toggleSelected, css: { 'selected': selected }"><td class="header4-left"><span class="big">${prettyMinutesToArrival}</span> ${prettyMinutesToArrivalSuffix}</td><td class="header4-right">${prettyTimeToLeave}</td></tr>
+		{{if !vm.showOnlyWatchedDepartures() || (vm.showOnlyWatchedDepartures() && hasWatchedPredictions())}}
+			<tr class="header1">
+				{{if vm.isEditing()}}
+					<td class="header1-left">${title}</td>
+					<td class="header1-right">
+						{{if isEditable}}
+							{{if i > 0}}<button title="move up" data-bind="click: function() { vm.moveup(i) }">↑</button>{{/if}}
+							{{if i < vm.stops().length-1}}<button title="move down" data-bind="click: function() { vm.movedown(i) }">↓</button>{{/if}}
+							<button title="edit" data-bind="click: function() { vm.editStop(i) }">✎</button>
+							<button title="delete" data-bind="click: function() { vm.deleteStop(i) }">✕</button>
+						{{else}}
+							not editable
 						{{/if}}
+					</td>
+				{{else}}
+					<td class="header1-main" colspan="2">${title}</td>
+				{{/if}}
+			</tr>
+			{{if !vm.isEditing() }}
+				{{if directions().length == 0}}
+					<tr class="header3"><td class="header3-left" colspan="2">loading predictions...</td></tr>
+				{{/if}}
+				{{each(j, direction) directions()}}
+					{{if title}}<tr class="header2"><td class="header2-left" colspan="2">${title}</td></tr>{{/if}}
+					{{if destinations().length == 0}}
+						<tr class="header3"><td class="header3-left" colspan="2">no vehicles predicted</td></tr>
+					{{/if}}
+					{{each(k, destination) destinations()}}
+						{{if title}}<tr class="header3"><td class="header3-left" colspan="2">${title}</td></tr>{{/if}}
+						{{if vehicles().length == 0}}
+							<tr class="header4"><td class="header4-left">no vehicles predicted</td><td class="header4-right"></td></tr>
+						{{/if}}
+						{{each(l, vehicle) vehicles()}}
+							{{if !vm.showOnlyWatchedDepartures() || (vm.showOnlyWatchedDepartures() && watching())}}
+								<tr class="header4" data-bind="click: toggleWatching, css: { 'watching': watching }"><td class="header4-left"><span class="big">${prettyMinutesToArrival}</span> ${prettyMinutesToArrivalSuffix}</td><td class="header4-right">${prettyTimeToLeave}</td></tr>
+							{{/if}}
+						{{/each}}
 					{{/each}}
 				{{/each}}
-			{{/each}}
+			{{/if}}
 		{{/if}}
 	{{/each}}
 	
