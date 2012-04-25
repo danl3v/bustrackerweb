@@ -8,6 +8,7 @@ class User(db.Model):
     zoom_level = db.IntegerProperty(default=14)
     map_type = db.StringProperty(default="roadmap")
     show_controls = db.StringProperty(default="yes")
+    last_agency_tag = db.StringProperty(default="")
     
     max_arrivals = db.IntegerProperty(default=3)
     show_missed = db.BooleanProperty(default=True)

@@ -125,6 +125,15 @@ class UserPredictions(webapp.RequestHandler):
             predictionList.append({ "id": stop.key().id() if stop.is_saved() else index, "directions": functions.apiwrapperfor(stop.agency_tag).get_directions(stop, user.max_arrivals, user.show_missed) })
         self.response.out.write(json.dumps(predictionList))
 
+class Defaults(webapp.RequestHandler):
+    def get(self):
+        current_user = users.get_current_user()
+        if current_user:
+            user = models.User.all().filter('user =', current_user).get()
+            self.response.out.write(json.dumps({
+                            'last_agency_tag' : user.last_agency_tag,
+                            }))
+
 class UserMap(webapp.RequestHandler):
     def get(self):
         current_user = users.get_current_user()

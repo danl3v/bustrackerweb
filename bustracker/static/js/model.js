@@ -12,6 +12,7 @@ var saveMapDefaultsTimer;
 var vm;
 var isMobile;
 var isLoggedIn;
+var lastAgencyTag;
 
 /* KO ADDONS */
 
@@ -347,8 +348,13 @@ var stop = function(aStop) {
 				return new selectionChoice(anAgency.title, anAgency.tag);
 			});
 			self.agencyChoices(mappedAgencyChoices);
-			if (self.agencyTag && self.canUpdateChoices()) {
-				self.agencyChoice(self.choiceFromTag(self.agencyTag, mappedAgencyChoices));
+			if (self.canUpdateChoices()) {
+				if (self.agencyTag) {
+					self.agencyChoice(self.choiceFromTag(self.agencyTag, mappedAgencyChoices));
+				}
+				else if (lastAgencyTag) {
+					self.agencyChoice(self.choiceFromTag(lastAgencyTag, mappedAgencyChoices));
+				}
 			}
 		}, 'json');
 		return self.trigger();
@@ -809,6 +815,7 @@ var viewModel = function() {
 		if (theStop.agencyChoice() && theStop.lineChoice() && theStop.directionChoice() && theStop.stopChoice()) {
 			if (self.isNewStop) {
 				self.stops.push(theStop);
+				lastAgencyTag = theStop.agencyChoice().tag;
 			}
 			theStop.commitAll();
 			$.post("/stop/save", { "id" : theStop.id(), "title" : theStop.title(), "agencyTag" : theStop.agencyChoice().tag, "lineTag" : theStop.lineChoice().tag, "directionTag" : theStop.directionChoice().tag, "stopTag" : theStop.stopChoice().tag, "timeToStop" : theStop.timeToStop() }, function(data) {
@@ -1139,6 +1146,10 @@ function initialize() {
 		vm.loadLines();
 		vm.loadSettings();
 		
+	}, 'json');
+	
+	$.get("/defaults", function(data) {
+		lastAgencyTag = data.last_agency_tag;
 	}, 'json');
 }
 

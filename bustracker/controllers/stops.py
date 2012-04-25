@@ -11,8 +11,12 @@ class SaveStop(webapp.RequestHandler):
         if id:
             stop = models.Stop.get_by_id(int(id))
         else:
+            user = models.User.all().filter('user =', current_user).get()
+            user.last_agency_tag = self.request.get("agencyTag") # set the last agency used tag
+            user.put()
+            
             stop = models.Stop()
-            stop.user = models.User.all().filter('user =', current_user).get()
+            stop.user = user
         
         if stop and stop.user.user == current_user:
             stop.title = self.request.get('title')
@@ -34,7 +38,7 @@ class SaveStop(webapp.RequestHandler):
             stop_data = functions.apiwrapperfor(stop.agency_tag).get_stop_data(stop)
             self.response.out.write('{"id": ' + str(key.id()) + ', "lat": ' + str(stop_data['lat']) + ', "lon": ' + str(stop_data['lon']) + '}')
         else:
-        	self.response.out.write('{"id": 0, "lat": 0, "lon": 0}')
+            self.response.out.write('{"id": 0, "lat": 0, "lon": 0}')
         
 class DeleteStop(webapp.RequestHandler):
     def post(self):

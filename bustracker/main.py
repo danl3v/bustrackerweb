@@ -15,6 +15,7 @@ def main():
            ('/predictions', buswrap.UserPredictions),
            ('/vehicles/(.*)', buswrap.UserVehicles),
            
+           ('/defaults', buswrap.Defaults),
            ('/map', buswrap.UserMap),
            
            # stop management
