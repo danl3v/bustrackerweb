@@ -220,7 +220,11 @@
 						{{/if}}
 					</td>
 				{{else}}
-					<td class="header1-main" colspan="2" data-bind="click: toggleWatching, css: { 'watching': watching }">${title}</td>
+					{{if isLoggedIn}}
+						<td class="header1-main" colspan="2" data-bind="click: toggleWatching, css: { 'watching': watching }">${title}</td>
+					{{else}}
+						<td class="header1-main" colspan="2">${title}</td>
+					{{/if}}
 				{{/if}}
 			</tr>
 			{{if !vm.isEditing() }}
@@ -238,8 +242,12 @@
 							<tr class="header4"><td class="header4-left">no vehicles predicted</td><td class="header4-right"></td></tr>
 						{{/if}}
 						{{each(l, vehicle) vehicles()}}
-							{{if !vm.showOnlyWatchedDepartures() || (vm.showOnlyWatchedDepartures() && watching() || stop.watching())}}
-								<tr class="header4" data-bind="click: toggleWatching, css: { 'watching': watching }"><td class="header4-left"><span class="big">${prettyMinutesToArrival}</span> ${prettyMinutesToArrivalSuffix}</td><td class="header4-right">${prettyTimeToLeave}</td></tr>
+							{{if isLoggedIn}}
+								{{if !vm.showOnlyWatchedDepartures() || (vm.showOnlyWatchedDepartures() && watching() || stop.watching())}}
+									<tr class="header4" data-bind="click: toggleWatching, css: { 'watching': watching }"><td class="header4-left"><span class="big">${prettyMinutesToArrival}</span> ${prettyMinutesToArrivalSuffix}</td><td class="header4-right">${prettyTimeToLeave}</td></tr>
+								{{/if}}
+							{{else}}
+								<tr class="header4"><td class="header4-left"><span class="big">${prettyMinutesToArrival}</span> ${prettyMinutesToArrivalSuffix}</td><td class="header4-right">${prettyTimeToLeave}</td></tr>
 							{{/if}}
 						{{/each}}
 					{{/each}}

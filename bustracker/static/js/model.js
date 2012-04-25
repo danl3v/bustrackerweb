@@ -6,9 +6,12 @@
 var map;
 var userLat;
 var userLon;
+var userLocationCircle;
+var userLocationPoint;
 var saveMapDefaultsTimer;
 var vm;
 var isMobile;
+var isLoggedIn;
 
 /* KO ADDONS */
 
@@ -1065,7 +1068,13 @@ var viewModel = function() {
 				self.loadPredictions();
 				self.loadVehicles();
 				
-				// refresh the user's location here
+				if (navigator.geolocation && isLoggedIn) {
+					navigator.geolocation.getCurrentPosition(function(position) {
+						userLat = position.coords.latitude;
+						userLon = position.coords.longitude;
+						plotUserLocation();
+					});
+				}
 				
 				setTimeout(self.refreshTimer, 20000);
 			}
@@ -1115,14 +1124,13 @@ function initialize() {
 		});
 		
 		if (data.user_lat && data.user_lon) {
-			plotUserLocation(data.user_lat, data.user_lon);
+			userLat = data.user_lat;
+			userLon = data.user_lon;
+			plotUserLocation();
+			isLoggedIn = false;
 		}
-		else if (navigator.geolocation) { // check if browser support this feature or not 
-			navigator.geolocation.getCurrentPosition(function(position) {
- 				userLat = position.coords.latitude;
- 				userLon = position.coords.longitude;
-				plotUserLocation(position.coords.latitude, position.coords.longitude);
-			});
+		else {
+			isLoggedIn = true;
 		}
 		
 		vm = new viewModel();
@@ -1174,30 +1182,40 @@ function saveMapDefaults() {
 	$.post("/map", { "zoom": map.getZoom(), "lat": map.getCenter().lat(), "lon": map.getCenter().lng() });
 }
 
-function plotUserLocation(lat, lon) {
-	if (lat && lon) {
-		var locationCircle = new google.maps.Circle({
-			strokeColor: "#FFAD29",
-			strokeOpacity: 0.8,
-			strokeWeight: 2,
-			fillColor: "#000000",
-			fillOpacity: 0.2,
-			map: map,
-			center: new google.maps.LatLng(lat, lon),
-			radius: 300
-		});
+function plotUserLocation() {
+	if (userLat && userLon) {
+		if (!userLocationCircle) {
+			userLocationCircle = new google.maps.Circle({
+				strokeColor: "#FFAD29",
+				strokeOpacity: 0.8,
+				strokeWeight: 2,
+				fillColor: "#000000",
+				fillOpacity: 0.2,
+				map: map,
+				center: new google.maps.LatLng(userLat, userLon),
+				radius: 300
+			});
+		}
+		else {
+			userLocationCircle.setCenter(new google.maps.LatLng(userLat, userLon));
+		}
 		
-		var image = new google.maps.MarkerImage('/images/user-location.png',
-			null, // size
-			new google.maps.Point(0,0), // origin
-			new google.maps.Point(15, 23) // anchor
-		);
-		
-		var locationPoint = new google.maps.Marker({
-			position: new google.maps.LatLng(lat, lon),
-			map: map,
-			icon: image
-		});
+		if (!userLocationPoint) {
+			var image = new google.maps.MarkerImage('/images/user-location.png',
+				null, // size
+				new google.maps.Point(0,0), // origin
+				new google.maps.Point(15, 23) // anchor
+			);
+			
+			userLocationPoint = new google.maps.Marker({
+				position: new google.maps.LatLng(userLat, userLon),
+				map: map,
+				icon: image
+			});
+		}
+		else {
+			userLocationPoint.setPosition(new google.maps.LatLng(userLat, userLon));
+		}
 	}
 }
 
