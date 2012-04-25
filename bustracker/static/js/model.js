@@ -407,6 +407,7 @@ var direction = function(stop, title, destinations) {
 	var self = this;
 	this.title = ko.observable(title);
 	this.destinations = ko.observableArray([]);
+	this.stop = stop;
 	
 	this.hasWatchedPredictions = ko.dependentObservable(function() {
 		for (var i=0; i < self.destinations().length; i++) {
@@ -447,7 +448,7 @@ var direction = function(stop, title, destinations) {
 					return theDestination;
 				}
 			}
-			return new destination(stop, aDestination.title, aDestination.vehicles);
+			return new destination(self.stop, aDestination.title, aDestination.vehicles);
 		});
 		self.destinations(mappedDestinations);
 	};
@@ -460,6 +461,7 @@ var destination = function(stop, title, vehicles) {
 	this.direction = ko.observable(direction);
 	this.title = ko.observable(title);
 	this.vehicles = ko.observableArray([]);
+	this.stop = stop;
 	
 	this.hasWatchedPredictions = ko.dependentObservable(function() {
 		for (var i=0; i < self.vehicles().length; i++) {
@@ -500,7 +502,7 @@ var destination = function(stop, title, vehicles) {
 					return theVehicle;
 				}
 			}
-			return new prediction(stop, aVehicle.minutes, aVehicle.id);
+			return new prediction(self.stop, aVehicle.minutes, aVehicle.id);
 		});
 		self.vehicles(mappedVehicles);
 	};
@@ -514,17 +516,14 @@ var prediction = function(stop, minutes, vehicleNumber) {
 	this.vehicleNumber = vehicleNumber;
 	this.minutes = ko.observable(minutes);
 	this.watching = ko.observable(false);
+	this.stop = stop;
 	
 	this.toggleWatching = function() {
 		self.watching(!self.watching());
 	}
 	
-	this.minutes.subscribe(function(newValue) {
-		self.updateVehicleMarker();
-	});
-	
 	this.timeToLeave = ko.dependentObservable(function() {
-		return self.minutes() - stop.timeToStop();
+		return self.minutes() - self.stop.timeToStop();
 	}, this);
 
 	this.prettyMinutesToArrival = ko.dependentObservable(function() {
