@@ -4,6 +4,8 @@
  */
 
 var map;
+var userLat;
+var userLon;
 var saveMapDefaultsTimer;
 var vm;
 var isMobile;
@@ -40,6 +42,10 @@ ko.protectedObservable = function(initialValue) {
 };
 
 /* HELPERS */
+
+function getDistance(x1, y1, x2, y2) {
+	return Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2);
+}
 
 function getAnchor(angle) {
 	switch (angle) {
@@ -318,6 +324,16 @@ var stop = function(aStop) {
 		return theChoice;
 	};
 	
+	this.closestStop = function(stops) { // finds the closest stop
+		var theStop = stops[0];
+		stops.forEach(function(aStop, i) {
+			if (getDistance(aStop.lat, aStop.lon, userLat, userLon) <= getDistance(theStop.lat, theStop.lon, userLat, userLon)) {
+				theStop = aStop;
+			}
+		});
+		return theStop;
+	};
+	
 	this.canUpdateChoices = ko.observable(true);
 	this.trigger = ko.observable(true);
 	
@@ -389,12 +405,18 @@ var stop = function(aStop) {
 				}
 				else {
 					var mappedStopChoices = $.map(stopChoices, function(aStopChoice, index) {
-						return new selectionChoice(aStopChoice.title, aStopChoice.tag);
+						return new stopChoice(aStopChoice.title, aStopChoice.tag, aStopChoice.lat, aStopChoice.lon);
 					});
 					self.stopChoices(mappedStopChoices);
-					if (self.stopTag && self.canUpdateChoices()) {
-						self.stopChoice(self.choiceFromTag(self.stopTag, mappedStopChoices));
-						self.canUpdateChoices = ko.observable(false);
+					if (self.canUpdateChoices()) {
+						if (self.stopTag) {
+							self.stopChoice(self.choiceFromTag(self.stopTag, mappedStopChoices));
+							self.canUpdateChoices = ko.observable(false);
+						}
+						else if (userLat && userLon) {
+							self.stopChoice(self.closestStop(mappedStopChoices));
+							self.canUpdateChoices = ko.observable(false);
+						}
 					}
 				}
 			}, 'json');
@@ -662,6 +684,13 @@ var vehicle = function(aVehicle, aLine) {
 var selectionChoice = function(title, tag) {
 	this.title = title;
 	this.tag = tag;
+};
+
+var stopChoice = function(title, tag, lat, lon) {
+	this.title = title;
+	this.tag = tag;
+	this.lat = lat;
+	this.lon = lon;
 };
 
 /* View Model */
@@ -1035,6 +1064,9 @@ var viewModel = function() {
 			if (!self.isLoadingStops() && !self.isLoadingLines()) {
 				self.loadPredictions();
 				self.loadVehicles();
+				
+				// refresh the user's location here
+				
 				setTimeout(self.refreshTimer, 20000);
 			}
 			else {
@@ -1087,6 +1119,8 @@ function initialize() {
 		}
 		else if (navigator.geolocation) { // check if browser support this feature or not 
 			navigator.geolocation.getCurrentPosition(function(position) {
+ 				userLat = position.coords.latitude;
+ 				userLon = position.coords.longitude;
 				plotUserLocation(position.coords.latitude, position.coords.longitude);
 			});
 		}

@@ -47,7 +47,7 @@ def stops(agency, line, direction):
     list = []
     for stop_id in stop_ids:
         stop = soup.find('stop', tag=stop_id['tag'])
-        list.append({"tag" : stop['tag'], "title" : stop['title']})
+        list.append({"tag" : stop['tag'], "title" : stop['title'], "lat" : float(stop['lat']), "lon" : float(stop['lon'])})
     return list
 
 def get_line_data(stop):
