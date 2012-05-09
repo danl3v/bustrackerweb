@@ -125,6 +125,16 @@ class UserPredictions(webapp.RequestHandler):
             predictionList.append({ "id": stop.key().id() if stop.is_saved() else index, "directions": functions.apiwrapperfor(stop.agency_tag).get_directions(stop, user.max_arrivals, user.show_missed) })
         self.response.out.write(json.dumps(predictionList))
 
+class UserNearestPredictions(webapp.RequestHandler):
+    def get(self, lat, lon):
+        '''Write out the JSON predictions for the user's nearest stops. Eventually we will loop through each data provider to give the user the closest stops.'''
+        current_user = users.get_current_user()
+        if current_user:
+            user = models.User.all().filter('user =', current_user).get()
+        else:
+            user = default_user.user()
+        self.response.out.write(json.dumps(functions.apiwrapperfor("actransit").get_nearest_predictions(lat, lon, user.max_arrivals, user.show_missed)))
+
 class Defaults(webapp.RequestHandler):
     def get(self):
         current_user = users.get_current_user()

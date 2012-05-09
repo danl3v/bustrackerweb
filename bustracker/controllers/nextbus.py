@@ -94,3 +94,19 @@ def get_directions(stop, max_arrivals, show_missed):
         predictions = sorted(predictions, key=lambda prediction: int(prediction['minutes']))[:max_arrivals]
         destinations_list.append({"title": destination['title'], "vehicles": [{"id" : prediction['vehicle'], "minutes" : prediction['minutes']} for prediction in predictions]})
     return [{"title": "", "destinations": destinations_list}]
+    
+def get_nearest_predictions(lat, lon, max_arrivals, show_missed):
+    soup = BeautifulStoneSoup(functions.get_xml('http://webservices.nextbus.com/service/publicXMLFeed?command=predsByLoc&lat=37.770715&lon=-122.437305&maxDis=2000&maxNumStops=40'), selfClosingTags=['prediction'])
+    stops = soup.findAll('predictions')
+    stop_list = []
+    for stop in stops:
+        directions = stop.findAll('direction')
+        directions_list = []
+        for direction in directions:
+            predictions = direction.findAll('prediction')
+            #if not show_missed:
+            #   predictions = filter(lambda prediction: True if functions.get_leave_at(stop['distanceToStop'], prediction['minutes']) != -1 else False, predictions)
+            predictions = sorted(predictions, key=lambda prediction: int(prediction['minutes']))[:max_arrivals]
+            directions_list.append({"title": direction['title'], "vehicles": [{"id" : prediction['vehicle'], "minutes" : prediction['minutes']} for prediction in predictions]})
+        stop_list.append({"stopTitle" : stop.stopTitle, "routeTitle" : stop.routeTitle, "directions" : directions_list})
+    return {"stops" : stop_list }

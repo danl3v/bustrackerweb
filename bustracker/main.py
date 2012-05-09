@@ -13,6 +13,7 @@ def main():
            ('/stops', buswrap.UserStops),
            ('/lines', buswrap.UserLines),
            ('/predictions', buswrap.UserPredictions),
+           ('/nearestpredictions/(.*)/(.*)', buswrap.UserNearestPredictions),
            ('/vehicles/(.*)', buswrap.UserVehicles),
            
            ('/defaults', buswrap.Defaults),
