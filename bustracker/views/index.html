@@ -30,8 +30,33 @@
 
 <body>
 
+<!-- main view -->
 <div id="map"></div>
 
+<table id="mobile-navigation-bar" style="display: none;" data-bind="visible: isMobile">
+	<tr>
+		<td id="list-toggle-cell"><button data-bind="click: vm.toggleSidebar, text: toggleSidebarButtonText"></button></td>
+		<td id="refresh-button-cell"><button data-bind="click: function() { vm.loadPredictions(); vm.loadVehicles(); }">↺</button></td>
+	</tr>
+</table>
+
+<div id="wrapper" data-bind="visible: vm.showSidebar">
+
+<div id="header" data-bind="style: { marginTop: isMobile ? '1em' : '0' }">
+	<p>Transit Arrival Times</p>
+	<span id="clock">&nbsp;</span><br>
+	{% if current_user %}<div data-bind="template:'headerButtonsTemplate'"></div>{% endif %}
+</div>
+
+<div id="main">
+	<table id="stop-list" class="list" data-bind="template:'stopTemplate'"></table>
+</div>
+
+</div>
+
+<!-- end main view -->
+
+<!-- editStopDialog -->
 <div id="editStopDialog" class="dialog" style="display: none;" data-bind="visible: editingStop">
 	<form>
 		<h1 data-bind="text: editingStop().title"></h1>
@@ -70,9 +95,9 @@
 		</div>
 	</form>
 </div>
-
 <div class="fade" style="display: none;" data-bind="visible: editingStop, click: vm.cancelEditingStop"></div>
 
+<!-- settingsDialog -->
 <div id="settingsDialog" class="dialog" style="display: none;" data-bind="visible: editingSettings">
 	<form>
 	
@@ -130,9 +155,9 @@
 		</div>
 	</form>
 </div>
-
 <div class="fade" style="display: none;" data-bind="visible: editingSettings, click: vm.cancelEditingSettings"></div>
 
+<!-- feedbackDialog -->
 <div id="feedbackDialog" class="dialog" style="display: none;" data-bind="visible: editingFeedback">
 	<form>
 		<h1>Feedback</h1>
@@ -146,30 +171,15 @@
 		</div>
 	</form>
 </div>
-
 <div class="fade" style="display: none;" data-bind="visible: editingFeedback, click: vm.cancelEditingFeedback"></div>
 
+<!-- offlineWarningDialog -->
 <div class="dialog" style="display: none;" data-bind="visible: showOfflineWarning">
 	<h1>Offline</h1>
 </div>
-
 <div class="fade" style="display: none;" data-bind="visible: showOfflineWarning"></div>
 
-<table id="mobile-navigation-bar" style="display: none;" data-bind="visible: isMobile">
-	<tr>
-		<td id="list-toggle-cell"><button data-bind="click: vm.toggleSidebar, text: toggleSidebarButtonText"></button></td>
-		<td id="refresh-button-cell"><button data-bind="click: function() { vm.loadPredictions(); vm.loadVehicles(); }">↺</button></td>
-	</tr>
-</table>
-
-<div id="wrapper" data-bind="visible: vm.showSidebar">
-
-<div id="header" data-bind="style: { marginTop: isMobile ? '1em' : '0' }">
-	<p>Transit Arrival Times</p>
-	<span id="clock">&nbsp;</span><br>
-	{% if current_user %}<div data-bind="template:'headerButtonsTemplate'"></div>{% endif %}
-</div>
-
+<!-- headerButtonsTemplate -->
 <script type="text/x-jquery-tmpl" id="headerButtonsTemplate">
 {% verbatim %}
 	{{if !vm.isEditing()}}
@@ -182,9 +192,6 @@
 {% endverbatim %}
 </script>
 
-<div id="main">
-	<table id="stop-list" class="list" data-bind="template:'stopTemplate'"></table>
-</div>
 
 <script type="text/x-jquery-tmpl" id="stopTemplate">
 	{% if not current_user %}
@@ -259,6 +266,7 @@
 {% endverbatim %} 
 </script>
 
+<!-- scrollFix -->
 <script type="text/javascript" charset="utf-8">
 	new ScrollFix(document.getElementById("wrapper"));
 	new ScrollFix(document.getElementById("editStopDialog"));
@@ -266,6 +274,5 @@
 	new ScrollFix(document.getElementById("feedbackDialog"));
 </script>
 
-</div>
 </body>
 </html>
